@@ -24,6 +24,10 @@ $config['site_description'] = "Resources";
 */
 $config['base_url'] = '';
 $config['base_path']    = str_replace("/application/", "/", APPPATH);
+$config['images_path']    = $config['base_path'] . '../images/';
+$config['scripts_path']    = $config['base_path'] . '../scripts/';
+$config['styles_path']    = $config['base_path'] . '../styles/';
+$config['uploads_path']    = $config['base_path'] . '../uploads/';
 //$config['base_url'] = 'http://localhost/school';
 
 /*

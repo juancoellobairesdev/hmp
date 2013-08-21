@@ -37,18 +37,6 @@ class Resource extends MY_Controller {
         $this->_form($id);
     }
 
-    public function add(){
-
-    }
-
-    public function edit(){
-
-    }
-
-    public function remove(){
-
-    }
-
     private function _form($id = NULL){
         if(!($resource = $this->resource_model->get($id))){
             $resource = $this->resource_model->fields();
@@ -83,8 +71,6 @@ class Resource extends MY_Controller {
         }
         else{ //Error
             $errors[] = 'Invalid resource.';
-            $errors[] = json_encode($resource);
-            $errors[] = $idToSave;
         }
 
         $data = new stdClass();

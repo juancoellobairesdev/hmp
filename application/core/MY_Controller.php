@@ -35,7 +35,32 @@ class MY_Controller extends CI_Controller {
 
         $this->load->view('templates/home', $params);
     }
-}
+
+    public function redirect($url = "", $params = array(), $get = true){
+        if(count($params)){
+            if($get){
+                $url .= "?" . http_build_query($params);
+            }
+            else{
+                if(strrpos($url,"/") != (strlen($url)-1)){
+                   $url .= "/";
+                }
+                foreach($params as $key => $value){
+                    if(!isset($bar)){
+                        $bar = true;
+                    }
+                    else{
+                        $url .= "/";
+                    }
+
+                    $url .= $value;
+                }
+            }
+        }
+
+        header("Location: $url", true, 302);
+        exit;
+    }}
 
 /* End of file MY_Controller.php */
 /* Location: ./application/core/MY_Controller.php */

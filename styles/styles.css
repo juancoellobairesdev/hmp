@@ -2,7 +2,7 @@ body{
     width:1024px;
 }
 
-.form_error, .form_success {
+.form_error, .form_success, .form_warning{
     font: normal normal 300 13px/16px Arial, Helvetica, sans-serif;
     margin: 10px 0;
     padding: 5px;
@@ -11,15 +11,49 @@ body{
     -webkit-border-radius: 3px;
     border-radius: 3px;
 }
-.form_error {
+.form_error{
     background: #FEF1EC no-repeat 8px 5px;
     border: 1px solid #CD0A0A;
     color: #CD0A0A;
 }
-.form_success {
+.form_success{
     background: #D8FFD3 no-repeat 8px 5px;
     border: 1px solid #337C2A;
     color: #337C2A;
+}
+.form_warning{
+    background: #FFECD3 no-repeat 8px 5px;
+    border: 1px solid #7C502A;
+    color: #7C502A;
+}
+
+form{
+    display: block;
+    margin: 20px auto;
+    background: #eee;
+    border-radius: 10px;
+    padding: 15px
+}
+
+#progress{
+    position:relative;
+    width:400px;
+    border: 1px solid #ddd;
+    padding: 1px;
+    border-radius: 3px;
+}
+
+#bar{background-color: #B4F5B4;
+    width:0%;
+    height:20px;
+    border-radius: 3px;
+}
+
+#percent{
+    position:absolute;
+    display:inline-block;
+    top:3px;
+    left:48%;
 }
 
 #notifications ul{

@@ -32,18 +32,6 @@ class Category extends MY_Controller {
         $this->_form($id);
     }
 
-    public function add(){
-
-    }
-
-    public function edit(){
-
-    }
-
-    public function remove(){
-
-    }
-
     private function _form($id = NULL){
         if(!($category = $this->category_model->get($id))){
             $category = $this->category_model->fields();
@@ -77,8 +65,6 @@ class Category extends MY_Controller {
         }
         else{ //Error
             $errors[] = 'Invalid category.';
-            $errors[] = json_encode($category);
-            $errors[] = $idToSave;
         }
 
         $data = new stdClass();

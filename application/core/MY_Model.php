@@ -83,8 +83,13 @@ class MY_Model extends CI_Model {
         return $this->db->update($this->table, $object);
     }
     
-    public function grades(){
+    public function grades($full = FALSE){
         $grades = array();
+        if($full){
+            $grades[-2] = 'Support Staff';
+            $grades[-1] = 'Pre Kindergarten';
+        }
+
         $grades[0] = 'Kindergarten';
         $grades[1] = '1st. Grade';
         $grades[2] = '2dn. Grade';
@@ -104,6 +109,17 @@ class MY_Model extends CI_Model {
         $cohorts[5] = '5';
 
         return $cohorts;
+    }
+
+    public function roles(){
+        $roles = array();
+        $roles[0] = 'Verification Designee';
+        $roles[1] = 'Support Staff';
+        $roles[2] = 'HMP Admin';
+        $roles[3] = 'HMP Staff';
+        $roles[4] = 'Teacher';
+
+        return $roles;
     }
 }
 

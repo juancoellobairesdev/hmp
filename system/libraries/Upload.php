@@ -1038,6 +1038,12 @@ class CI_Upload {
 				$mime = @finfo_file($finfo, $file['tmp_name']);
 				finfo_close($finfo);
 
+				//Juan's code
+				if($file['type'] == 'text/csv'){
+					$mime = 'text/csv';
+				}
+				//End of Juan's code
+				
 				/* According to the comments section of the PHP manual page,
 				 * it is possible that this function returns an empty string
 				 * for some files (e.g. if they don't exist in the magic MIME database)

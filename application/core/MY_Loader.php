@@ -41,6 +41,7 @@ class MY_Loader extends CI_Loader
 
         $vars['basePath'] = config_item('base_path');
         $vars['viewsPath'] = $vars['basePath'] . "application/views/";
+        $vars['uploadsPath'] = $vars['basePath'] . "uploads/";
 
         $vars['baseUrl'] = config_item('base_url');
         $vars['imagesUrl'] = $vars['baseUrl'] . "images/";
