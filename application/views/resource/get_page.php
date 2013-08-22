@@ -12,7 +12,7 @@
         <th>Weight</th>
     </tr>
     <?php foreach($resources as $resource): ?>
-        <tr class="resource_row" onclick="window.location='<?= $baseUrl ?>resource/edit_form/<?= $resource->id?>'" style="cursor:pointer">
+        <tr class="list_row" onclick="window.location='<?= $baseUrl ?>resource/edit_form/<?= $resource->id?>'" style="cursor:pointer">
             <th><?= $resource->id; ?></th>
             <th><?= $categories[$resource->categoryId]->name; ?></th>
             <th><?= $resource->title; ?></th>

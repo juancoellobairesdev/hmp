@@ -4,7 +4,7 @@ class Misc_helper{
     static function pagination($page, $model){
         $ci = &get_instance();
         $count = $ci->$model->count();
-        $pages = ((int) ($count/PAGE_SIZE_DEFAULT)) + 1;
+        $pages = (int) ($count/PAGE_SIZE_DEFAULT) -1;
 
         $page = ($page < 1)? 1: $page;
         $page = ($page > $pages)? $pages: $page;
@@ -15,7 +15,7 @@ class Misc_helper{
         $pagination->current = $page;
         $pagination->next = ($page < $pages)? $page +1: $pages;
         $pagination->last = $pages;
-        
+
         return $pagination;
     }
     

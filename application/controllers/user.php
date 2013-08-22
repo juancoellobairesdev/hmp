@@ -1,11 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class User extends MY_Controller {
-
-    public function index(){
-        echo "hola vieja de la water polo";
-    }
-
     public function login_form(){
         $this->template('user/login_form');
     }
@@ -36,6 +31,7 @@ class User extends MY_Controller {
             echo $e->getMessage();
         }
         */
+        
 
     }
 }

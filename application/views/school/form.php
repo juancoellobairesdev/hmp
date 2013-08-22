@@ -88,6 +88,7 @@
             <?php endforeach; ?>
         </select><br>
 
+        <label for="userfile">Teachers CSV:</label>
         <input type="file" size="60" name="userfile">
         <!--input type="submit" value="Upload CSV"><br/-->
         <div id="progress">

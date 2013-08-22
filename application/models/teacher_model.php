@@ -1,6 +1,47 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+if(!defined('TEACHER_GRADE_LEVEL_S')){
+    define('TEACHER_GRADE_LEVEL_S', -2);
+}
+
+if(!defined('TEACHER_GRADE_LEVEL_PK')){
+    define('TEACHER_GRADE_LEVEL_PK', -1);
+}
+
+if(!defined('TEACHER_GRADE_LEVEL_K')){
+    define('TEACHER_GRADE_LEVEL_K', 0);
+}
+
+if(!defined('TEACHER_GRADE_LEVEL_1')){
+    define('TEACHER_GRADE_LEVEL_1', 1);
+}
+
+if(!defined('TEACHER_GRADE_LEVEL_2')){
+    define('TEACHER_GRADE_LEVEL_2', 2);
+}
+
+if(!defined('TEACHER_GRADE_LEVEL_3')){
+    define('TEACHER_GRADE_LEVEL_3', 3);
+}
+
+if(!defined('TEACHER_GRADE_LEVEL_4')){
+    define('TEACHER_GRADE_LEVEL_4', 4);
+}
+
+if(!defined('TEACHER_GRADE_LEVEL_5')){
+    define('TEACHER_GRADE_LEVEL_5', 5);
+}
+
 class Teacher_model extends MY_Model {
+    static $GRADE_LEVEL_S = -2;
+    static $GRADE_LEVEL_PK = -1;
+    static $GRADE_LEVEL_K = 0;
+    static $GRADE_LEVEL_1 = 1;
+    static $GRADE_LEVEL_2 = 2;
+    static $GRADE_LEVEL_3 = 3;
+    static $GRADE_LEVEL_4 = 4;
+    static $GRADE_LEVEL_5 = 5;
+
     protected $table = 'teachers';
 
     public function __construct(){

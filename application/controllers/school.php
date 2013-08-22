@@ -52,9 +52,6 @@ class School extends MY_Controller {
     }
 
     public function save(){
-        
-        echo json_encode($_POST);
-        return;
         $warnings = array();
 
         $this->db->trans_begin();
@@ -84,9 +81,31 @@ class School extends MY_Controller {
         $errors = array();
         $id = FALSE;
 
-        $school = (object) $this->input->post('school');
-        $principalsemail = $school->principalsemail;
-        unset($school->principalsemail);
+        $school = new stdClass();
+        $school->id = $this->input->post('id');
+        $school->name = $this->input->post('name');
+        $school->startingSchoolYear = $this->input->post('startingSchoolYear');
+        $school->classesStartDate = $this->input->post('classesStartDate');
+        $school->address = $this->input->post('address');
+        $school->phone = $this->input->post('phone');
+        $school->fax = $this->input->post('fax');
+        $school->email = $this->input->post('email');
+        $school->startTimeOfClasses = $this->input->post('startTimeOfClasses');
+        $school->endTimeOfClasses = $this->input->post('endTimeOfClasses');
+        $school->fallBreakDates = $this->input->post('fallBreakDates');
+        $school->winterBreakDates = $this->input->post('winterBreakDates');
+        $school->springBreakDates = $this->input->post('springBreakDates');
+        $school->itbsTestingDates = $this->input->post('itbsTestingDates');
+        $school->writingAssessmentDates = $this->input->post('writingAssessmentDates');
+        $school->crctTestingDates = $this->input->post('crctTestingDates');
+        $school->shippingContactInfo = $this->input->post('shippingContactInfo');
+        $school->principal = $this->input->post('principal');
+        $school->principalCarbonCopied = $this->input->post('principalCarbonCopied');
+        $school->approveNewsletterCommunication = $this->input->post('approveNewsletterCommunication');
+        $school->approveReminderPrompts = $this->input->post('approveReminderPrompts');
+        $school->districtId = $this->input->post('districtId');
+
+        $principalsemail = $this->input->post('principalsemail');
 
         //Null means insert, an integer means edit that resourceId
         $idToSave = $this->session->userdata('schoolSaveId');
@@ -96,6 +115,9 @@ class School extends MY_Controller {
 
             if(!($errors = $this->school_model->has_errors($school))){
                 $id = $this->school_model->insert($school);
+                if(!$this->_save_principal($id, $principalsemail, $school)){
+                    $errors[] = 'Unable to save principal information.';
+                }
             }
         }
         elseif(isset($school->id) && ($school->id == $idToSave)){ //Edit
@@ -145,10 +167,10 @@ class School extends MY_Controller {
             $this->load->library('upload', $config);
 
             if (!$this->upload->do_upload()){
-                $errors[] = $this->upload->display_errors();
+                $errors[] = $this->upload->display_errors('','');
             }
             else{
-                $data = array('upload_data' => $this->upload->data());
+                $data = $this->upload->data();
                 $full_path = $data['full_path'];
             }
         }
@@ -177,9 +199,9 @@ class School extends MY_Controller {
             $user = new stdClass();
             $user->name = $school->principal;
             $user->email = $principalsemail;
-            $user->role = 'Support Staff';
+            $user->role = User_model::$ROLE_S;
             $user->salt = hash('sha512', microtime());
-            $user->password = Misc_helper::pbkdf2('sha512', implode('', explode(' ', $user->name)), $salt, '1024', '64');
+            $user->password = Misc_helper::pbkdf2('sha512', implode('', explode(' ', $user->name)), $user->salt, '1024', '64');
 
             if($id = $this->user_model->insert($user)){
                 $userId = $id;
@@ -192,14 +214,14 @@ class School extends MY_Controller {
             $teacher->userId = $userId;
             $teacher->schoolYear = date('Y');
             $teacher->enabled = TRUE;
-            $teacher->gradeLevel = -2;
+            $teacher->gradeLevel = Teacher_model::$GRADE_LEVEL_T;
             $teacher->numStudents = 0;
 
             if($id = $this->teacher_model->insert($teacher)){
                 $teacher->id = $id;
             }
             else{
-                $tacher = FALSE;
+                $teacher = FALSE;
             }
         }
 
@@ -209,6 +231,71 @@ class School extends MY_Controller {
     private function _save_teachers_from_csv($schoolId, $full_path){
         $this->load->library('Csv_Reader');
 
+        $csv_users = $this->csv_reader->parse_file($full_path);
+        $csv_users = array_values($csv_users);
+        $csv_users = json_decode(json_encode($csv_users));
+
+        // Get all emails to search for users already on db
+        $teachers = array();
+        $emails = array();
+        $year = date('Y');
+        for($i=0;$i<count($csv_users);$i++){
+            $csv_user = $csv_users[$i];
+            if(isset($csv_user->gradeLevel) && isset($csv_user->name) && isset($csv_user->email) && isset($csv_user->numStudents) && $csv_user->email){
+                $user = new stdClass();
+                $user->name = $csv_user->name;
+                $user->email = $csv_user->email;
+                $user->role = User_model::$ROLE_T;
+                $user->salt = hash('sha512', microtime());
+                $user->password = Misc_helper::pbkdf2('sha512', implode('', explode(' ', $user->name)), $user->salt, '1024', '64');
+
+                unset($csv_user->name);
+                unset($csv_user->email);
+                
+                $teacher = new stdClass();
+                $teacher->schoolId = $schoolId;
+                $teacher->gradeLevel = $csv_user->gradeLevel;
+                $teacher->numStudents = $csv_user->numStudents;
+                $teacher->schoolYear = $year;
+                $teacher->enabled = FALSE;
+                $teacher->user = $user;
+
+                $teachers[$user->email] = $teacher;
+                $emails[$user->email] = $user->email;
+            }
+            else{
+                unset($csv_users[$i]);
+            }
+        }
+        $db_users = $this->user_model->gets_by_email($emails);
+        foreach($db_users as $db_user){
+            $teachers[$db_user->email]->user = $db_user;
+            $teachers[$db_user->email]->userId = $db_user->id;
+        }
+
+        // Save every teacher to db
+        $userIds = array();
+        $teacherIds = array();
+        foreach($teachers as &$teacher){
+
+            // Save user before teacher
+            if(!isset($teacher->user->id)){
+                $user = $teacher->user;
+                if($userId = $this->user_model->insert($user)){
+                    $teacher->userId = $userId;
+                    $userIds[] = $userId;
+                }
+            }
+
+            // Save teacher at last
+            unset($teacher->user);
+            if($teacherId = $this->teacher_model->insert($teacher)){
+                $teacherIds[] = $teacherId;
+            }
+        }
+
+        //$data['csvData'] =  $result;
+        //$this->load->view('view_csv', $data);
     }
 }
 

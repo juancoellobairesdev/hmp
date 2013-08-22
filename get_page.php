@@ -7,7 +7,7 @@
         <th>Weight</th>
     </tr>
     <?php foreach($categories as $category): ?>
-        <tr class="list_row" onclick="window.location='<?= $baseUrl ?>category/edit_form/<?= $category->id?>'" style="cursor:pointer">
+        <tr class="category_row" onclick="window.location='<?= $baseUrl ?>category/edit_form/<?= $category->id?>'" style="cursor:pointer">
             <th><?= $category->id; ?></th>
             <th><?= $category->name; ?></th>
             <th><?= $category->minCohort; ?></th>

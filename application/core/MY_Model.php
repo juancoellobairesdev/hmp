@@ -111,13 +111,17 @@ class MY_Model extends CI_Model {
         return $cohorts;
     }
 
+    public function gradeLevels(){
+        return $this->grades(TRUE);
+    }
+
     public function roles(){
         $roles = array();
-        $roles[0] = 'Verification Designee';
-        $roles[1] = 'Support Staff';
-        $roles[2] = 'HMP Admin';
-        $roles[3] = 'HMP Staff';
-        $roles[4] = 'Teacher';
+        $roles['V'] = 'Verification Designee';
+        $roles['S'] = 'Support Staff';
+        $roles['A'] = 'HMP Admin';
+        $roles['H'] = 'HMP Staff';
+        $roles['T'] = 'Teacher';
 
         return $roles;
     }

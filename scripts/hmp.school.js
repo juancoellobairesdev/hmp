@@ -39,31 +39,29 @@ hmp.school = {
         type: 'POST',
         dataType: 'json',
         data:{
-            school:[{asda:123},{
-                id: $('#id').val(),
-                name: $('#name').val(),
-                startingSchoolYear: $('#startingSchoolYear').val(),
-                classesStartDate: $('#classesStartDate').val(),
-                address: $('#address').val(),
-                phone: $('#phone').val(),
-                fax: $('#fax').val(),
-                email: $('#email').val(),
-                startTimeOfClasses: $('#startTimeOfClasses').val(),
-                endTimeOfClasses: $('#endTimeOfClasses').val(),
-                fallBreakDates: $('#fallBreakDates').val(),
-                winterBreakDates: $('#winterBreakDates').val(),
-                springBreakDates: $('#springBreakDates').val(),
-                itbsTestingDates: $('#itbsTestingDates').val(),
-                writingAssessmentDates: $('#writingAssessmentDates').val(),
-                crctTestingDates: $('#crctTestingDates').val(),
-                shippingContactInfo: $('#shippingContactInfo').val(),
-                Principal: $('#Principal').val(),
-                principalsemail: $('#principalsemail').val(),
-                principalCarbonCopied: $('#principalCarbonCopied').val(),
-                approveNewsletterCommunication: $('#approveNewsletterCommunication').val(),
-                approveReminderPrompts: $('#approveReminderPrompts').val(),
-                districtId: $('#districtId').val()
-            },{dsasad:321}]
+            id: $('#id').val(),
+            name: $('#name').val(),
+            startingSchoolYear: $('#startingSchoolYear').val(),
+            classesStartDate: $('#classesStartDate').val(),
+            address: $('#address').val(),
+            phone: $('#phone').val(),
+            fax: $('#fax').val(),
+            email: $('#email').val(),
+            startTimeOfClasses: $('#startTimeOfClasses').val(),
+            endTimeOfClasses: $('#endTimeOfClasses').val(),
+            fallBreakDates: $('#fallBreakDates').val(),
+            winterBreakDates: $('#winterBreakDates').val(),
+            springBreakDates: $('#springBreakDates').val(),
+            itbsTestingDates: $('#itbsTestingDates').val(),
+            writingAssessmentDates: $('#writingAssessmentDates').val(),
+            crctTestingDates: $('#crctTestingDates').val(),
+            shippingContactInfo: $('#shippingContactInfo').val(),
+            principal: $('#Principal').val(),
+            principalsemail: $('#principalsemail').val(),
+            principalCarbonCopied: $('#principalCarbonCopied').val(),
+            approveNewsletterCommunication: $('#approveNewsletterCommunication').val(),
+            approveReminderPrompts: $('#approveReminderPrompts').val(),
+            districtId: $('#districtId').val()
         },
 
         beforeSend: function(){
@@ -85,7 +83,23 @@ hmp.school = {
         },
 
         complete: function(response){
-            alert(JSON.stringify(response.responseText));
+                var data = response.responseJSON;
+                if(data.id){
+                    $('#notifications ul').html('<li class="form_success">School successfully saved with id ' + data.id + '</li>');
+                    for(i=0; i < data.warnings.length; i++){
+                        $('#notifications ul').append('<li class="form_warning">' + data.warnings[i] + '</li>')
+                    }
+                }
+                else if(data.errors){
+                    var i;
+                    $('#notifications ul').html('');
+                    for(i=0; i < data.errors.length; i++){
+                        $('#notifications ul').append('<li class="form_error">' + data.errors[i] + '</li>')
+                    }
+                }
+                else{
+                    alert('Unknown error.');
+                }
         }
     }
 };
