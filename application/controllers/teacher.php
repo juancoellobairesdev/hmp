@@ -6,39 +6,6 @@ class Teacher extends MY_Controller {
         $this->load->model('teacher_model');
     }
 
-    public function login_form(){
-        $this->template('user/login_form');
-    }
-
-    public function login(){
-        $email = $this->input->post('email');
-        $password = $this->input->post('password');
-
-        $this->session->set_userdata('asd', $email . ' - ' . $password);
-        echo $this->session->userdata('asd');
-    }
-
-    public function forgot_form(){
-        $this->template('user/forgot_form');
-    }
-
-    public function forgot(){
-        $this->email->from('juan.coello@bairesdev.com','Juan');
-        $this->email->to('juan.coello@bairesdev.com');
-        $this->email->subject('Hola hola perinola');
-        $this->email->message('Un mensaje bonito bonito');
-        echo "Me olvidao";
-        /*
-        try{
-            var_dump($this->email->send());
-        }
-        catch(Exception $e){
-            echo $e->getMessage();
-        }
-        */
-
-    }
-
     public function show_list($page = 1){
         $params = array();
 

@@ -30,8 +30,9 @@ class MY_Controller extends CI_Controller {
         $params['imagesUrl'] = $params['baseUrl'] . "images/";
         $params['scriptsUrl'] = $params['baseUrl'] . "scripts/";
         $params['stylesUrl'] = $params['baseUrl'] . "styles/";
+        $params['redirect_url'] = config_item('base_url');
         
-        $params['renderedContent'] = $this->load->view($view, $params, true);
+        $params['rendered_content'] = $this->load->view($view, $params, true);
 
         $this->load->view('templates/home', $params);
     }

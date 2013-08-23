@@ -15,7 +15,7 @@ class Misc_helper{
         $pagination->current = $page;
         $pagination->next = ($page < $pages)? $page +1: $pages;
         $pagination->last = $pages;
-        
+
         return $pagination;
     }
     
@@ -66,5 +66,21 @@ class Misc_helper{
         }
         
         return $result;
+    }
+
+    static function encrypt_password($raw, $salt){
+        return self::pbkdf2('sha512', $raw, $salt, '1024', '64');;
+    }
+
+    static function random_password(){
+        $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for($i = 0; $i < 8; $i++){
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
+        }
+
+        return implode($pass); //turn the array into a string
     }
 }

@@ -14,6 +14,18 @@ class Test extends MY_Controller {
 
         $this->_print($result);
     }
+
+    public function create_user(){
+        $user = new stdClass();
+        $user->name = 'Chiforimpulo';
+        $user->email = 'chif@rimpu.lo';
+        $user->role = User_model::$ROLE_S;
+        $user->salt = hash('sha512', microtime());
+        $user->password = Misc_helper::pbkdf2('sha512', 'asd', $user->salt, '1024', '64');
+
+        $this->_print($this->user_model->insert($user));
+        $this->_print($user);
+    }
 }
 
 /* End of file test.php */

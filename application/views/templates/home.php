@@ -10,12 +10,11 @@
         <div class="maincont">
             <div class="bodycont">
                 <p>
-                    <?php echo $renderedContent; ?>
+                    <?php echo $rendered_content; ?>
                 </p>
             </div>
 
             <?php include "_footer.php"; ?>
         </div>
-        <script type="text/javascript" src="<?=$scriptsUrl?>bootstrap.min.js"></script>
     </body>
 </html>
