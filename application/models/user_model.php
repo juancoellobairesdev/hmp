@@ -1,25 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-if(!defined('USER_ROLE_S')){
-    define('USER_ROLE_S', 'Support Staff');
-}
-
-if(!defined('USER_ROLE_V')){
-    define('USER_ROLE_V', 'Verification Designee');
-}
-
-if(!defined('USER_ROLE_A')){
-    define('USER_ROLE_A', 'HMP Admin');
-}
-
-if(!defined('USER_ROLE_H')){
-    define('USER_ROLE_H', 'HMP Staff');
-}
-
-if(!defined('USER_ROLE_T')){
-    define('USER_ROLE_T', 'Teacher');
-}
-
 class User_model extends MY_Model {
     static $ROLE_S = 'Support Staff';
     static $ROLE_V = 'Verification Designee';
@@ -49,11 +29,47 @@ class User_model extends MY_Model {
     }
 
     public function get_by_email($email){
-        return $this->_get_by_email($email)->row();
+        return $this->_get_by_email($email)->result();
     }
 
-    public function gets_by_email($emails){
+    public function get_by_emails($emails){
         return $this->_get_by_email($emails)->result();
+    }
+
+    public function get_forgot_password_users($email, $schoolId, $is_teacher = FALSE, $gradeLevel = FALSE){
+        if($is_teacher){
+            $sql .= "
+                SELECT u.*
+                FROM users AS u
+                INNER JOIN teachers AS t
+                    ON u.id = t.userId
+                WHERE id = ?
+                AND t.gradeLevel = ?
+            ";
+
+            $query =  $this->db->query($sql, array($schoolId, $gradeLevel));
+        }
+        else{
+            $sql = "
+                SELECT u.*
+                FROM schools AS s
+                INNER JOIN users AS u
+                    ON s.administratorUserId = u.id
+                    OR s.verifierUserId = u.id
+                WHERE s.id = ?
+                AND u.email like ?
+            ";
+
+            $query = $this->db->query($sql, array($schoolId, $email));
+        }
+
+        return $query->result();
+    }
+
+    public function _print($obj){
+        echo '<pre>';
+        print_r($obj);
+        echo '</pre>';
     }
 }
 

@@ -83,4 +83,41 @@ class Misc_helper{
 
         return implode($pass); //turn the array into a string
     }
+
+    static function time_to_db($str){
+        try{
+            $date = new dateTime($str);
+
+            return $date->format('H:i');
+        }
+        catch(exception $e){
+            return FALSE;
+        }
+    }
+
+    static function time_to_user($str){
+        try{
+            $date = new dateTime($str);
+
+            return $date->format('g:i A');
+        }
+        catch(exception $e){
+            return FALSE;
+        }
+    }
+
+    static function is_valid_email($email){
+        return filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
+
+    static function date_to_db($str = FALSE){
+        try{
+            $date = new dateTime($str);
+
+            return $date->format('Y-m-d');
+        }
+        catch(exception $e){
+            return FALSE;
+        }
+    }
 }

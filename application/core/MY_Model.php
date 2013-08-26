@@ -46,6 +46,13 @@ class MY_Model extends CI_Model {
         return $this->db->get()->result();
     }
 
+    public function delete($where = array()){
+        $this->db->from($this->table);
+        $this->db->where($where);
+
+        return $this->db->delete();
+    }
+
     public function count(){
         return $this->db->count_all($this->table);
     }
@@ -87,9 +94,9 @@ class MY_Model extends CI_Model {
         $grades = array();
         if($full){
             $grades[-2] = 'Support Staff';
-            $grades[-1] = 'Pre Kindergarten';
         }
 
+        $grades[-1] = 'Pre Kindergarten';
         $grades[0] = 'Kindergarten';
         $grades[1] = '1st. Grade';
         $grades[2] = '2dn. Grade';

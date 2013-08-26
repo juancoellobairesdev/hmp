@@ -26,6 +26,24 @@ class Test extends MY_Controller {
         $this->_print($this->user_model->insert($user));
         $this->_print($user);
     }
+
+    public function dates(){
+        $date1 = '6:13 AM';
+        $date2 = '5.15pm';
+        $date3 = '3,12';
+
+        $date11 = new DateTime($date1);
+        $date22 = new DateTime($date2);
+        //$date33 = new DateTime($date3);
+
+        $this->_print(Misc_helper::parse_time($date1));
+        $this->_print(Misc_helper::parse_time($date2));
+        //$this->_print($date33);
+    }
+
+    public function maver(){
+        $this->_print(User_model::$ROLE_S);
+    }
 }
 
 /* End of file test.php */

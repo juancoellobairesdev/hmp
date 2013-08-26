@@ -8,7 +8,9 @@
     </p>
 </div>
 <script>
-    setTimeout(function(){
-        window.location = "<?= $redirect_url ?>";
-    }, 5000);
+    <?php if(!isset($timeout) || $timeout != 0): ?>
+        setTimeout(function(){
+            window.location = "<?= $redirect_url ?>";
+        }, <?= isset($timeout)? $timeout: 5000 ?>);
+    <?php endif ?>
 </script>

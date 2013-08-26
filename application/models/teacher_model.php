@@ -1,37 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-if(!defined('TEACHER_GRADE_LEVEL_S')){
-    define('TEACHER_GRADE_LEVEL_S', -2);
-}
-
-if(!defined('TEACHER_GRADE_LEVEL_PK')){
-    define('TEACHER_GRADE_LEVEL_PK', -1);
-}
-
-if(!defined('TEACHER_GRADE_LEVEL_K')){
-    define('TEACHER_GRADE_LEVEL_K', 0);
-}
-
-if(!defined('TEACHER_GRADE_LEVEL_1')){
-    define('TEACHER_GRADE_LEVEL_1', 1);
-}
-
-if(!defined('TEACHER_GRADE_LEVEL_2')){
-    define('TEACHER_GRADE_LEVEL_2', 2);
-}
-
-if(!defined('TEACHER_GRADE_LEVEL_3')){
-    define('TEACHER_GRADE_LEVEL_3', 3);
-}
-
-if(!defined('TEACHER_GRADE_LEVEL_4')){
-    define('TEACHER_GRADE_LEVEL_4', 4);
-}
-
-if(!defined('TEACHER_GRADE_LEVEL_5')){
-    define('TEACHER_GRADE_LEVEL_5', 5);
-}
-
 class Teacher_model extends MY_Model {
     static $GRADE_LEVEL_S = -2;
     static $GRADE_LEVEL_PK = -1;
@@ -46,7 +14,6 @@ class Teacher_model extends MY_Model {
 
     public function __construct(){
         parent::__construct();
-        $this->load->model('user_model');
     }
 
     public function has_errors($object){
@@ -65,6 +32,32 @@ class Teacher_model extends MY_Model {
         }
 
         return $errors;
+    }
+
+    public function get_by_school($schoolId){
+        $this->db->select();
+        $this->db->from($this->table);
+        $this->db->where('schoolId', $schoolId);
+
+        return $this->db->get()->result();
+    }
+
+    public function get_count_by_school($schoolId){
+        $this->db->select();
+        $this->db->from($this->table);
+        $this->db->where('schoolId', $schoolId);
+
+        return $this->db->count_all_results();
+    }
+
+    public function delete_by_school($schoolId){
+        $this->db->from($this->table);
+        $this->db->where('schoolId', $schoolId);
+        $teachers = $this->db->get()->result();
+
+        foreach($teachers as $teacher){
+            $this->user_model->delete(array('id' => $teacher->userId));
+        }
     }
 }
 

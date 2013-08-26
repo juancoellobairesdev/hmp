@@ -3,7 +3,6 @@
 class User extends MY_Controller {
     public function __construct(){
         parent::__construct();
-        $this->load->model('user_model');
     }
 
     public function login_form($email = '', $errors = array()){
@@ -14,38 +13,49 @@ class User extends MY_Controller {
     }
 
     public function login(){
-        $invalid = TRUE;
+        $accounts = array();
         $errors = array();
 
         $email = $this->input->post('email');
         $password = $this->input->post('password');
 
-        if($user = $this->user_model->get_by_email($email)){
-            $encrypted = Misc_helper::encrypt_password($password, $user->salt);
-            if($user->password == $encrypted){
-                $invalid = FALSE;
-                $this->session->set_userdata('user', $user);
-                $this->session->set_userdata('userId', $user->id);
-                $this->_login_success($user);
+        if($users = $this->user_model->get_by_email($email)){
+            foreach($users as $user){
+                $encrypted = Misc_helper::encrypt_password($password, $user->salt);
+                if($user->password == $encrypted){
+                    $accounts[] = $user;
+                }
             }
         }
 
-        if($invalid){
+        if(!$accounts){
             $errors[] = 'Invalid email and/or password.';
             $this->login_form($email, $errors);
+        }
+        else{
+            if(count($accounts) == 1){
+                $this->_login_success($account[0]);
+
+            }
+            else{
+                $this->_login_success();
+            }
         }
     }
 
     private function _login_success($user = FALSE){
         if(!$user || !is_object($user) || !isset($user->id) || $user->id != $this->session->userdata('userId')){
-            $this->redirect(config_item('base_url'), array($this->session->userdata('session_id')));
+            $params['timeout'] = 0;
+            $params['message'] = "We can't detect your user account, please contact HMP Staff in order to login.";
+            //$this->redirect(config_item('base_url'), array($this->session->userdata('session_id')));
         }
         else{
-            $params['user'] = $user;
-            $params['redirect_url'] = config_item('base_url');
             $params['message'] = "Welcome {$user->name}. Thank you for loging in.";
-            $this->template('user/messages', $params);
         }
+
+        $params['user'] = $user;
+        $params['redirect_url'] = config_item('base_url');
+        $this->template('user/messages', $params);
     }
 
     public function logout(){
@@ -106,33 +116,46 @@ class User extends MY_Controller {
 
     public function forgot_password_form($errors = array()){
         $params['errors'] = $errors;
-        $this->template('user/forgot_password_form');
+        $params['schools'] = $this->school_model->get_all_approved();
+        $params['gradeLevels'] = $this->teacher_model->gradeLevels();
+        $this->template('user/forgot_password_form', $params);
     }
 
     public function forgot_password(){
         $errors = array();
         $email = $this->input->post('email');
+        $schoolId = $this->input->post('school');
+        $is_teacher = $this->input->post('iAmTeacher');
+        $gradeLevel = $this->input->post('gradeLevel');
 
-        if($user = $this->user_model->get_by_email($email)){
-            $user->securityCode = md5($user->email . $user->salt . microtime(TRUE));
-            if($this->user_model->update($user->id, $user)){
-                $params['user'] = $user;
-                $this->email->from('noreply@hmp.com','HealthMPowers');
-                $this->email->to($user->email);
-                $this->email->subject('Password reset');
-                $this->email->message($this->load->view('user/forgot_password_mail', $params, TRUE));
+        if($users = $this->user_model->get_forgot_password_users($email, $schoolId, $is_teacher, $gradeLevel)){
+            if(count($users) == 1){
+                $user = $users[0];
 
-                if($this->email->send()){
-                    $params['message'] = "A link has been sent to the given email. Please follow the instructions there to reset the current password.";
-                    $this->template('user/messages', $params);
-                    return;
+                $user->securityCode = md5($user->email . $user->salt . microtime(TRUE));
+
+                if($this->user_model->update($user->id, $user)){
+                    $params['user'] = $user;
+                    $this->email->from('noreply@hmp.com','HealthMPowers');
+                    $this->email->to($user->email);
+                    $this->email->subject('Password reset');
+                    $this->email->message($this->load->view('user/forgot_password_mail', $params, TRUE));
+
+                    if($this->email->send()){
+                        $params['message'] = "A link has been sent to the given email. Please follow the instructions there to reset the current password.";
+                        $this->template('user/messages', $params);
+                        return;
+                    }
+                    else{
+                        $errors[] = 'Unable to send mail.';
+                    }
                 }
                 else{
-                    $errors[] = 'Unable to send mail.';
+                    $errors[] = 'Unable to complete process.';
                 }
             }
             else{
-                $errors[] = 'Unable to complete process.';
+                $errors[] = 'We couldn\'t determine your account. Please contact HMP Staff.';
             }
         }
         else{

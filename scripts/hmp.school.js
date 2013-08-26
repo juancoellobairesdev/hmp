@@ -36,63 +36,119 @@ hmp.school = {
     },
 
     form:{
-        type: 'POST',
-        dataType: 'json',
-        data:{
-            id: $('#id').val(),
-            name: $('#name').val(),
-            startingSchoolYear: $('#startingSchoolYear').val(),
-            classesStartDate: $('#classesStartDate').val(),
-            address: $('#address').val(),
-            phone: $('#phone').val(),
-            fax: $('#fax').val(),
-            email: $('#email').val(),
-            startTimeOfClasses: $('#startTimeOfClasses').val(),
-            endTimeOfClasses: $('#endTimeOfClasses').val(),
-            fallBreakDates: $('#fallBreakDates').val(),
-            winterBreakDates: $('#winterBreakDates').val(),
-            springBreakDates: $('#springBreakDates').val(),
-            itbsTestingDates: $('#itbsTestingDates').val(),
-            writingAssessmentDates: $('#writingAssessmentDates').val(),
-            crctTestingDates: $('#crctTestingDates').val(),
-            shippingContactInfo: $('#shippingContactInfo').val(),
-            principal: $('#Principal').val(),
-            principalsemail: $('#principalsemail').val(),
-            principalCarbonCopied: $('#principalCarbonCopied').val(),
-            approveNewsletterCommunication: $('#approveNewsletterCommunication').val(),
-            approveReminderPrompts: $('#approveReminderPrompts').val(),
-            districtId: $('#districtId').val()
+        same_as_administrator: function(){
+            if($('#sameAsAdministrator').is(':checked')){
+                $('#verifier').val($('#administrator').val());
+                $('#verifiersEmail').val($('#administratorsEmail').val());
+            }
         },
 
-        beforeSend: function(){
-            $("#progress").show();
-            //clear everything
-            $("#bar").width('0%');
-            $("#message").html("");
-            $("#percent").html("0%");
+        copy_administrator: function(){
+            if($('#sameAsAdministrator').is(':checked')){
+                hmp.school.form.same_as_administrator();
+                $('#verifier').prop('disabled', true);
+                $('#verifiersEmail').prop('disabled', true);
+            }
+            else{
+                $('#verifier').val('');
+                $('#verifiersEmail').val('');
+                $('#verifier').prop('disabled', false);
+                $('#verifiersEmail').prop('disabled', false);
+            }
         },
 
-        uploadProgress: function(event, position, total, percentComplete) {
-            $("#bar").width(percentComplete+'%');
-            $("#percent").html(percentComplete+'%');
+        check_upload: function(){
+            var schoolId = $('#schoolId').val();
+            if(schoolId){
+                $.ajax({
+                    url: hmp.config.url.base + 'school/check_upload',
+                    data:{
+                        schoolId: schoolId
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(data){
+                        if(data){
+                            $('#check_upload').addClass('form_warning').html('Uploading a new csv will delete all existing teachers on this school. Do it at your own risk.');
+                        }
+                        else{
+                            $('#check_upload').removeClass('form_warning').html('');
+                        }
+                    }
+                });
+            }
         },
 
-        success: function(){
-            $("#bar").width('100%');
-            $("#percent").html('100%');
-        },
+        options: {
+            type: 'POST',
+            dataType: 'json',
+            data:{
+                schoolId: $('#schoolId').val(),
+                name: $('#name').val(),
+                startingSchoolYear: $('#startingSchoolYear').val(),
+                classesStartDate: $('#classesStartDate').val(),
+                address: $('#address').val(),
+                phone: $('#phone').val(),
+                fax: $('#fax').val(),
+                email: $('#email').val(),
+                startTimeOfClasses: $('#startTimeOfClasses').val(),
+                endTimeOfClasses: $('#endTimeOfClasses').val(),
+                fallBreakDates: $('#fallBreakDates').val(),
+                winterBreakDates: $('#winterBreakDates').val(),
+                springBreakDates: $('#springBreakDates').val(),
+                itbsTestingDates: $('#itbsTestingDates').val(),
+                writingAssessmentDates: $('#writingAssessmentDates').val(),
+                crctTestingDates: $('#crctTestingDates').val(),
+                shippingContactInfo: $('#shippingContactInfo').val(),
+                principal: $('#Principal').val(),
+                principalCarbonCopied: $('#principalCarbonCopied').is('checked'),
+                aministrator: $('#administrator').val(),
+                aministratorsEmail: $('#administratorsEmail').val(),
+                verifier: $('#verifier').val(),
+                verifierEmail: $('#verifiersEmail').val(),
+                approveNewsletterCommunication: $('#approveNewsletterCommunication').is('checked'),
+                approveReminderPrompts: $('#approveReminderPrompts').is('checked'),
+                districtId: $('#districtId').val()
+            },
 
-        complete: function(response){
+            beforeSend: function(){
+                $("#progress").show();
+                //clear everything
+                $("#bar").width('0%');
+                $("#message").html("");
+                $("#percent").html("0%");
+            },
+
+            uploadProgress: function(event, position, total, percentComplete) {
+                $("#bar").width(percentComplete+'%');
+                $("#percent").html(percentComplete+'%');
+            },
+
+            success: function(){
+                $("#bar").width('100%');
+                $("#percent").html('100%');
+            },
+
+            complete: function(response){
                 var data = response.responseJSON;
+                $('#notifications ul').html('');
                 if(data.id){
-                    $('#notifications ul').html('<li class="form_success">School successfully saved with id ' + data.id + '</li>');
+                    $('#notifications ul').append('<li class="form_success">School successfully saved with id ' + data.id + '</li>');
+                    if(data.administrator_password){
+                        $('#notifications ul').append('<li class="form_success">Administrator password: ' + data.administrator_password + '</li>');
+                    }
+                    if(data.verifier_password){
+                        $('#notifications ul').append('<li class="form_success">Verifier password: ' + data.verifier_password + '</li>');
+                    }
+
                     for(i=0; i < data.warnings.length; i++){
                         $('#notifications ul').append('<li class="form_warning">' + data.warnings[i] + '</li>')
                     }
+
+                    $('#form_buttons').hide();
                 }
                 else if(data.errors){
                     var i;
-                    $('#notifications ul').html('');
                     for(i=0; i < data.errors.length; i++){
                         $('#notifications ul').append('<li class="form_error">' + data.errors[i] + '</li>')
                     }
@@ -100,6 +156,7 @@ hmp.school = {
                 else{
                     alert('Unknown error.');
                 }
+            }
         }
     }
 };
