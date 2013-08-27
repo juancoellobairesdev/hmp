@@ -10,7 +10,7 @@ class Resource_model extends MY_Model {
 
     public function get_for_poster($gradeLevel, $startingSchoolYear, $categoryId = FALSE){
         $cohort = date('Y') - $startingSchoolYear + 1;
-        $this->db->select('r.id, r.title, c.id AS categoryId, c.name');
+        $this->db->select('r.id, r.title, r.maximumUsesPerMonth, c.id AS categoryId, c.name');
         $this->db->from("{$this->table} AS r");
         $this->db->join('refResourceCategories AS c', 'r.categoryId = c.id', 'inner');
         $this->db->where('c.minCohort <=', $cohort);

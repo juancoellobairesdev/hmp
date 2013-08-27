@@ -41,8 +41,8 @@ class Test extends MY_Controller {
         //$this->_print($date33);
     }
 
-    public function maver(){
-        $this->_print(date("F", mktime(0, 0, 0, (0 + 1))));
+    public function maver($int = 1){
+        $this->_print(Misc_helper::str_month($int));
     }
 
     public function change_password($userId, $password){

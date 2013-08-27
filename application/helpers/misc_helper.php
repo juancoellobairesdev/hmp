@@ -122,14 +122,25 @@ class Misc_helper{
     }
 
     static function str_month($int){
-        return date("F", mktime(0, 0, 0, ($int + 1)));
+        if($int > 0 && $int < 13){
+            return date("F", mktime(0, 0, 0, $int));
+        }
+        else{
+            return NULL;
+        }
     }
 
     static function str_months(){
-        for($i = 0; $i<12;$i++){
-            $months[$i] = date("F", mktime(0, 0, 0, ($i + 1)));
+        for($i = 1; $i<=12;$i++){
+            $months[$i] = self::str_month($i);
         }
         
         return $months;
+    }
+
+    static function str_datetime_to_db($str = FALSE){
+        $str = $str? $str: time();
+        
+        return date('Y-m-d H:i:s', $str);
     }
 }
