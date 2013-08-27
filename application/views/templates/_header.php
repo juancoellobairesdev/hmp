@@ -27,7 +27,7 @@
         </li>
         <li><a href="#">Participating Schools</a>
             <ul>
-                <li><a href="<?= $baseUrl . 'school/show_list' ?>">List</a></li>
+                <!--li><a href="<?= $baseUrl . 'school/show_list' ?>">List</a></li-->
                 <li><a href="<?= $baseUrl . 'school/add_form' ?>">Become a Participating School</a></li>
             </ul>
         </li>

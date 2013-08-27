@@ -34,10 +34,21 @@ class User extends MY_Controller {
         }
         else{
             if(count($accounts) == 1){
-                $this->_login_success($account[0]);
 
+                // User logs fine
+                $user = $accounts[0];
+                $this->session->set_userdata('user', $user);
+                $this->session->set_userdata('userId', $user->id);
+                if($teacher = $this->teacher_model->get_by_user($user->id)){
+                    $this->session->set_userdata('teacher', $teacher);
+                    $this->session->set_userdata('teacherId', $teacher->id);
+                }
+
+                $this->_login_success($user);
             }
             else{
+
+                // User can't be determined univocally
                 $this->_login_success();
             }
         }
@@ -55,17 +66,19 @@ class User extends MY_Controller {
 
         $params['user'] = $user;
         $params['redirect_url'] = config_item('base_url');
-        $this->template('user/messages', $params);
+        $this->template('messages', $params);
     }
 
     public function logout(){
         $this->session->unset_userdata('user');
         $this->session->unset_userdata('userId');
+        $this->session->unset_userdata('teacher');
+        $this->session->unset_userdata('teacherId');
 
         $params['redirect_url'] = config_item('base_url');
         $params['message'] = "We are sad to see you leave. Please como again soon.";
 
-        $this->template('user/messages', $params);
+        $this->template('messages', $params);
     }
 
     public function change_password_form($errors = array()){
@@ -95,7 +108,7 @@ class User extends MY_Controller {
 
                     $params['redirect_url'] = config_item('base_url');
                     $params['message'] = "We are sad to see you leave. Please como again soon.";
-                    $this->template('user/messages', $params);
+                    $this->template('messages', $params);
 
                     return;
                 }
@@ -143,7 +156,7 @@ class User extends MY_Controller {
 
                     if($this->email->send()){
                         $params['message'] = "A link has been sent to the given email. Please follow the instructions there to reset the current password.";
-                        $this->template('user/messages', $params);
+                        $this->template('messages', $params);
                         return;
                     }
                     else{
@@ -181,7 +194,7 @@ class User extends MY_Controller {
 
                     if($this->email->send()){
                         $params['message'] = "The new password has been sent to your email. We recommend you to change it as soon as possible. {$raw_password}";
-                        $this->template('user/messages', $params);
+                        $this->template('messages', $params);
                         return;
                     }
                     else{

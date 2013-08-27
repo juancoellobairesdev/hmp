@@ -23,7 +23,7 @@ class Category extends MY_Controller {
     }
 
     public function add_form(){
-        $this->session->set_userdata('categorySaveId', NULL);
+        $this->session->unset_userdata('categorySaveId');
         $this->_form();
     }
 

@@ -120,4 +120,16 @@ class Misc_helper{
             return FALSE;
         }
     }
+
+    static function str_month($int){
+        return date("F", mktime(0, 0, 0, ($int + 1)));
+    }
+
+    static function str_months(){
+        for($i = 0; $i<12;$i++){
+            $months[$i] = date("F", mktime(0, 0, 0, ($i + 1)));
+        }
+        
+        return $months;
+    }
 }

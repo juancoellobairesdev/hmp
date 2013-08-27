@@ -42,7 +42,27 @@ class Test extends MY_Controller {
     }
 
     public function maver(){
-        $this->_print(User_model::$ROLE_S);
+        $this->_print(date("F", mktime(0, 0, 0, (0 + 1))));
+    }
+
+    public function change_password($userId, $password){
+        $user = $this->user_model->get($userId);
+        $user->password = Misc_helper::encrypt_password($password, $user->salt);
+
+        if($this->user_model->update($user->id, $user)){
+            $this->_print($this->user_model->get($userId));
+        }
+        else{
+            $this->_print('Nain!');
+        }
+    }
+
+    public function get_users(){
+        $this->_print($this->user_model->getAll());
+    }
+
+    public function get_teachers(){
+        $this->_print($this->teacher_model->getAll());
     }
 }
 

@@ -8,6 +8,24 @@ class Resource_model extends MY_Model {
         $this->load->model('category_model');
     }
 
+    public function get_for_poster($gradeLevel, $startingSchoolYear, $categoryId = FALSE){
+        $cohort = date('Y') - $startingSchoolYear + 1;
+        $this->db->select('r.id, r.title, c.id AS categoryId, c.name');
+        $this->db->from("{$this->table} AS r");
+        $this->db->join('refResourceCategories AS c', 'r.categoryId = c.id', 'inner');
+        $this->db->where('c.minCohort <=', $cohort);
+        $this->db->where('c.maxCohort >=', $cohort);
+        $this->db->where('r.minGrade >=', $gradeLevel);
+        $this->db->where('r.maxGrade <=', $gradeLevel);
+        $this->db->where('r.enabled', TRUE);
+        if($categoryId){
+            $this->db->where('r.categoryId', $categoryId);
+        }
+        $this->db->order_by('r.categoryId', 'asc');
+
+        return $this->db->get()->result();
+    }
+
     public function has_errors($resource){
         $errors = array();
 

@@ -23,7 +23,7 @@ class Teacher_model extends MY_Model {
             $errors[] = 'Invalid value for "School Year". It must be an integer.';
         }
 
-        if(!isset($object->gradeLevel) || !array_key_exists($object->gradeLevel, $this->grades())){
+        if(!isset($object->gradeLevel) || !array_key_exists($object->gradeLevel, $this->grades(TRUE))){
             $errors[] = 'Invalid Grade Level.';
         }
 
@@ -37,6 +37,15 @@ class Teacher_model extends MY_Model {
     public function get_by_school($schoolId){
         $this->db->select();
         $this->db->from($this->table);
+        $this->db->where('schoolId', $schoolId);
+
+        return $this->db->get()->result();
+    }
+
+    public function get_full_by_school($schoolId){
+        $this->db->select();
+        $this->db->from($this->table);
+        $this->db->join('users', 'teachers.userId = users.id', 'inner');
         $this->db->where('schoolId', $schoolId);
 
         return $this->db->get()->result();
@@ -58,6 +67,14 @@ class Teacher_model extends MY_Model {
         foreach($teachers as $teacher){
             $this->user_model->delete(array('id' => $teacher->userId));
         }
+    }
+
+    public function get_by_user($userId){
+        $this->db->select();
+        $this->db->from($this->table);
+        $this->db->where('userId', $userId);
+
+        return $this->db->get()->row();
     }
 }
 
