@@ -2,6 +2,7 @@
 
 class User_model extends MY_Model {
     static $ROLE_S = 'Support Staff';
+    static $ROLE_C = 'School Admin';
     static $ROLE_V = 'Verification Designee';
     static $ROLE_A = 'HMP Admin';
     static $ROLE_H = 'HMP Staff';

@@ -12,34 +12,6 @@
             </table>
         </center>
     </div>
-    <ul class="menu">
-        <li><a href="#">Resource Categories</a>
-            <ul>
-                <li><a href="<?= $baseUrl . 'category/show_list' ?>">List</a></li>
-                <li><a href="<?= $baseUrl . 'category/add_form' ?>">Add...</a></li>
-            </ul>
-        </li>
-        <li><a href="#">School Resources</a>
-            <ul>
-                <li><a href="<?= $baseUrl . 'resource/show_list' ?>">List</a></li>
-                <li><a href="<?= $baseUrl . 'resource/add_form' ?>">Add...</a></li>
-            </ul>
-        </li>
-        <li><a href="#">Participating Schools</a>
-            <ul>
-                <!--li><a href="<?= $baseUrl . 'school/show_list' ?>">List</a></li-->
-                <li><a href="<?= $baseUrl . 'school/add_form' ?>">Become a Participating School</a></li>
-            </ul>
-        </li>
-        <?php if($this->session->userdata('userId')): ?>
-            <li><a href="#">Profile</a>
-                <ul>
-                    <li><a href="<?= $baseUrl . 'user/change_password_form'?>">Change Password</a></li>
-                    <li><a href="<?= $baseUrl . 'user/logout' ?>">Logout</a>
-                </ul>
-        <?php else: ?>
-            <li><a href="<?= $baseUrl . 'user/login_form' ?>">Login</a>
-        <?php endif ?>
-        </li>
-    </ul>
+
+    <?= Menu::menu_to_html($menu) ?>
 </div><br>

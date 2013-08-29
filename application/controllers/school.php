@@ -18,8 +18,12 @@ class School extends MY_Controller {
     public function get_page(){
         $page = $this->input->post('page');
         $schools = $this->school_model->getAll($page);
+        foreach($schools as &$school){
+            $school->administrator = $this->user_model->get($school->administratorUserId);
+            $school->verifier = $this->user_model->get($school->verifierUserId);
+        }
 
-        $params['schools'] = $resources;
+        $params['schools'] = $schools;
 
         $this->load->view('school/get_page', $params);
     }

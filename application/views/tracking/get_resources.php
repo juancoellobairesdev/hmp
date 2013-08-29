@@ -1,5 +1,5 @@
 <?php $categoryId = 0 ?>
-<table>
+<table border="1">
     <tr>
         <th>Resource</th>
         <th>Check if Used</th>

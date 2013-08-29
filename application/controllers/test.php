@@ -7,6 +7,8 @@ class Test extends MY_Controller {
         $this->load->model('school_model');
         $this->load->model('district_model');
         $this->load->model('user_model');
+        $this->load->helper('url');
+        $this->load->library('user_agent');
     }
 
     public function get_by_email($email = ''){
@@ -42,7 +44,14 @@ class Test extends MY_Controller {
     }
 
     public function maver($int = 1){
-        $this->_print(Misc_helper::str_month($int));
+        $this->_print(current_url());
+        echo "<a href='http://localhost/hmp/test/a'>asd</a>";
+    }
+
+    public function a(){
+        $this->_print(current_url());
+        $this->_print($_SERVER['HTTP_REFERER']);
+        $this->_print($this->agent->referrer());
     }
 
     public function change_password($userId, $password){

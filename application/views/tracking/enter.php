@@ -9,7 +9,7 @@
 
     <p>
         <label for "month">Reporting Month</label>
-        <select id="month" name="month">
+        <select id="month" name="month" onChange="hmp.tracking.enter.get_resources()">
             <?php foreach($months as $index => $month): ?>
                 <option value="<?= $index ?>" <?= $index==date('m')? 'selected': '' ?>><?= $month ?></option>
             <?php endforeach ?>
@@ -30,7 +30,7 @@
     <p>
         <label for "grades">Grade:</label>
         <?php if(count($grades) > 1): ?>
-            <select id="grades" name="grades" onChange="hmp.tracking.get_resources()">
+            <select id="grades" name="grades" onChange="hmp.tracking.enter.get_resources()">
                 <?php foreach($grades as $index => $grade): ?>
                     <option value="<?= $index ?>"><?= $grade ?></option>
                 <?php endforeach ?>
@@ -43,11 +43,11 @@
     <div id="resources">
     </div>
 
-    <input type="button" value="Submit" onClick="hmp.tracking.submit()">
+    <input type="button" value="Submit" onClick="hmp.tracking.enter.submit()">
 </div>
 
 <script>
     $(document).ready(function(){
-        hmp.tracking.get_resources();
+        hmp.tracking.enter.get_resources();
     });
 </script>

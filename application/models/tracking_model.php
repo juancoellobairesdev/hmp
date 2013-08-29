@@ -31,6 +31,16 @@ class Tracking_model extends MY_Model {
 
         return parent::insert($tracking);
     }
+
+    public function get_unverified_by_school($schoolId){
+        $this->db->select();
+        $this->db->from($this->table);
+        $this->db->where('schoolId', $schoolId);
+        $this->db->where('verified IS NULL');
+        $this->db->order_by('entered', 'desc');
+
+        return $this->db->get()->result();
+    }
 }
 
 /* End of file tracking_model.php */

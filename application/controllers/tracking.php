@@ -72,7 +72,7 @@ class Tracking extends MY_Controller {
         $this->load->view('tracking/get_resources', $params);
     }
 
-    public function submit(){
+    public function submit_enter(){
         $errors = array();
         $id = FALSE;
         $teacher = $this->session->userdata('teacher');
@@ -126,6 +126,64 @@ class Tracking extends MY_Controller {
         $data->errors = $errors;
         $data->id = $id;
         $data->teacherId = $teacherId;
+
+        echo json_encode($data);
+    }
+
+    public function unverified(){
+        $verifierUserId = $this->session->userdata('userId');
+        $schools = $this->school_model->get_by_verifier($verifierUserId);
+
+        $params['schools'] = $schools;
+        $params['user'] = $verifierUserId;
+
+        $this->template('tracking/unverified', $params);
+    }
+
+    public function get_trackings(){
+        $schoolId = $this->input->post('schoolId');
+
+        $trackings = $this->tracking_model->get_unverified_by_school($schoolId);
+        foreach($trackings as &$tracking){
+            $teacher = $this->teacher_model->get($tracking->teacherId);
+            $user = $this->user_model->get($teacher->userId);
+            $tracking->user = $user;
+        }
+
+        $params['trackings'] = $trackings;
+
+        $this->load->view('tracking/get_trackings', $params);
+    }
+
+    public function submit_unverified(){
+        $errors = array();
+        $trackingIds = $this->input->post('trackingIds');
+        $select_submit = $this->input->post('select_submit');
+        $success = FALSE;
+
+        if($trackingIds){
+            if($select_submit == 'delete'){
+                foreach($trackingIds as $trackingId){
+                    $this->tracking_model->delete(array('id' => $trackingId));
+                }
+            }
+            else{
+                foreach($trackingIds as $trackingId){
+                    $tracking = new stdClass();
+                    $tracking->verified = Misc_helper::str_datetime_to_db();
+
+                    $this->tracking_model->update($trackingId, $tracking);
+                }
+            }
+
+            $success = TRUE;
+        }
+        else{
+            $errors[] = 'Please, select something to Verify or Delete';
+        }
+
+        $data['success'] = $success;
+        $data['errors'] = $errors;
 
         echo json_encode($data);
     }

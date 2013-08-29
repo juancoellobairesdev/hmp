@@ -12,9 +12,12 @@ if(!defined('PAGE_SIZE_MAX')){
 class MY_Controller extends CI_Controller {
     public function __construct(){
         parent::__construct();
+        $this->load->library('Auth');
+        $this->auth->authenticate();
+        $this->load->library('menu');
     }
 
-    protected function _print($object, $return = FALSE){
+    public function _print($object, $return = FALSE){
         echo '<pre>';
         $printed = print_r($object, $return);
         echo '</pre>';
@@ -25,6 +28,7 @@ class MY_Controller extends CI_Controller {
     public function template($view, $params = array()){
         $params['basePath'] = config_item('base_path');
         $params['viewsPath'] = $params['basePath'] . "application/views/";
+        $params['menu'] = $this->menu->get_menu();
 
         $params['baseUrl'] = config_item('base_url');
         $params['imagesUrl'] = $params['baseUrl'] . "images/";

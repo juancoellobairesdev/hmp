@@ -39,6 +39,7 @@ class User extends MY_Controller {
                 $user = $accounts[0];
                 $this->session->set_userdata('user', $user);
                 $this->session->set_userdata('userId', $user->id);
+                $this->session->set_userdata('role', $user->role);
                 if($teacher = $this->teacher_model->get_by_user($user->id)){
                     $this->session->set_userdata('teacher', $teacher);
                     $this->session->set_userdata('teacherId', $teacher->id);
@@ -74,6 +75,7 @@ class User extends MY_Controller {
         $this->session->unset_userdata('userId');
         $this->session->unset_userdata('teacher');
         $this->session->unset_userdata('teacherId');
+        $this->session->unset_userdata('role');
 
         $params['redirect_url'] = config_item('base_url');
         $params['message'] = "We are sad to see you leave. Please como again soon.";

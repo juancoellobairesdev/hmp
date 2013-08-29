@@ -63,6 +63,14 @@ class School_model extends MY_Model {
 
         return $errors;
     }
+
+    public function get_by_verifier($verifierUserId){
+        $this->db->select();
+        $this->db->from($this->table);
+        $this->db->where('verifierUserId', $verifierUserId);
+
+        return $this->db->get()->result();
+    }
 }
 
 /* End of file school_model.php */
