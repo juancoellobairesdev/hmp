@@ -37,12 +37,26 @@ class User extends MY_Controller {
 
                 // User logs fine
                 $user = $accounts[0];
+                unset($user->password);
+                unset($user->salt);
+                unset($user->securityCode);
                 $this->session->set_userdata('user', $user);
                 $this->session->set_userdata('userId', $user->id);
                 $this->session->set_userdata('role', $user->role);
                 if($teacher = $this->teacher_model->get_by_user($user->id)){
                     $this->session->set_userdata('teacher', $teacher);
                     $this->session->set_userdata('teacherId', $teacher->id);
+
+                    if($school = $this->school_model->get($teacher->schoolId)){
+                        $this->session->set_userdata('school', $school);
+                        $this->session->set_userdata('schoolId', $school->id);
+                    }
+                }
+                else{
+                    if($school = $this->school_model->get_by_user($user->id)){
+                        $this->session->set_userdata('school', $school);
+                        $this->session->set_userdata('schoolId', $school->id);
+                    }
                 }
 
                 $this->_login_success($user);
@@ -76,6 +90,8 @@ class User extends MY_Controller {
         $this->session->unset_userdata('teacher');
         $this->session->unset_userdata('teacherId');
         $this->session->unset_userdata('role');
+        $this->session->unset_userdata('school');
+        $this->session->unset_userdata('schoolId');
 
         $params['redirect_url'] = config_item('base_url');
         $params['message'] = "We are sad to see you leave. Please como again soon.";

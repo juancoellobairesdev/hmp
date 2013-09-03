@@ -22,12 +22,17 @@ $config['site_description'] = "Resources";
 | path to your installation.
 |
 */
-$config['base_url'] = '';
-$config['base_path']    = str_replace("/application/", "/", APPPATH);
-$config['images_path']    = $config['base_path'] . '../images/';
-$config['scripts_path']    = $config['base_path'] . '../scripts/';
-$config['styles_path']    = $config['base_path'] . '../styles/';
-$config['uploads_path']    = $config['base_path'] . '../uploads/';
+$config['base_url'] = 'http://localhost/hmp/';
+$config['images_url'] = $config['base_url'] . 'images/';
+$config['scripts_url'] = $config['base_url'] . 'scripts/';
+$config['styles_url'] = $config['base_url'] . 'styles/';
+$config['uploads_url'] = $config['base_url'] . 'uploads/';
+
+$config['base_path'] = str_replace("/application/", "/", APPPATH);
+$config['images_path'] = $config['base_path'] . '../images/';
+$config['scripts_path'] = $config['base_path'] . '../scripts/';
+$config['styles_path'] = $config['base_path'] . '../styles/';
+$config['uploads_path'] = $config['base_path'] . '../uploads/';
 //$config['base_url'] = 'http://localhost/school';
 
 /*

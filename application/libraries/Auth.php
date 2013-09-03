@@ -122,6 +122,11 @@ class Auth{
         $category[] = 'save';
         $category[] = 'check_upload';
 
+        $report = array();
+        $report[] = 'by_teacher';
+        $report[] = 'by_school';
+        $report[] = 'by_resource';
+
         $controllers = new stdClass();
         $controllers->home = $home;
         $controllers->user = $user;
@@ -129,6 +134,7 @@ class Auth{
         $controllers->tracking = $tracking;
         $controllers->resource = $resource;
         $controllers->category = $category;
+        $controllers->report = $report;
 
         $this->controllers = $controllers;
     }
@@ -168,6 +174,10 @@ class Auth{
         $access->tracking->unverified[] = $roles->sv;
         $access->tracking->get_trackings = $access->tracking->unverified;
         $access->tracking->submit_unverified = $access->tracking->unverified;
+
+        $access->report->by_teacher = $this->_get_all_roles();
+        $access->report->by_school = $this->_get_all_roles();
+        $access->report->by_resource = $this->_get_all_roles();
 
         foreach($access->resource as $method => $array){
             $temp = array();

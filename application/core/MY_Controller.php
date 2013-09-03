@@ -18,10 +18,15 @@ class MY_Controller extends CI_Controller {
     }
 
     public function _print($object, $return = FALSE){
-        echo '<pre>';
-        $printed = print_r($object, $return);
-        echo '</pre>';
+        $printed = '';
+        $printed .= '<pre>';
+        $printed .= print_r($object, TRUE);
+        $printed .= '</pre>';
 
+        if(!$return){
+            echo $printed;
+        }
+        
         return $printed;
     }
 

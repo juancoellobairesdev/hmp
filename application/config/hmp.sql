@@ -150,7 +150,7 @@ CREATE TABLE `schools` (
 
 LOCK TABLES `schools` WRITE;
 /*!40000 ALTER TABLE `schools` DISABLE KEYS */;
-INSERT INTO `schools` VALUES (1,1,1,1,'asd',1,2013,'2013-10-10','','','','asd@asd.asd','00:00:00','00:00:00','','','','','','','','dsas',0,0,0),(2,1,1,14,'asd@asd.asd',1,2013,'2013-10-10','','','','asd@asd.asd','00:00:00','00:00:00','','','','','','','','asd@asd.asd',0,0,0),(3,1,12,12,'asd@asd.asd',1,2013,'2013-10-10','','','','asd@asd.asd','00:00:00','00:00:00','','','','','','','','',0,0,0),(4,1,14,14,'asd@asd.asd',1,2013,'2013-08-25','','','','asd@asd.asd','00:00:00','00:00:00','','','','','','','','',0,0,0),(5,1,16,16,'asd@asd.asd',1,2013,'2013-08-25','','','','asd@asd.asd','00:00:00','00:00:00','','','','','','','','asd@asd.asd',0,0,0);
+INSERT INTO `schools` VALUES (1,1,1,5,'asd',1,2013,'2013-10-10','','','','asd@asd.asd','00:00:00','00:00:00','','','','','','','','dsas',0,0,0),(2,1,1,5,'asd@asd.asd',1,2013,'2013-10-10','','','','asd@asd.asd','00:00:00','00:00:00','','','','','','','','asd@asd.asd',0,0,0),(3,1,12,5,'asd@asd.asd',1,2013,'2013-10-10','','','','asd@asd.asd','00:00:00','00:00:00','','','','','','','','',0,0,0),(4,1,14,5,'asd@asd.asd',1,2013,'2013-08-25','','','','asd@asd.asd','00:00:00','00:00:00','','','','','','','','',0,0,0),(5,1,16,5,'asd@asd.asd',1,2013,'2013-08-25','','','','asd@asd.asd','00:00:00','00:00:00','','','','','','','','asd@asd.asd',0,0,0);
 /*!40000 ALTER TABLE `schools` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -199,14 +199,16 @@ CREATE TABLE `trackingEntry` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `teacherId` int(11) unsigned NOT NULL,
   `schoolId` int(11) unsigned NOT NULL,
-  `entered` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `verified` timestamp NULL DEFAULT NULL,
+  `entered` datetime NOT NULL,
+  `verified` datetime DEFAULT NULL,
+  `reportingMonth` tinyint(2) NOT NULL DEFAULT '0',
+  `reportingWeek` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `fk_trackingEntry_teacher` (`teacherId`),
   KEY `fk_trackingEntry_school` (`schoolId`),
   CONSTRAINT `fk_trackingEntry_school` FOREIGN KEY (`schoolId`) REFERENCES `schools` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_trackingEntry_teacher` FOREIGN KEY (`teacherId`) REFERENCES `teachers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -215,6 +217,7 @@ CREATE TABLE `trackingEntry` (
 
 LOCK TABLES `trackingEntry` WRITE;
 /*!40000 ALTER TABLE `trackingEntry` DISABLE KEYS */;
+INSERT INTO `trackingEntry` VALUES (1,4,2,'2013-06-26 00:00:00',NULL,8,1),(2,5,2,'2013-08-26 00:00:00',NULL,7,2),(3,6,3,'2013-07-27 00:00:00',NULL,7,1),(4,6,3,'2013-06-26 00:00:00',NULL,6,4);
 /*!40000 ALTER TABLE `trackingEntry` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -235,7 +238,7 @@ CREATE TABLE `trackingResources` (
   KEY `fk_trackingResources_refResources` (`resourceId`),
   CONSTRAINT `fk_trackingResources_refResources` FOREIGN KEY (`resourceId`) REFERENCES `refResources` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_trackingResources_trackingEntry` FOREIGN KEY (`trackingEntryId`) REFERENCES `trackingEntry` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -244,6 +247,7 @@ CREATE TABLE `trackingResources` (
 
 LOCK TABLES `trackingResources` WRITE;
 /*!40000 ALTER TABLE `trackingResources` DISABLE KEYS */;
+INSERT INTO `trackingResources` VALUES (1,1,1,1),(2,1,2,3),(3,1,3,2),(4,2,4,1),(5,2,5,5);
 /*!40000 ALTER TABLE `trackingResources` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -272,7 +276,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'asd','asd@asd.asd','87f29435a93090445dc764af1b1dd78b6c9b3e832ed88a42ae36fd1724d8e9ad4650a0db8f86915638d8e8cb64be751a6f023eb0a6cfc6f9d432a6e8755c82d5','Support Staff','ae6c22b2ee0363295127164b5ac4176bfd46545afa98e1fd19c61eeafee29bd61d7fdfadd85e5b8bbd12977c5d08e71b1fa9a1584886720bd36bad00b5321bf5','5effb71c471bfdf109550f5286587419'),(5,' juan ramon','juan@ramon','943fdf93f34f99d535fe4a0897ab8c4a329de877dcebee2c7432a0a0b245edec956526b6d0bdf84ad825940c1a2bcdb34362b0d2a5960ad2dfea3ccb09a3bbe7','Teacher','c9270c5ac08f0a31a2198684244ec159f7b24c40ed600b9ef777528b7d13f620c2862e99df1501ef97114ea7569c10d2397a5442c495a7818a203053a3829f55',NULL),(6,' Whiterun Jarl','jarl@whiterun','2226455d590f8ed66bb7095cbf4fad6bc12121f2fa04d06775b250b199b3b1e36151bf3d959325be92eb288e6f0369a868607816967bfe10dd08530a6ce5a71f','Teacher','957f6fac9cfa78ce875bd97faf8e5635d60bd866f967754fac40a63c3edc37da1d53b52f6ff1acda1d8858f5c20160e199a8c66040d12cbe7f77c007ffec8964',NULL),(7,' James Cameron','james@cameron','fa6ad62ededb297aaaaec9f80b770aeea4665308c8d22f2ad3d860eb89906e701b2e601ce184aeb33a860b77777dc68c14c3fdc1e2106cec876c395cab8cda46','Teacher','ae2d77a2fd03bf0a9b5464e6f4362f0464df2a31bfbe38a0938036f3a3e0766bf7532ee00a14164be2b3d60e82b7141fb8fe1b2a92a3087bb859163607cac98c',NULL),(8,' juan ramon','juan@ramon','99865473f920b301aa294bec2e0f6ab6dcd1c6981238b97136df06fe687c0a04dfeda63841dddeee2dad6da3c626e0358c7f6ec6cdfaeb954c9c60f0a2317fa3','Teacher','abec3e7825affbef712322578f2834fc86507ce17905485fa33c039031f2a679541ddff364dae3c5fdc2150b5f2c56654030915ebca13808e20e325943f28051',NULL),(9,' Whiterun Jarl','jarl@whiterun','80aa247098672580f4daa60a897a0fc193dfd7a30839b693159b8270de514494b495b4fe6b96c1f8c70bcf33b3ad327bdbe80a43794b43de5df10b36b30b5131','Teacher','9ab23bf7b3b104dcfa1d0f78154b471c957ad0901587a3e7ce7cd64700789e531586f0c13b320470ced8433cf563fea584c6a27a93b64ce9f06533ee186d41c9',NULL),(10,' James Cameron','james@cameron','6664a3a9c7ce37d16b6d1b498bc2ed8b1f64e2d46ff436cf709cb5887731474b5d0e9fb72385268ca7383e0c17a5c7d01bd9315cc83730eec488c3c1cbd386c8','Teacher','f629ca2d2312ed3439659fd2e61749947b578387fcb655b57be029fd0ba9c68e10e8a72697252335ef5fbf2dda61287b7d5c3a36af05afc660e40d769d295e8e',NULL),(11,'asd@asd.asd','asd@asd.asd','2e44cc845e638ad626aa5409afdbc2e1c6969f2006bbe592e89429d4683ad4b66aeaf8c8e2d2275c18567395099c26ee9c3ddc6c25e7544619f90932861d57aa','Support Staff','f796885c571a05c66f5aabc4d6b12abcf441656ee9d7b1a2a109fbc033ace3d7d7a263cb77f100393c042f9a927eeeb2254b2400df5f028f2321661f46ca450d',NULL),(12,'asd@asd.asd','asd@asd.asd','8677c14eef3bb1fccccefca5d1458f9a5e0158b242221d748edddfda555a5b4c82edcc023d4516bb496f0b6083168086be3b495b8528e7579a8434866c2502e5','Support Staff','a01ce6ea18c6b0fb8d010383ab559c6e942730025d64aba81c23e95b2b3050b7aa5ccbff9edff81db7c986772fb1058d45dcf435fd524ab451a7ef913ea96ed4',NULL),(13,'asd@asd.asd','asd@asd.asd','debb3a0885554c0623fe6f4ba9915272eca370518391a3ec9b5fd889f3f5fbaeeb114367613d96f4d4f0c125fbf576bd7d3843c97ad5ad09b2aaab7b9e41dcb4','Support Staff','b32873cde3a66104ef5f2b837b34bf333d00a9a9c333d3cc83fd88fc4bfd2b0fb7be960306ea9fba8dd78a8e8eeb366c0f274951ae5c622c91f469f2109edbb2',NULL),(14,'asd@asd.asd','asd@asd.asd','e5e839d4e3e62d65fae588ebef84482c725b9cf79040aba444ff63ef7cf7263b65809460858c2b1b90c058c813f173a9afaea11fad0a189c418aae8beb5f8269','Support Staff','1e92d30705e6073823e48cfb3b823d0a46d86fab75b0dd4741cbc64945e10f577578e4b1ecccb14747c7f5d3388a4d9f222bcc935f1c533285b012a41a59c818',NULL),(16,'asd@asd.asd','asd@asd.asd','2eb21f39b9f82ca127f29af221f8349d9d20f5f260bbceeb77099da15788775dd3b86521d2c50deeff567ecb645e2d752566a21a6d90dc9ffaf31f5ae93015d8','Support Staff','05f10c91c02ebfa02331812e27a937a936cfd3df05ffa179b94cbd38a74ef4ba9ff81e89ced0bc91bbd3b1a909bd5bd3272cabd781eefe182038ee0be46e7830',NULL);
+INSERT INTO `users` VALUES (1,'asd','asd@asd.asd','87f29435a93090445dc764af1b1dd78b6c9b3e832ed88a42ae36fd1724d8e9ad4650a0db8f86915638d8e8cb64be751a6f023eb0a6cfc6f9d432a6e8755c82d5','Support Staff','ae6c22b2ee0363295127164b5ac4176bfd46545afa98e1fd19c61eeafee29bd61d7fdfadd85e5b8bbd12977c5d08e71b1fa9a1584886720bd36bad00b5321bf5','5effb71c471bfdf109550f5286587419'),(5,' juan ramon','juan@ramon','943fdf93f34f99d535fe4a0897ab8c4a329de877dcebee2c7432a0a0b245edec956526b6d0bdf84ad825940c1a2bcdb34362b0d2a5960ad2dfea3ccb09a3bbe7','Teacher','c9270c5ac08f0a31a2198684244ec159f7b24c40ed600b9ef777528b7d13f620c2862e99df1501ef97114ea7569c10d2397a5442c495a7818a203053a3829f55',NULL),(6,' Whiterun Jarl','jarl@whiterun','2226455d590f8ed66bb7095cbf4fad6bc12121f2fa04d06775b250b199b3b1e36151bf3d959325be92eb288e6f0369a868607816967bfe10dd08530a6ce5a71f','Teacher','957f6fac9cfa78ce875bd97faf8e5635d60bd866f967754fac40a63c3edc37da1d53b52f6ff1acda1d8858f5c20160e199a8c66040d12cbe7f77c007ffec8964',NULL),(7,' James Cameron','james@cameron','fa6ad62ededb297aaaaec9f80b770aeea4665308c8d22f2ad3d860eb89906e701b2e601ce184aeb33a860b77777dc68c14c3fdc1e2106cec876c395cab8cda46','Teacher','ae2d77a2fd03bf0a9b5464e6f4362f0464df2a31bfbe38a0938036f3a3e0766bf7532ee00a14164be2b3d60e82b7141fb8fe1b2a92a3087bb859163607cac98c',NULL),(8,'8','juan@ramon','99865473f920b301aa294bec2e0f6ab6dcd1c6981238b97136df06fe687c0a04dfeda63841dddeee2dad6da3c626e0358c7f6ec6cdfaeb954c9c60f0a2317fa3','Teacher','abec3e7825affbef712322578f2834fc86507ce17905485fa33c039031f2a679541ddff364dae3c5fdc2150b5f2c56654030915ebca13808e20e325943f28051',NULL),(9,'9','jarl@whiterun','80aa247098672580f4daa60a897a0fc193dfd7a30839b693159b8270de514494b495b4fe6b96c1f8c70bcf33b3ad327bdbe80a43794b43de5df10b36b30b5131','Teacher','9ab23bf7b3b104dcfa1d0f78154b471c957ad0901587a3e7ce7cd64700789e531586f0c13b320470ced8433cf563fea584c6a27a93b64ce9f06533ee186d41c9',NULL),(10,'10','james@cameron','6664a3a9c7ce37d16b6d1b498bc2ed8b1f64e2d46ff436cf709cb5887731474b5d0e9fb72385268ca7383e0c17a5c7d01bd9315cc83730eec488c3c1cbd386c8','Teacher','f629ca2d2312ed3439659fd2e61749947b578387fcb655b57be029fd0ba9c68e10e8a72697252335ef5fbf2dda61287b7d5c3a36af05afc660e40d769d295e8e',NULL),(11,'asd@asd.asd','asd@asd.asd','2e44cc845e638ad626aa5409afdbc2e1c6969f2006bbe592e89429d4683ad4b66aeaf8c8e2d2275c18567395099c26ee9c3ddc6c25e7544619f90932861d57aa','Support Staff','f796885c571a05c66f5aabc4d6b12abcf441656ee9d7b1a2a109fbc033ace3d7d7a263cb77f100393c042f9a927eeeb2254b2400df5f028f2321661f46ca450d',NULL),(12,'asd@asd.asd','asd@asd.asd','8677c14eef3bb1fccccefca5d1458f9a5e0158b242221d748edddfda555a5b4c82edcc023d4516bb496f0b6083168086be3b495b8528e7579a8434866c2502e5','Support Staff','a01ce6ea18c6b0fb8d010383ab559c6e942730025d64aba81c23e95b2b3050b7aa5ccbff9edff81db7c986772fb1058d45dcf435fd524ab451a7ef913ea96ed4',NULL),(13,'asd@asd.asd','asd@asd.asd','debb3a0885554c0623fe6f4ba9915272eca370518391a3ec9b5fd889f3f5fbaeeb114367613d96f4d4f0c125fbf576bd7d3843c97ad5ad09b2aaab7b9e41dcb4','Support Staff','b32873cde3a66104ef5f2b837b34bf333d00a9a9c333d3cc83fd88fc4bfd2b0fb7be960306ea9fba8dd78a8e8eeb366c0f274951ae5c622c91f469f2109edbb2',NULL),(14,'asd@asd.asd','asd@asd.asd','e5e839d4e3e62d65fae588ebef84482c725b9cf79040aba444ff63ef7cf7263b65809460858c2b1b90c058c813f173a9afaea11fad0a189c418aae8beb5f8269','Support Staff','1e92d30705e6073823e48cfb3b823d0a46d86fab75b0dd4741cbc64945e10f577578e4b1ecccb14747c7f5d3388a4d9f222bcc935f1c533285b012a41a59c818',NULL),(16,'asd@asd.asd','asd@asd.asd','2eb21f39b9f82ca127f29af221f8349d9d20f5f260bbceeb77099da15788775dd3b86521d2c50deeff567ecb645e2d752566a21a6d90dc9ffaf31f5ae93015d8','Support Staff','05f10c91c02ebfa02331812e27a937a936cfd3df05ffa179b94cbd38a74ef4ba9ff81e89ced0bc91bbd3b1a909bd5bd3272cabd781eefe182038ee0be46e7830',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -285,4 +289,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-08-27  8:34:53
+-- Dump completed on 2013-09-03  8:26:32

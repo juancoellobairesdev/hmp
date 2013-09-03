@@ -44,8 +44,7 @@ class Test extends MY_Controller {
     }
 
     public function maver($int = 1){
-        $this->_print(current_url());
-        echo "<a href='http://localhost/hmp/test/a'>asd</a>";
+        $this->_print($this->district_model->get($int));
     }
 
     public function a(){

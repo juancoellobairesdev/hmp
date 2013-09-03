@@ -99,7 +99,7 @@ class MY_Model extends CI_Model {
         $grades[-1] = 'Pre Kindergarten';
         $grades[0] = 'Kindergarten';
         $grades[1] = '1st. Grade';
-        $grades[2] = '2dn. Grade';
+        $grades[2] = '2nd. Grade';
         $grades[3] = '3rd. Grade';
         $grades[4] = '4th. Grade';
         $grades[5] = '5th. Grade';

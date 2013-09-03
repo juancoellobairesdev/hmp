@@ -95,7 +95,8 @@ class School extends MY_Controller {
         $school = new stdClass();
         $school->id = $this->input->post('schoolId');
         $school->name = $this->input->post('name');
-        $school->startingSchoolYear = $this->input->post('startingSchoolYear');
+        //$school->startingSchoolYear = $this->input->post('startingSchoolYear');
+        $school->startingSchoolYear = date('m') < 8: date('Y')-1: date('Y');
         $school->classesStartDate = Misc_helper::date_to_db($this->input->post('classesStartDate'));
         $school->address = $this->input->post('address');
         $school->phone = $this->input->post('phone');

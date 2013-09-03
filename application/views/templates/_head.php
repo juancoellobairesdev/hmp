@@ -13,3 +13,4 @@
 <script type="text/javascript" src="<?=$scriptsUrl?>hmp.school.js" id="<?= microtime(TRUE) ?>"></script>
 <script type="text/javascript" src="<?=$scriptsUrl?>hmp.user.js" id="<?= microtime(TRUE) ?>"></script>
 <script type="text/javascript" src="<?=$scriptsUrl?>hmp.tracking.js" id="<?= microtime(TRUE) ?>"></script>
+<script type="text/javascript" src="<?=$scriptsUrl?>hmp.report.js" id="<?= microtime(TRUE) ?>"></script>

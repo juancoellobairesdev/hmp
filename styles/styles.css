@@ -145,11 +145,11 @@ ul.menu {
     text-decoration: none;
 }
 
-.list_row{
+.list_row, .list_cell{
     cursor: pointer;
 }
 
-.list_row:hover{
+.list_row:hover, .list_cell:hover{
     color: darkblue;
     text-decoration: underline;
 }

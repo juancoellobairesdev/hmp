@@ -16,7 +16,7 @@ class Menu{
     private function _set_menu(){
         $home = $this->_get_element('Home', 'home');
 
-        $school = $this->_get_element('School');
+        $school = $this->_get_element('Schools');
         $school->childs[] = $this->_get_element('Become a Participating School', 'school', 'add_form');
         $school->childs[] = $this->_get_element('List', 'school', 'show_list');
 
@@ -24,9 +24,14 @@ class Menu{
         $resource->childs[] = $this->_get_element('List', 'resource', 'show_list');
         $resource->childs[] = $this->_get_element('Add Resource', 'resource', 'add_form');
 
-        $category = $this->_get_element('Category');
+        $category = $this->_get_element('Categories');
         $category->childs[] = $this->_get_element('List', 'category', 'show_list');
         $category->childs[] = $this->_get_element('Add Category', 'category', 'add_form');
+
+        $report = $this->_get_element('Reports');
+        $report->childs[] = $this->_get_element('By Teacher', 'report', 'by_teacher');
+        $report->childs[] = $this->_get_element('By School', 'report', 'by_school');
+        $report->childs[] = $this->_get_element('By Resource', 'report', 'by_resource');
 
         $tracking = $this->_get_element('Track Resources');
         $tracking->childs[] = $this->_get_element('Enter Tracking', 'tracking', 'enter');
@@ -44,6 +49,7 @@ class Menu{
             $tracking,
             $resource,
             $category,
+            $report,
             $user,
             $login
         );

@@ -71,6 +71,32 @@ class School_model extends MY_Model {
 
         return $this->db->get()->result();
     }
+
+    public function get_by_administrator($administratorUserId){
+        $this->db->select();
+        $this->db->from($this->table);
+        $this->db->where('administratorUserId', $administratorUserId);
+
+        return $this->db->get()->result();
+    }
+
+    public function get_by_user($userId){
+        $this->db->select();
+        $this->db->from($this->table);
+        $this->db->where('administratorUserId', $administratorUserId);
+        $this->db->or_where('verifierUserId', $verifierUserId);
+
+        // Not good but client want this asap. The way database is right now, it is very possible that an user verifies or manage more than 1 school.
+        return $this->db->get()->row();
+    }
+
+    public function get_by_district($districtId){
+        $this->db->select();
+        $this->db->from($this->table);
+        $this->db->where('districtId', $districtId);
+
+        return $this->db->get()->result();
+    }
 }
 
 /* End of file school_model.php */
