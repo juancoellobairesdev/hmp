@@ -2,6 +2,7 @@
 
 <title><?php $this->title(); ?></title>
 <meta name="description" content="<?php $this->description(); ?>">
+<meta charset="utf-8">
 
 <link type="text/css" href="<?=$stylesUrl?>styles.css" rel="stylesheet" />
 

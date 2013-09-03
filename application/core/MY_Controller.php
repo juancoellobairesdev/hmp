@@ -13,8 +13,8 @@ class MY_Controller extends CI_Controller {
     public function __construct(){
         parent::__construct();
         $this->load->library('Auth');
+        $this->load->library('Menu');
         $this->auth->authenticate();
-        $this->load->library('menu');
     }
 
     public function _print($object, $return = FALSE){

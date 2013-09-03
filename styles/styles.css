@@ -2,6 +2,25 @@ body{
     width:1024px;
 }
 
+header{
+    background: rgba(44, 186, 115, 0.75);
+    -webkit-border-top-left-radius: 10px;
+    -webkit-border-top-right-radius: 10px;
+    -moz-border-radius-topleft: 10px;
+    -moz-border-radius-topright: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+footer{
+    -webkit-border-bottom-right-radius: 10px;
+    -webkit-border-bottom-left-radius: 10px;
+    -moz-border-radius-bottomright: 10px;
+    -moz-border-radius-bottomleft: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
 .form_error, .form_success, .form_warning{
     font: normal normal 300 13px/16px Arial, Helvetica, sans-serif;
     margin: 10px 0;
