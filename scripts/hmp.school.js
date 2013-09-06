@@ -3,38 +3,6 @@ if(!hmp){
 }
 
 hmp.school = {
-    page: function(page){
-        $.ajax({
-            url: hmp.config.url.base + 'school/get_page',
-            data:{
-                page: page
-            },
-            type: 'POST',
-            dataType: 'html',
-            success: function(data){
-                if(data){
-                    $('#schools').html(data);
-                    var last = $("#pagination_top [name='last']").attr('value');
-                    prev = (page > 1)? page - 1: 1;
-                    next = (page < last)? page + 1: page;
-                    $("#pagination_top [name='prev']").attr('onclick', 'hmp.school.page(' + prev + ')');
-                    $("#pagination_top [name='prev']").attr('value', 'hmp.school.page(' + prev + ')');
-                    $("#pagination_top [name='current']").attr('value', page).html(page);
-                    $("#pagination_top [name='next']").attr('onclick', 'hmp.school.page(' + next + ')');
-                    $("#pagination_top [name='next']").attr('value', 'hmp.school.page(' + next + ')');
-                    $("#pagination_bottom [name='prev']").attr('onclick', 'hmp.school.page(' + prev + ')');
-                    $("#pagination_bottom [name='prev']").attr('value', 'hmp.school.page(' + prev + ')');
-                    $("#pagination_bottom [name='current']").attr('value', page).html(page);
-                    $("#pagination_bottom [name='next']").attr('onclick', 'hmp.school.page(' + next + ')');
-                    $("#pagination_bottom [name='next']").attr('value', 'hmp.school.page(' + next + ')');
-                }
-                else{
-                    alert('An error ocurred, please, try again later');
-                }
-            }
-        });
-    },
-
     form:{
         same_as_administrator: function(){
             if($('#sameAsAdministrator').is(':checked')){
@@ -85,12 +53,15 @@ hmp.school = {
             data:{
                 schoolId: $('#schoolId').val(),
                 name: $('#name').val(),
+                districtId: $('#districtId').val(),
                 startingSchoolYear: $('#startingSchoolYear').val(),
                 classesStartDate: $('#classesStartDate').val(),
                 address: $('#address').val(),
                 phone: $('#phone').val(),
                 fax: $('#fax').val(),
                 email: $('#email').val(),
+                shippingContactInfo: $('#shippingContactInfo').val(),
+                principal: $('#Principal').val(),
                 startTimeOfClasses: $('#startTimeOfClasses').val(),
                 endTimeOfClasses: $('#endTimeOfClasses').val(),
                 fallBreakDates: $('#fallBreakDates').val(),
@@ -99,16 +70,13 @@ hmp.school = {
                 itbsTestingDates: $('#itbsTestingDates').val(),
                 writingAssessmentDates: $('#writingAssessmentDates').val(),
                 crctTestingDates: $('#crctTestingDates').val(),
-                shippingContactInfo: $('#shippingContactInfo').val(),
-                principal: $('#Principal').val(),
-                principalCarbonCopied: $('#principalCarbonCopied').is('checked'),
                 aministrator: $('#administrator').val(),
                 aministratorsEmail: $('#administratorsEmail').val(),
                 verifier: $('#verifier').val(),
                 verifierEmail: $('#verifiersEmail').val(),
-                approveNewsletterCommunication: $('#approveNewsletterCommunication').is('checked'),
-                approveReminderPrompts: $('#approveReminderPrompts').is('checked'),
-                districtId: $('#districtId').val()
+                principalCarbonCopied: $('#principalCarbonCopied:checked').val(),
+                approveNewsletterCommunication: $('#approveNewsletterCommunication:checked').val(),
+                approveReminderPrompts: $('#approveReminderPrompts:checked').val()
             },
 
             beforeSend: function(){
@@ -145,7 +113,7 @@ hmp.school = {
                         $('#notifications ul').append('<li class="form_warning">' + data.warnings[i] + '</li>')
                     }
 
-                    $('#form_buttons').hide();
+                    //$('#form_buttons').hide();
                 }
                 else if(data.errors){
                     var i;

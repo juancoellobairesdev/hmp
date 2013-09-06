@@ -11,7 +11,9 @@ class School extends MY_Controller {
     public function show_list($page = 1){
         $params = array();
 
-        $params['pagination'] = Misc_helper::pagination($page, 'school_model');
+        $pagination = Misc_helper::pagination($page, 'school');
+        $params['pagination_html'] = Misc_helper::pagination_html($pagination);
+        $params['pagination'] = $pagination;
         $this->template('school/show_list', $params);
     }
 
@@ -25,7 +27,14 @@ class School extends MY_Controller {
 
         $params['schools'] = $schools;
 
-        $this->load->view('school/get_page', $params);
+        $view = $this->load->view('school/get_page', $params, TRUE);
+        $pagination = Misc_helper::pagination($page, 'school');
+
+        $data = new stdClass();
+        $data->pagination_html = Misc_helper::pagination_html($pagination);
+        $data->view = $view;
+
+        echo json_encode($data);
     }
 
     public function add_form(){
@@ -95,8 +104,15 @@ class School extends MY_Controller {
         $school = new stdClass();
         $school->id = $this->input->post('schoolId');
         $school->name = $this->input->post('name');
-        //$school->startingSchoolYear = $this->input->post('startingSchoolYear');
-        $school->startingSchoolYear = date('m') < 8: date('Y')-1: date('Y');
+        
+        if(!$school->id){
+            $school->startingSchoolYear = Misc_helper::school_year();
+        }
+        else{
+            if($this->input->post('startingSchoolYear')){
+                $school->startingSchoolYear = $this->input->post('startingSchoolYear');
+            }
+        }
         $school->classesStartDate = Misc_helper::date_to_db($this->input->post('classesStartDate'));
         $school->address = $this->input->post('address');
         $school->phone = $this->input->post('phone');
@@ -127,7 +143,7 @@ class School extends MY_Controller {
             // Save administrator
             $response_administrator = $this->_save_administrator();
             $errors = $response_administrator->errors;
-            $administrator_password = $response_administrator->administrator_password;
+            $administrator_password = isset($response_administrator->administrator_password)? $response_administrator->administrator_password: '';
             $school->administratorUserId = $response_administrator->administratorId;
 
             if(!$errors){
@@ -139,7 +155,7 @@ class School extends MY_Controller {
                 else{
                     $response_verifier = $this->_save_verifier();
                     $errors = $response_verifier->errors;
-                    $verifier_password = $response_verifier->verifier_password;
+                    $verifier_password = isset($response_verifier->verifier_password)? $response_verifier->verifier_password: '';
                     $school->verifierUserId = $response->verifierId;
                 }
             }
@@ -154,6 +170,27 @@ class School extends MY_Controller {
 
         // Edit Shcool
         elseif(isset($school->id) && ($school->id == $idToSave)){
+            // Save administrator
+
+            $response_administrator = $this->_save_administrator();
+            $errors = $response_administrator->errors;
+            $administrator_password = $response_administrator->administrator_password;
+            $school->administratorUserId = $response_administrator->administratorId;
+
+            if(!$errors){
+                // Use admin as verifier if no verifier is given
+                if(!$this->input->post('verifiersEmail')){
+                    $school->verifierUserId = $school->administratorUserId;
+                    $verifier_password = $administrator_password;
+                }
+                else{
+                    $response_verifier = $this->_save_verifier();
+                    $errors = $response_verifier->errors;
+                    $verifier_password = $response_verifier->verifier_password;
+                    $school->verifierUserId = $response_verifier->verifierId;
+                }
+            }
+
             if(!($errors = $this->school_model->has_errors($school))){
                 if(!($id = $this->school_model->update($school->id, $school)? $school->id: FALSE)){
                     $errors[] = 'Unable to save School data.';
@@ -233,12 +270,33 @@ class School extends MY_Controller {
         }
 
         if(!$errors){
-            $response_user = $this->_save_user($administrator, $administratorsEmail, User_model::$ROLE_S, Misc_helper::random_password());
-            if($response->administratorId = $response_user->id){
-                $response->administrator_password = $response_user->raw_password;
+            // School is on update
+            if($school = $this->school_model->get($this->input->post('schoolId'))){
+                $current_administrator = $this->user_model->get($school->administratorUserId);
+                if($current_administrator->email != $administratorsEmail){
+                    $response_user = $this->_save_user($administrator, $administratorsEmail, User_model::$ROLE_S, Misc_helper::random_password());
+                    if($response->administratorId = $response_user->id){
+                        $response->administrator_password = $response_user->raw_password;
+                    }
+                    else{
+                        $errors[] = 'Unable to save administrator.';
+                    }
+                }
+                else{
+                    $current_administrator->name = $administrator;
+                    $this->user_model->update($current_administrator->id, $current_administrator);
+                    $response->administratorId = $current_administrator->id;
+                }
             }
             else{
-                $errors[] = 'Unable to save administrator.';
+                // School is on save
+                $response_user = $this->_save_user($administrator, $administratorsEmail, User_model::$ROLE_S, Misc_helper::random_password());
+                if($response->administratorId = $response_user->id){
+                    $response->administrator_password = $response_user->raw_password;
+                }
+                else{
+                    $errors[] = 'Unable to save administrator.';
+                }
             }
         }
 
@@ -247,11 +305,11 @@ class School extends MY_Controller {
         return $response;
     }
 
-    private function _save_verifier($name, $email, $role = 'Support Staff'){
+    private function _save_verifier(){
         $response = new stdClass();
         $response->verifierId = FALSE;
         $response->verifier_password = FALSE;
-        $response->errors = array();
+        $errors = array();
 
         $verifier = $this->input->post('verifier');
         $verifiersEmail = $this->input->post('verifiersEmail');
@@ -264,12 +322,33 @@ class School extends MY_Controller {
         }
 
         if(!$errors){
-            $response_user = $this->_save_user($verifier, $verifiersEmail, User_model::$ROLE_S);
-            if($response->verifierId = $response_user->id){
-                $response->verifier_password = $response_user->raw_password;
+            // School is on update
+            if($school = $this->school_model->get($this->input->post('schoolId'))){
+                $current_verifier = $this->user_model->get($school->verifierUserId);
+                if($current_verifier->email != $verifiersEmail){
+                    $response_user = $this->_save_user($verifier, $verifiersEmail, User_model::$ROLE_S, Misc_helper::random_password());
+                    if($response->verifierId = $response_user->id){
+                        $response->verifier_password = $response_user->raw_password;
+                    }
+                    else{
+                        $errors[] = 'Unable to save verifier.';
+                    }
+                }
+                else{
+                    $current_verifier->name = $verifier;
+                    $this->user_model->update($current_verifier->id, $current_verifier);
+                    $response->verifierId = $current_verifier->id;
+                }
             }
             else{
-                $errors[] = 'Unable to save verifier.';
+                // School is on save
+                $response_user = $this->_save_user($verifier, $verifiersEmail, User_model::$ROLE_S, Misc_helper::random_password());
+                if($response->verifierId = $response_user->id){
+                    $response->verifier_password = $response_user->raw_password;
+                }
+                else{
+                    $errors[] = 'Unable to save verifier.';
+                }
             }
         }
 

@@ -13,16 +13,16 @@
     </tr>
     <?php foreach($resources as $resource): ?>
         <tr class="list_row" onclick="window.location='<?= $baseUrl ?>resource/edit_form/<?= $resource->id?>'" style="cursor:pointer">
-            <th><?= $resource->id; ?></th>
-            <th><?= $categories[$resource->categoryId]->name; ?></th>
-            <th><?= $resource->title; ?></th>
-            <th><?= $resource->minutesPerUse; ?></th>
-            <th><?= $resource->maximumUsesPerMonth; ?></th>
-            <th><?= $resource->nutrition; ?></th>
-            <th><?= $resource->minGrade; ?></th>
-            <th><?= $resource->maxGrade; ?></th>
-            <th><?= $resource->enabled; ?></th>
-            <th><?= $resource->weight; ?></th>
+            <td><?= $resource->id; ?></td>
+            <td><?= $categories[$resource->categoryId]->name; ?></td>
+            <td><?= $resource->title; ?></td>
+            <td><?= $resource->minutesPerUse; ?></td>
+            <td><?= $resource->maximumUsesPerMonth; ?></td>
+            <td><?= $resource->nutrition; ?></td>
+            <td><?= $resource->minGrade; ?></td>
+            <td><?= $resource->maxGrade; ?></td>
+            <td><?= $resource->enabled; ?></td>
+            <td><?= $resource->weight; ?></td>
         </tr>
     <?php endforeach; ?>
 </table>

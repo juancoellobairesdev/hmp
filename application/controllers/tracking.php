@@ -1,30 +1,58 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Tracking extends MY_Controller {
+    private $access;
+
     public function __construct(){
         parent::__construct();
         $this->load->model('resource_model');
         $this->load->model('tracking_model');
         $this->load->model('tracking_resource_model');
+        $this->_set_access();
     }
 
     public function enter(){
-        $user = $this->session->userdata('user');
-        $teacher = $this->session->userdata('teacher');
+        $role = $this->session->userdata('role');
+        $schools = array();
         $teachers = array();
-        if($teacher->gradeLevel == Teacher_model::$GRADE_LEVEL_S){
-            $teachers = $this->teacher_model->get_full_by_school($teacher->schoolId);
+        $grades = array();
+
+        $all_grades = $this->teacher_model->grades();
+
+        if($this->_can_access($role, 'enter_choose_school')){
+            $schools = $this->school_model->getAll();
+            $teachers = $this->teacher_model->get_full_by_school($schools[0]->id);
+            if($this->_can_access($teachers[0]->role, 'enter_choose_grade')){
+                $grades = $all_grades;
+            }
+            else{
+                $grades[$teachers[0]->gradeLevel] = $all_grades[$teachers[0]->gradeLevel];
+            }
+        }
+        else{
+            $school = $this->session->userdata('school');
+            $schools[] = $school;
+            if($this->_can_access($role, 'enter_choose_teacher')){
+                $teachers = $this->teacher_model->get_full_by_school($school->id);
+            }
+            else{
+                $user = $this->session->userdata('user');
+                $teacher = $this->session->userdata('teacher');
+                $teacher->name = $user->name;
+                $teachers[] = $teacher;
+                if($this->_can_access($role, 'enter_choose_grade')){
+                    $grades = $all_grades;
+                }
+                else{
+                    $grades[$teacher->gradeLevel] = $all_grades[$teacher->gradeLevel];
+                }
+            }
         }
 
-        $school = $this->school_model->get($teacher->schoolId);
-        $grades = $teacher->gradeLevel == Teacher_model::$GRADE_LEVEL_S? $this->teacher_model->grades(): array($teacher->gradeLevel);
-
-        $params['user'] = $user;
-        $params['teacher'] = $teacher;
+        $params['months'] = Misc_helper::get_months();
         $params['teachers'] = $teachers;
-        $params['school'] = $school;
+        $params['schools'] = $schools;
         $params['grades'] = $grades;
-        $params['months'] = Misc_helper::str_months();
 
         $this->template('tracking/enter', $params);
     }
@@ -32,9 +60,11 @@ class Tracking extends MY_Controller {
     public function get_resources(){
         $selected_grade = $this->input->post('selected_grade');
         $month = $this->input->post('month');
+        $teacherId = $this->input->post('teacherId');
+        $schoolId = $this->input->post('schoolId');
 
-        $teacher = $this->session->userdata('teacher');
-        $school = $this->school_model->get($teacher->schoolId);
+        $teacher = $this->teacher_model->get($teacherId);
+        $school = $this->school_model->get($schoolId);
         $resources = $this->resource_model->get_for_poster($selected_grade, $school->startingSchoolYear);
         $resources_used = $this->tracking_resource_model->get_resources_used($school->id, $month);
         $count_resources = count($resources);
@@ -72,50 +102,64 @@ class Tracking extends MY_Controller {
         $this->load->view('tracking/get_resources', $params);
     }
 
+    public function get_teachers(){
+        $schoolId = $this->input->post('schoolId');
+
+        echo json_encode($this->teacher_model->get_full_by_school($schoolId));
+    }
+
+    public function get_grades(){
+        $grades = array();
+        $all_grades = $this->teacher_model->grades();
+        $teacherId = $this->input->post('teacherId');
+
+        $teacher = $this->teacher_model->get_full($teacherId);
+        if($this->_can_access($teacher->role, 'enter_choose_grade')){
+            $grades = $all_grades;
+        }
+        else{
+            $grades[$teacher->gradeLevel] = $all_grades[$teacher->gradeLevel];
+        }
+
+        echo json_encode($grades);
+    }
+
     public function submit_enter(){
         $errors = array();
         $id = FALSE;
-        $teacher = $this->session->userdata('teacher');
-        $schoolId = $teacher->schoolId;
 
         $resources = json_decode(json_encode($this->input->post('resources')));
         $reportingMonth = $this->input->post('reportingMonth');
         $reportingWeek = $this->input->post('reportingWeek');
         $teacherId = $this->input->post('teacherId');
 
-        $tracking = new stdClass();
-        $tracking->teacherId = $teacherId;
-        $tracking->schoolId = $schoolId;
-        $tracking->reportingMonth = $reportingMonth;
-        $tracking->reportingWeek = $reportingWeek;
-
         if($resources){
-            if(!($errors = $this->tracking_model->has_errors($tracking))){
-                //$this->db->trans_begin();
-                try{
+            if($teacher = $this->teacher_model->get($teacherId)){
+                $school = $this->school_model->get($teacher->schoolId);
+                $schoolId = $school->id;
 
-                    // Save trackingEntry
-                    if($id = $this->tracking_model->insert($tracking)){
+                $tracking = new stdClass();
+                $tracking->teacherId = $teacherId;
+                $tracking->schoolId = $schoolId;
+                $tracking->reportingMonth = $reportingMonth;
+                $tracking->reportingWeek = $reportingWeek;
+                $errors = $this->tracking_model->has_errors($tracking);
 
-                        // Save trackingResources
-                        $trans_complete = TRUE;
-                        foreach($resources as $resource){
-                            $resource->trackingEntryId = $id;
-                            $trans_error = $trans_complete && !!$this->tracking_resource_model->insert($resource);
-                        }
+                // Save trackingEntry
+                if($id = $this->tracking_model->insert($tracking)){
 
-                        if($trans_complete){
-                            //$this->db->trans_commit();
-                        }
-                    }
-                    else{
-                        $errors[] = 'Unable to save tracking.';
+                    // Save trackingResources
+                    foreach($resources as $resource){
+                        $resource->trackingEntryId = $id;
+                        $this->tracking_resource_model->insert($resource);
                     }
                 }
-                catch(exception $e){
-                    //$this->db->trans_rollback();
-                    $errors[] = 'Unable to complete transaction.';
+                else{
+                    $errors[] = 'Unable to save tracking.';
                 }
+            }
+            else{
+                $errors[] = 'Invalid teacher.';
             }
         }
         else{
@@ -131,11 +175,17 @@ class Tracking extends MY_Controller {
     }
 
     public function unverified(){
-        $verifierUserId = $this->session->userdata('userId');
-        $schools = $this->school_model->get_by_verifier($verifierUserId);
+        $role = $this->session->userdata('role');
+        $userId = $this->session->userdata('userId');
+
+        if($this->_can_access($role, 'unverified_choose_school')){
+            $schools = $this->school_model->getAll();
+        }
+        else{
+            $schools = $this->school_model->get_by_verifier($userId);
+        }
 
         $params['schools'] = $schools;
-        $params['user'] = $verifierUserId;
 
         $this->template('tracking/unverified', $params);
     }
@@ -186,6 +236,43 @@ class Tracking extends MY_Controller {
         $data['errors'] = $errors;
 
         echo json_encode($data);
+    }
+
+    private function _set_access(){
+        $access = array(
+            'enter_choose_school' => array(
+                User_model::$ROLE_A,
+                User_model::$ROLE_H
+            ),
+
+            'enter_choose_teacher' => array(
+                User_model::$ROLE_A,
+                User_model::$ROLE_H,
+                User_model::$ROLE_S,
+                User_model::$ROLE_C,
+            ),
+
+            'enter_choose_grade' => array(
+                User_model::$ROLE_A,
+                User_model::$ROLE_H,
+                User_model::$ROLE_C,
+                User_model::$ROLE_S,
+            ),
+
+            'unverified_choose_school' => array(
+                User_model::$ROLE_A,
+            ),
+        );
+
+        $this->access = $access;
+    }
+
+    private function _can_access($role, $function){
+        if(array_key_exists($function, $this->access) && in_array($role, $this->access[$function])){
+            return TRUE;
+        }
+
+        return FALSE;
     }
 }
 

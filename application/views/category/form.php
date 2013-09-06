@@ -9,24 +9,24 @@
             <input type="text" id="id" name="id" maxlength="3" size="3" disabled value="<?= intval($category->id) ?>"/><br/>
         <?php endif; ?>
 
-        <lable for="name">Name:</label>
+        <label for="name">Name:</label>
         <input type="text" id="name" name="name" maxlength="100" size="50" value="<?= $category->name ?>"/><br/>
 
-        <lable for="minCohort">Minimum Cohort:</label>
+        <label for="minCohort">Minimum Cohort:</label>
         <select id="minCohort" name="minCohort">
             <?php foreach($cohorts as $cohort): ?>
                 <option value="<?= $cohort ?>" <?= ($category->minCohort == $cohort)? 'selected': '' ?>><?= $cohort ?></option>
             <?php endforeach ?>
         </select><br/>
 
-        <lable for="maxCohort">Maximum Cohort:</label>
+        <label for="maxCohort">Maximum Cohort:</label>
         <select id="maxCohort" name="maxCohort">
             <?php foreach($cohorts as $cohort): ?>
                 <option value="<?= $cohort ?>" <?= ($category->maxCohort == $cohort)? 'selected': '' ?>><?= $cohort ?></option>
             <?php endforeach ?>
         </select><br/>
 
-        <lable for="weight">Weight:</label>
+        <label for="weight">Weight:</label>
         <input type="text" id="weight" name="weight" maxlength="2" size="2" value="<?= intval($category->weight) ?>"/><br/>
 
         <input type="button" value="Save" onclick="hmp.category.save();">

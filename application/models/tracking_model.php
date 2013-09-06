@@ -104,15 +104,21 @@ class Tracking_model extends MY_Model {
     public function report_by_school($year, $params){
         $order_by = array();
         $order_by['month'] = 'month(tc.entered)';
-        $order_by['district'] = 'd.id';
+        $order_by['verified'] = 'tc.verified';
         $order_by['school'] = 's.id';
         $order_by['grade'] = 't.gradeLevel';
         $order_by['teacher'] = 't.id';
 
         $this->db->select('
             month(tc.entered) AS month,
+            tc.verified,
             d.name AS district,
+            IF(month(now())<8, year(now()) - s.startingSchoolYear, year(now()) - s.startingSchoolYear + 1) AS cohort,
             s.name AS school,
+            r.nutrition,
+            t.numStudents,
+            
+            
             t.gradeLevel AS gradeLevel,
             u.name AS teacher,
             c.name AS category,

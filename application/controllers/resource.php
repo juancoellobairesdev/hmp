@@ -9,7 +9,9 @@ class Resource extends MY_Controller {
     public function show_list($page = 1){
         $params = array();
 
-        $params['pagination'] = Misc_helper::pagination($page, 'resource_model');
+        $pagination = Misc_helper::pagination($page, 'resource');
+        $params['pagination_html'] = Misc_helper::pagination_html($pagination);
+        $params['pagination'] = $pagination;
         $this->template('resource/show_list', $params);
     }
 
@@ -24,7 +26,14 @@ class Resource extends MY_Controller {
         $params['resources'] = $resources;
         $params['categories'] = $categories;
 
-        $this->load->view('resource/get_page', $params);
+        $view = $this->load->view('resource/get_page', $params, TRUE);
+        $pagination = Misc_helper::pagination($page, 'resource');
+
+        $data = new stdClass();
+        $data->pagination_html = Misc_helper::pagination_html($pagination);
+        $data->view = $view;
+
+        echo json_encode($data);
     }
 
     public function add_form(){

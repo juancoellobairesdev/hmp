@@ -1,8 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Misc_helper{
-    static function pagination($page, $model){
+    static function pagination($page, $controller){
         $ci = &get_instance();
+        $model = $controller . '_model';
         $count = $ci->$model->count();
         $pages = ((int) ($count/PAGE_SIZE_DEFAULT)) + 1;
 
@@ -15,8 +16,37 @@ class Misc_helper{
         $pagination->current = $page;
         $pagination->next = ($page < $pages)? $page +1: $pages;
         $pagination->last = $pages;
+        $pagination->controller = $controller;
 
         return $pagination;
+    }
+
+    static function pagination_html($pagination){
+        $html = '';
+
+        $html .= "<ul class='pagination'>\n";
+
+        $class = $pagination->first == $pagination->current? 'inactive': 'active';
+        $onclick = $class == 'inactive'? '': "hmp.page(\"{$pagination->controller}\", {$pagination->first})";
+        $html .= "\t<li class='pagination_first {$class}' onClick='{$onclick}'><<</li>\n";
+
+        $class = $pagination->prev == $pagination->current? 'inactive': 'active';
+        $onclick = $class == 'inactive'? '': "hmp.page(\"{$pagination->controller}\", {$pagination->prev})";
+        $html .= "\t<li class='pagination_previous {$class}' onClick='{$onclick}'><</li>";
+
+        $html .= "\t<li class='pagination_current inactive'>{$pagination->current}</li>\n";
+
+        $class = $pagination->next == $pagination->current? 'inactive': 'active';
+        $onclick = $class == 'inactive'? '': "hmp.page(\"{$pagination->controller}\", {$pagination->next})";
+        $html .= "\t<li class='pagination_next {$class}' onClick='{$onclick}'>></li>\n";
+
+        $class = $pagination->last == $pagination->current? 'inactive': 'active';
+        $onclick = $class == 'inactive'? '': "hmp.page(\"{$pagination->controller}\", {$pagination->last})";
+        $html .= "\t<li class='pagination_last {$class}' onClick='{$onclick}'>>></li>\n";
+
+        $html .= "</ul>\n";
+
+        return $html;
     }
     
     /**
@@ -142,5 +172,42 @@ class Misc_helper{
         $str = $str? $str: time();
         
         return date('Y-m-d H:i:s', $str);
+    }
+
+    static function school_year($year = FALSE, $month = FALSE){
+        $year = $year? $year: date('Y');
+        $month = $month? $month: date('m');
+
+        return $month < 8? $year-1: $year;
+    }
+
+    static function get_months($year = FALSE, $any = FALSE){
+        $months = array();
+
+        $current_year = date('Y');
+        $current_month = date('m');
+
+        if(!$year){
+            $year = $current_year;
+            if($current_month < 8){
+                $year--;
+            }
+        }
+
+        for($i=0;$i<12;$i++){
+            $month = $i > 4? $i - 4: $i + 8;
+            $months[$month] = Misc_helper::str_month($month);
+            /*
+            if($year == $current_year && $month > $current_month){
+                break;
+            }
+            else{
+                $year_by_month = $month<8? $year - 1: $year;
+                $months[$month] = Misc_helper::str_month($month) . ' ' . $year_by_month;
+            }
+            */
+        }
+
+        return $months;
     }
 }

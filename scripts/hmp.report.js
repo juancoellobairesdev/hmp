@@ -36,14 +36,13 @@ hmp.report = {
                 dataType: 'json',
                 success: function(data){
                     if(data){
-                        var select = $('#teacher');
                         $('#teacher option').remove();
                         $.each(data, function(){
                             $('#teacher').append($("<option />").val(this.id).text(this.name));
                         });
                     }
 
-                    select.prop('disabled', $('#teacher option').length <= 1);
+                    $('#teacher').prop('disabled', $('#teacher option').length <= 1);
                 }
             });
         },

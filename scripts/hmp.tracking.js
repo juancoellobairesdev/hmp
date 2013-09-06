@@ -34,7 +34,8 @@ hmp.tracking = {
                 url: hmp.config.url.base + 'tracking/submit_enter',
                 data:{
                     resources: resources,
-                    teacherId: $('#teacher').attr('value'),
+                    teacherId: $('#teacher').val(),
+                    grade: $('#grade').val(),
                     reportingMonth: $('#month').val(),
                     reportingWeek: $('#week').val()
                 },
@@ -51,10 +52,13 @@ hmp.tracking = {
                         for(i=0; i < data.errors.length; i++){
                             $('#notifications ul').append('<li class="form_error">' + data.errors[i] + '</li>');
                         }
+
                     }
                     else{
                         alert('Unknown error.');
                     }
+                    
+                    hmp.scroll('#notifications');
                 }
             });
         },
@@ -65,6 +69,8 @@ hmp.tracking = {
                 data:{
                     selected_grade: $('#grades').val(),
                     month: $('#month').val(),
+                    teacherId: $('#teacher').val(),
+                    schoolId: $('#school').val()
                 },
                 type: 'POST',
                 dataType: 'html',
@@ -72,6 +78,51 @@ hmp.tracking = {
                     if(data){
                         $('#resources').html(data);
                     }
+                }
+            });
+        },
+
+        get_teachers: function(){
+            $.ajax({
+                url: hmp.config.url.base + 'tracking/get_teachers',
+                data:{
+                    schoolId: $('#school').val()
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function(data){
+                    if(data){
+                        $('#teacher option').remove();
+                        $.each(data, function(){
+                            $('#teacher').append($("<option />").val(this.id).text(this.name));
+                        });
+                    }
+
+                    $('#teacher').prop('disabled', $('#teacher option').length <= 1);
+                    hmp.tracking.enter.get_grades();
+                }
+            });
+        },
+
+        get_grades: function(){
+            $.ajax({
+                url: hmp.config.url.base + 'tracking/get_grades',
+                data:{
+                    teacherId: $('#teacher').val()
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function(data){
+                    if(data){
+                        $('#grade option').remove();
+                        $.each(data, function(index, value){
+                            $('#grade').append($("<option />").val(index).text(value));
+                        });
+                    }
+
+                    $('#grade').prop('disabled', $('#grade option').length <= 1);
+
+                    hmp.tracking.enter.get_resources();
                 }
             });
         }

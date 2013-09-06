@@ -34,6 +34,15 @@ class Teacher_model extends MY_Model {
         return $errors;
     }
 
+    public function get_full($id){
+        $this->db->select('t.*, u.*, t.id');
+        $this->db->from("{$this->table} AS t");
+        $this->db->join('users AS u', 't.userId = u.id', 'inner');
+        $this->db->where('t.id', $id);
+
+        return $this->db->get()->row();
+    }
+
     public function get_by_school($schoolId){
         $this->db->select();
         $this->db->from($this->table);
@@ -43,10 +52,10 @@ class Teacher_model extends MY_Model {
     }
 
     public function get_full_by_school($schoolId){
-        $this->db->select();
-        $this->db->from($this->table);
-        $this->db->join('users', 'teachers.userId = users.id', 'inner');
-        $this->db->where('schoolId', $schoolId);
+        $this->db->select('t.*, u.*, t.id');
+        $this->db->from("{$this->table} AS t");
+        $this->db->join('users AS u', 't.userId = u.id', 'inner');
+        $this->db->where('t.schoolId', $schoolId);
 
         return $this->db->get()->result();
     }

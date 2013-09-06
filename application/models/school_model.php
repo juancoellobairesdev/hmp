@@ -83,8 +83,8 @@ class School_model extends MY_Model {
     public function get_by_user($userId){
         $this->db->select();
         $this->db->from($this->table);
-        $this->db->where('administratorUserId', $administratorUserId);
-        $this->db->or_where('verifierUserId', $verifierUserId);
+        $this->db->where('administratorUserId', $userId);
+        $this->db->or_where('verifierUserId', $userId);
 
         // Not good but client want this asap. The way database is right now, it is very possible that an user verifies or manage more than 1 school.
         return $this->db->get()->row();

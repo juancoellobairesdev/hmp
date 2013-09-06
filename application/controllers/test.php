@@ -65,6 +65,14 @@ class Test extends MY_Controller {
         }
     }
 
+    public function get_teacher_full($id = 1){
+        $this->_print($this->teacher_model->get_full($id));
+    }
+
+    public function get_teachers_full_by_school($id = 1){
+        $this->_print($this->teacher_model->get_full_by_school($id));
+    }
+
     public function get_users(){
         $this->_print($this->user_model->getAll());
     }

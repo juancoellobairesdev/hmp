@@ -9,7 +9,9 @@ class Category extends MY_Controller {
     public function show_list($page = 1){
         $params = array();
 
-        $params['pagination'] = Misc_helper::pagination($page, 'category_model');
+        $pagination = Misc_helper::pagination($page, 'category');
+        $params['pagination_html'] = Misc_helper::pagination_html($pagination);
+        $params['pagination'] = $pagination;
         $this->template('category/show_list', $params);
     }
 
@@ -19,7 +21,14 @@ class Category extends MY_Controller {
 
         $params['categories'] = $categories;
 
-        $this->load->view('category/get_page', $params);
+        $view = $this->load->view('category/get_page', $params, TRUE);
+        $pagination = Misc_helper::pagination($page, 'category');
+
+        $data = new stdClass();
+        $data->pagination_html = Misc_helper::pagination_html($pagination);
+        $data->view = $view;
+
+        echo json_encode($data);
     }
 
     public function add_form(){

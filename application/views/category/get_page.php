@@ -8,11 +8,11 @@
     </tr>
     <?php foreach($categories as $category): ?>
         <tr class="list_row" onclick="window.location='<?= $baseUrl ?>category/edit_form/<?= $category->id?>'" style="cursor:pointer">
-            <th><?= $category->id; ?></th>
-            <th><?= $category->name; ?></th>
-            <th><?= $category->minCohort; ?></th>
-            <th><?= $category->maxCohort; ?></th>
-            <th><?= $category->weight; ?></th>
+            <td><?= $category->id; ?></td>
+            <td><?= $category->name; ?></td>
+            <td><?= $category->minCohort; ?></td>
+            <td><?= $category->maxCohort; ?></td>
+            <td><?= $category->weight; ?></td>
         </tr>
     <?php endforeach; ?>
 </table>

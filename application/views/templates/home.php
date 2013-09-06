@@ -6,15 +6,14 @@
         <?php include '_config.php'; ?>
     </head>
     <body>
-        <?php include "_header.php"; ?>
-        <div class="maincont">
-            <div class="bodycont">
-                <p>
-                    <?php echo $rendered_content; ?>
-                </p>
-            </div>
-
+        <br/>
+        <section class="bodycont">
+            <?php include "_header.php"; ?>
+            <section class="maincont">
+                <?php echo $rendered_content; ?>
+            </section>
             <?php include "_footer.php"; ?>
-        </div>
+        </section>
+        <br/>
     </body>
 </html>

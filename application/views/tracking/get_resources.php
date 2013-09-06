@@ -1,4 +1,5 @@
 <?php $categoryId = 0 ?>
+
 <table border="1">
     <tr>
         <th>Resource</th>

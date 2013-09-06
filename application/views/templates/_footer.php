@@ -1,4 +1,4 @@
-<footer id="footercont" class="footercont">
+<footer>
     <p>
         Unless otherwise specified, HealthMPowers is not responsible 
         for the content of any linked site not hosted by healthmpowers.org. 
@@ -8,4 +8,3 @@
         <a href="mailto:info@healthmpowers.org" target="_top">info@healthmpowers.org</a>
     </p>
 </footer>
-
