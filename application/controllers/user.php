@@ -111,7 +111,8 @@ class User extends MY_Controller {
         $new_password = $this->input->post('newPassword');
 
         // Session exists
-        if($user = $this->session->userdata('user')){
+        $userId = $this->session->userdata('userId');
+        if($user = $this->user_model->get($userId)){
             $encrypted = Misc_helper::encrypt_password($password, $user->salt);
 
             // Current password ok
