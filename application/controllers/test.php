@@ -44,7 +44,14 @@ class Test extends MY_Controller {
     }
 
     public function maver($int = 1){
-        $this->_print($this->district_model->get($int));
+        $date = new DateTime('First monday of November 2013');
+        $date->add(new DateInterval('P1W'));
+        $now = new DateTime();
+
+        $this->_print($date);
+        $this->_print($now);
+
+        $this->_print($date < $now);
     }
 
     public function a(){

@@ -72,6 +72,7 @@ class Tracking extends MY_Controller {
         for($i=0; $i<$count_resources; $i++){
             $uses = 0;
             $unset_resource = FALSE;
+            $resources_used = array_values($resources_used);
             $count_resources_used = count($resources_used);
 
             for($j=0; $j<$count_resources_used; $j++){
@@ -135,27 +136,55 @@ class Tracking extends MY_Controller {
 
         if($resources){
             if($teacher = $this->teacher_model->get($teacherId)){
-                $school = $this->school_model->get($teacher->schoolId);
-                $schoolId = $school->id;
+                // Get reporting date
+                try{
+                    $str_month = Misc_helper::str_month($reportingMonth);
+                    if((date('m') < 8 && $reportingMonth < 8) || (date('m') >= 8 && $reportingMonth >= 8)){
+                        $year = date('Y');
+                    }
+                    else{
+                        if(date('m') >= 8 && $reportingMonth < 8){
+                            $year = date('Y') + 1;
+                        }
+                        else{
+                            $year = date('Y') - 1;
+                        }
+                    }
 
-                $tracking = new stdClass();
-                $tracking->teacherId = $teacherId;
-                $tracking->schoolId = $schoolId;
-                $tracking->reportingMonth = $reportingMonth;
-                $tracking->reportingWeek = $reportingWeek;
-                $errors = $this->tracking_model->has_errors($tracking);
+                    $date = new DateTime('First monday of ' . $str_month . ' ' . $year);
+                    $date->add(new DateInterval('P' . $reportingWeek-1 . 'W'));
+                }
+                catch(Exception $e){
+                    $date = new DateTime();
+                    $date->add(new DateInterval('P1Y'));
+                }
+                $now = new DateTime();
+                if($date <= $now){
+                    $school = $this->school_model->get($teacher->schoolId);
+                    $schoolId = $school->id;
 
-                // Save trackingEntry
-                if($id = $this->tracking_model->insert($tracking)){
+                    $tracking = new stdClass();
+                    $tracking->teacherId = $teacherId;
+                    $tracking->schoolId = $schoolId;
+                    $tracking->reportingMonth = $reportingMonth;
+                    $tracking->reportingWeek = $reportingWeek;
+                    $errors = $this->tracking_model->has_errors($tracking);
 
-                    // Save trackingResources
-                    foreach($resources as $resource){
-                        $resource->trackingEntryId = $id;
-                        $this->tracking_resource_model->insert($resource);
+                    // Save trackingEntry
+                    if($id = $this->tracking_model->insert($tracking)){
+
+                        // Save trackingResources
+                        foreach($resources as $resource){
+                            $resource->trackingEntryId = $id;
+                            $this->tracking_resource_model->insert($resource);
+                        }
+                    }
+                    else{
+                        $errors[] = 'Unable to save tracking.';
                     }
                 }
                 else{
-                    $errors[] = 'Unable to save tracking.';
+                    $errors[] = 'Invalid Month and Week given. Date cannot be greater than today.';
                 }
             }
             else{

@@ -193,6 +193,9 @@ class Misc_helper{
                 $year--;
             }
         }
+        if($any){
+            $months[0] = 'Any';
+        }
 
         for($i=0;$i<12;$i++){
             $month = $i > 4? $i - 4: $i + 8;

@@ -73,7 +73,7 @@ class Report_model extends MY_Model {
     public function get_cohorts($any = FALSE){
         $cohorts = array();
         if($any){
-            $cohorts[''] = 'Any';
+            $cohorts[0] = 'Any';
         }
 
         return array_merge($cohorts, $this->cohorts());

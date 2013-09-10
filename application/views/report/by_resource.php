@@ -13,13 +13,6 @@
             <?php endforeach ?>
         </select><br/>
 
-        <label for="month">Up To Month:</label>
-        <select id="month" name="month">
-            <?php foreach($months as $index => $month): ?>
-                <option value="<?= $index ?>"><?= $month ?></option>
-            <?php endforeach ?>
-        </select><br/>
-
         <label for="school">School:</label>
         <?php $disabled = (count($schools) <= 1)? 'disabled': '' ?>
         <select id="school" name="school" <?= $disabled ?> onChange="hmp.report.by_teacher.get_teachers()">
@@ -27,34 +20,27 @@
                 <option value="<?= $school->id ?>"><?= $school->name ?></option>
             <?php endforeach ?>
         </select><br/>
-        <?php if(count($schools) <= 1): ?>
-            <script>
-                hmp.report.by_teacher.get_teachers();
-            </script>
-        <?php endif ?>
 
-        <div id="teacher_cont">
-            <label for="teacher">Teacher:</label>
-            <select id="teacher" name="teacher" disabled>
-                <?php foreach($teachers as $teacher): ?>
-                    <option value="<?= $teacher->id ?>"><?= $teacher->name ?></option>
-                <?php endforeach ?>
-            </select>
-        </div>
+        <label for="cohort">Cohort:</label>
+        <select id="cohort" name="cohort">
+            <?php foreach($cohorts as $index => $cohort): ?>
+                <option value="<?= $index ?>"><?= $cohort ?></option>
+            <?php endforeach ?>
+        </select><br/>
 
         <label for="grade">Grade:</label>
-        <?php $disabled = (count($schools) <= 1)? 'disabled': '' ?>
+        <?php $disabled = (count($grades) <= 1)? 'disabled': '' ?>
         <select id="grade" name="grade" <?= $disabled ?>>
             <?php foreach($grades as $index => $grade): ?>
                 <option value="<?= $index ?>"><?= $grade ?></option>
             <?php endforeach ?>
-        </select>
+        </select><br/>
+
+        <input type="hidden" id="order_by" value="month" side="asc"/>
     </fieldset>
 
-    <input type="hidden" id="order_by" value="month" side="asc"/>
-
-    <input type="button" value="Search" onClick="hmp.report.by_teacher.search()"/>
-    <input type="button" value="Download CSV" onClick="hmp.report.by_teacher.download()"/>
+    <input type="button" value="Search" onClick="hmp.report.by_resource.search()"/>
+    <input type="button" value="Download CSV" onClick="hmp.report.by_resource.download()"/>
 </section>
 
 <section class="list" id="report">
@@ -62,6 +48,6 @@
 
 <script>
     $(document).ready(function(){
-        hmp.report.by_teacher.search();
+        //hmp.report.by_resource.search();
     });
 </script>

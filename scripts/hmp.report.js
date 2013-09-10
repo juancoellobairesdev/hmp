@@ -101,35 +101,35 @@ hmp.report = {
 
     by_school: {
         search: function(){
-            var verified = $('input[name="verified"]:checked').val();
-            if(verified == '0'){
-                verified = false;
-            }
-            else{
-                verified = true;
-                var after_date = $('input[name="verified"][type="text"]').val();
-                if(after_date){
-                    verified = after_date;
-                }
-            }
-
             $.ajax({
                 url: hmp.config.url.base + 'report/search_by_school',
                 data:{
                     districtId: $('#district').val(),
                     schoolId: $('#school').val(),
+                    date: $('input[name="date"]:checked').val(),
                     year: $('#year').val(),
                     month: $('#month').val(),
+                    andMonth: $('#andMonth').val(),
+                    late: $('#late').val(),
                     cohort: $('#cohort').val(),
-                    verified: verified,
+                    verified: $('input[name="verified"]:checked').val() == '1',
+                    afterDate: $('#afterDate').val(),
                     order_by: $('#order_by').val(),
                     side: $('#order_by').attr('side')
                 },
                 type: 'POST',
-                dataType: 'html',
+                dataType: 'json',
                 success: function(data){
-                    if(data){
-                        $('#report').html(data);
+                    if(data.view){
+                        $('#report').html(data.view);
+                        $('#notifications ul').html('');
+                    }
+                    if(data.errors){
+                        var i;
+                        $('#notifications ul').html('');
+                        for(i=0; i < data.errors.length; i++){
+                            $('#notifications ul').append('<li class="form_error">' + data.errors[i] + '</li>')
+                        }
                     }
                 }
             });
@@ -162,8 +162,150 @@ hmp.report = {
             });
         },
 
+        order_by: function(field){
+            var order_by = $('#order_by');
+            if(order_by.val() != field){
+                order_by.val(field);
+                order_by.attr('side', 'asc');
+            }
+            else{
+                if(order_by.attr('side') == 'asc'){
+                    order_by.attr('side', 'desc').val(field);
+                }
+                else{
+                    order_by.attr('side', 'asc').val(field);
+                }
+            }
+
+            hmp.report.by_school.search();
+        },
+
         verified: function(){
-            $('input[name="verified"][type="text"]').prop('disabled', $('input[name="verified"]:checked').val() == '0');
+            $('#afterDate').prop('disabled', $('input[name="verified"]:checked').val() == '0');
+        },
+
+        date: function(){
+            if($('input[name="date"]:checked').val() == '0'){
+                $('#monthBetween').hide();
+                if($('#month option[value="0"]')){
+                    $('#month').prepend($("<option />").val(0).text('Any'));
+                }
+            }
+            else{
+                $('#monthBetween').css('display', 'inline');
+                $('#month option[value="0"]').remove();
+            }
+        },
+
+        download: function(){
+            $.ajax({
+                url: hmp.config.url.base + 'report/download_by_school',
+                data:{
+                    districtId: $('#district').val(),
+                    schoolId: $('#school').val(),
+                    date: $('input[name="date"]:checked').val(),
+                    year: $('#year').val(),
+                    month: $('#month').val(),
+                    andMonth: $('#andMonth').val(),
+                    late: $('#late').val(),
+                    cohort: $('#cohort').val(),
+                    verified: $('input[name="verified"]:checked').val() == '1',
+                    afterDate: $('#afterDate').val(),
+                    order_by: $('#order_by').val(),
+                    side: $('#order_by').attr('side')
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function(data){
+                    if(data.url){
+                        $('#notifications ul').html('<li class="form_success">Download ready on ' + data.url + '</li>');
+                        document.location = data.url;
+                    }
+                    else if(data.errors){
+                        var i;
+                        $('#notifications ul').html('');
+                        for(i=0; i < data.errors.length; i++){
+                            $('#notifications ul').append('<li class="form_error">' + data.errors[i] + '</li>')
+                        }
+                    }
+                    else{
+                        alert('Unknown error.');
+                    }
+                }
+            });
+        }
+    },
+
+    by_resource{
+        search: function(){
+            $.ajax({
+                url: hmp.config.url.base + 'report/search_by_resource',
+                data:{
+                    year: $('#year').val(),
+                    schoolId: $('#school').val(),
+                    grade: $('#grade').val(),
+                    cohort: $('#cohort').val(),
+                    order_by: $('#order_by').val(),
+                    side: $('#order_by').attr('side')
+                },
+                type: 'POST',
+                dataType: 'html',
+                success: function(data){
+                    if(data){
+                        $('#report').html(data);
+                    }
+                }
+            });
+        },
+
+        order_by: function(field){
+            var order_by = $('#order_by');
+            if(order_by.val() != field){
+                order_by.val(field);
+                order_by.attr('side', 'asc');
+            }
+            else{
+                if(order_by.attr('side') == 'asc'){
+                    order_by.attr('side', 'desc').val(field);
+                }
+                else{
+                    order_by.attr('side', 'asc').val(field);
+                }
+            }
+
+            hmp.report.by_resource.search();
+        },
+
+        download: function(){
+            $.ajax({
+                url: hmp.config.url.base + 'report/download_by_resource',
+                data:{
+                    year: $('#year').val(),
+                    schoolId: $('#school').val(),
+                    grade: $('#grade').val(),
+                    cohort: $('#cohort').val(),
+                    order_by: $('#order_by').val(),
+                    side: $('#order_by').attr('side')
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function(data){
+                    if(data.url){
+                        $('#notifications ul').html('<li class="form_success">Download ready on ' + data.url + '</li>');
+                        document.location = data.url;
+                    }
+                    else if(data.errors){
+                        var i;
+                        $('#notifications ul').html('');
+                        for(i=0; i < data.errors.length; i++){
+                            $('#notifications ul').append('<li class="form_error">' + data.errors[i] + '</li>')
+                        }
+                    }
+                    else{
+                        alert('Unknown error.');
+                    }
+                }
+            });
         }
     }
 };
