@@ -18,7 +18,7 @@
     </select><br/>
 
     <label for="iAmTeacher">I am a Teacher</label>
-    <input type="checkbox" id="iAmTeacher" name="iAmTeacher" onClick="hmp.user.forgot_password.i_am_teacher()"/>
+    <input type="checkbox" id="iAmTeacher" name="iAmTeacher" onClick="hmp.user.forgot_password.i_am_teacher()"/><br/>
 
     <label for="gradeLevel">Grade Level</label>
     <select id="gradeLevel" name="gradeLevel" disabled>
