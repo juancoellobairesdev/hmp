@@ -96,7 +96,7 @@ class Tracking_model extends MY_Model {
             $date = $year + 1 . '-07-31';
         }
 
-        $this->db->where('tc.trackData <=' $date);
+        $this->db->where('tc.trackData <=', $date);
 
         if(isset($params->schoolId)){
             $this->db->where('tc.schoolId', $params->schoolId);
@@ -255,7 +255,7 @@ class Tracking_model extends MY_Model {
             $date = $year + 1 . '-07-31';
         }
 
-        $this->db->where('tc.trackData <=' $date);
+        $this->db->where('tc.trackData <=', $date);
 
         if(isset($params->schoolId)){
             $this->db->where('tc.schoolId', $params->schoolId);

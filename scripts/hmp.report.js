@@ -236,7 +236,7 @@ hmp.report = {
         }
     },
 
-    by_resource{
+    by_resource: {
         search: function(){
             $.ajax({
                 url: hmp.config.url.base + 'report/search_by_resource',
