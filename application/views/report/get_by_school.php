@@ -1,13 +1,16 @@
 <table border="1">
     <tr>
-        <th class="list_cell" onClick="hmp.report.by_school.order_by('month')">Month</th>
-        <th class="list_cell" onClick="hmp.report.by_school.order_by('district')">District</th>
-        <th class="list_cell" onClick="hmp.report.by_school.order_by('school')">School</th>
-        <th class="list_cell" onClick="hmp.report.by_school.order_by('verified')">Verified</th>
-        <th class="list_cell" onClick="hmp.report.by_school.order_by('type')">Type</th>
+        <th>Month</th>
+        <th>District</th>
+        <th>School</th>
+        <th>Verified</th>
+        <th>Type</th>
         <th>Cohort</th>
         <th>Students</th>
         <th>Total Minutes Used</th>
+        <th>Teacher Usage</th>
+        <th>Student Usage</th>
+        <th>Actual Time</th>
     </tr>
     <?php foreach($result as $row): ?>
         <tr>
@@ -17,8 +20,11 @@
             <td><?= $row->verified? $row->verified: 'No' ?></td>
             <td><?= $row->nutrition ?></td>
             <td><?= $row->cohort ?></td>
-            <td><?= $row->numStudents ?></td>
+            <td><?= $row->students ?></td>
             <td><?= $row->totalMinutesUsed ?></td>
+            <td><?= $row->teacherUsage ?></td>
+            <td><?= $row->studentUsage ?></td>
+            <td><?= $row->actualTime ?></td>
         </tr>
     <?php endforeach ?>
 </table>

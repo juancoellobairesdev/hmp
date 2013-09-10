@@ -1,10 +1,10 @@
 <table border="1">
     <tr>
-        <th class="list_cell" onClick="hmp.report.by_teacher.order_by('month')">Month</th>
-        <th class="list_cell" onClick="hmp.report.by_teacher.order_by('district')">District</th>
-        <th class="list_cell" onClick="hmp.report.by_teacher.order_by('school')">School</th>
-        <th class="list_cell" onClick="hmp.report.by_teacher.order_by('grade')">Grade Level</th>
-        <th class="list_cell" onClick="hmp.report.by_teacher.order_by('teacher')">Teacher</th>
+        <th>Month</th>
+        <th>District</th>
+        <th>School</th>
+        <th>Grade Level</th>
+        <th>Teacher</th>
         <th>Category</th>
         <th>Resource</th>
         <th>Minutes Per Use</th>

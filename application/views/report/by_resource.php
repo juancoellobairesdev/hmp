@@ -36,6 +36,13 @@
             <?php endforeach ?>
         </select><br/>
 
+        <label for="group_by">Group By:</label>
+        <select id="group_by" name="group_by">
+            <?php foreach($group_by as $index => $value): ?>
+                <option value="<?= $index ?>"><?= $value ?></option>
+            <?php endforeach ?>
+        </select><br/>
+
         <input type="hidden" id="order_by" value="month" side="asc"/>
     </fieldset>
 
@@ -48,6 +55,6 @@
 
 <script>
     $(document).ready(function(){
-        //hmp.report.by_resource.search();
+        hmp.report.by_resource.search();
     });
 </script>

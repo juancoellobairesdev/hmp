@@ -13,8 +13,7 @@ hmp.report = {
                     year: $('#year').val(),
                     month: $('#month').val(),
                     grade: $('#grade').val(),
-                    order_by: $('#order_by').val(),
-                    side: $('#order_by').attr('side')
+                    group_by: $('#group_by').val()
                 },
                 type: 'POST',
                 dataType: 'html',
@@ -74,8 +73,7 @@ hmp.report = {
                     year: $('#year').val(),
                     month: $('#month').val(),
                     grade: $('#grade').val(),
-                    order_by: $('#order_by').val(),
-                    side: $('#order_by').attr('side')
+                    group_by: $('#group_by').val()
                 },
                 type: 'POST',
                 dataType: 'json',
@@ -114,8 +112,7 @@ hmp.report = {
                     cohort: $('#cohort').val(),
                     verified: $('input[name="verified"]:checked').val() == '1',
                     afterDate: $('#afterDate').val(),
-                    order_by: $('#order_by').val(),
-                    side: $('#order_by').attr('side')
+                    group_by: $('#group_by').val()
                 },
                 type: 'POST',
                 dataType: 'json',
@@ -211,8 +208,7 @@ hmp.report = {
                     cohort: $('#cohort').val(),
                     verified: $('input[name="verified"]:checked').val() == '1',
                     afterDate: $('#afterDate').val(),
-                    order_by: $('#order_by').val(),
-                    side: $('#order_by').attr('side')
+                    group_by: $('#group_by').val()
                 },
                 type: 'POST',
                 dataType: 'json',
@@ -245,8 +241,7 @@ hmp.report = {
                     schoolId: $('#school').val(),
                     grade: $('#grade').val(),
                     cohort: $('#cohort').val(),
-                    order_by: $('#order_by').val(),
-                    side: $('#order_by').attr('side')
+                    group_by: $('#group_by').val()
                 },
                 type: 'POST',
                 dataType: 'html',
@@ -284,8 +279,7 @@ hmp.report = {
                     schoolId: $('#school').val(),
                     grade: $('#grade').val(),
                     cohort: $('#cohort').val(),
-                    order_by: $('#order_by').val(),
-                    side: $('#order_by').attr('side')
+                    group_by: $('#group_by').val()
                 },
                 type: 'POST',
                 dataType: 'json',

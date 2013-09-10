@@ -2,9 +2,50 @@
 
 class Tracking_model extends MY_Model {
     protected $table = 'trackingEntry';
+    private $group_by_teacher;
+    private $group_by_school;
+    private $group_by_resource;
 
     public function __construct(){
         parent::__construct();
+        $this->_set_group_by();
+    }
+
+    private function _set_group_by(){
+        $group_by_teacher = array();
+        $group_by_teacher['month'] = 'month(tc.trackDate)';
+        $group_by_teacher['district'] = 'd.id';
+        $group_by_teacher['school'] = 's.id';
+        $group_by_teacher['grade'] = 't.gradeLevel';
+        $group_by_teacher['teacher'] = 't.id';
+
+        $group_by_school = array();
+        $group_by_school['month'] = 'month(tc.trackDate)';
+        $group_by_school['verified'] = 'tc.verified';
+        $group_by_school['district'] = 'd.id';
+        $group_by_school['school'] = 's.id';
+        $group_by_school['nutrition'] = 'r.nutrition';
+
+        $group_by_resource = array();
+        $group_by_resource['resource'] = 'r.id';
+        $group_by_resource['category'] = 'c.id';
+        $group_by_resource['grade'] = 't.gradeLevel';
+
+        $this->group_by_teacher = $group_by_teacher;
+        $this->group_by_school = $group_by_school;
+        $this->group_by_resource = $group_by_resource;
+    }
+
+    public function get_group_by_teacher(){
+        return $this->group_by_teacher;
+    }
+
+    public function get_group_by_school(){
+        return $this->group_by_school;
+    }
+
+    public function get_group_by_resource(){
+        return $this->group_by_resource;
     }
 
     public function has_errors($tracking){
@@ -45,13 +86,6 @@ class Tracking_model extends MY_Model {
 
 
     public function report_by_teacher($year, $params){
-        $order_by = array();
-        $order_by['month'] = 'month(tc.entered)';
-        $order_by['district'] = 'd.id';
-        $order_by['school'] = 's.id';
-        $order_by['grade'] = 't.gradeLevel';
-        $order_by['teacher'] = 't.id';
-
         $this->db->select('
             month(tc.trackDate) AS month,
             d.name AS district,
@@ -96,7 +130,7 @@ class Tracking_model extends MY_Model {
             $date = $year + 1 . '-07-31';
         }
 
-        $this->db->where('tc.trackData <=', $date);
+        $this->db->where('tc.trackDate <=', $date);
 
         if(isset($params->schoolId)){
             $this->db->where('tc.schoolId', $params->schoolId);
@@ -111,22 +145,26 @@ class Tracking_model extends MY_Model {
         if(isset($params->month)){
             $this->db->where('month(tc.entered)', $params->month);
         }
-        */
         if(isset($params->order_by) and array_key_exists($params->order_by, $order_by)){
             $this->db->order_by($order_by[$params->order_by], $params->side);
         }
+        */
+
+        if(isset($params->group_by) and array_key_exists($params->group_by, $this->group_by_teacher)){
+            $this->db->group_by($this->group_by_teacher[$params->group_by]);
+        }
+        else{
+            $this->db->group_by('month(tc.entered)');
+        }
 
         return $this->db->get()->result();
+        $return = $this->db->get()->result();
+        $ci = &get_instance();
+        $ci->_print($this->db->last_query());
+        return $return;
     }
 
     public function report_by_school($year, $params){
-        $order_by = array();
-        $order_by['month'] = 'month(tc.entered)';
-        $order_by['verified'] = 'tc.verified';
-        $order_by['district'] = 'd.id';
-        $order_by['school'] = 's.id';
-        $order_by['nutrition'] = 'r.nutrition';
-
         $this->db->select('
             month(tc.trackDate) AS month,
             tc.verified,
@@ -134,8 +172,11 @@ class Tracking_model extends MY_Model {
             s.name AS school,
             r.nutrition,
             IF(month(now())<8, year(now()) - s.startingSchoolYear, year(now()) - s.startingSchoolYear + 1) AS cohort,
-            t.numStudents,
-            r.minutesPerUse * tcr.timesUsed AS totalMinutesUsed 
+            sum(t.numStudents) as students,
+            sum(r.minutesPerUse * tcr.timesUsed) AS totalMinutesUsed,
+            sum(tcr.timesUsed) as teacherUsage,
+            sum(tcr.timesUsed * r.minutesPerUse)/60 AS actualTime,
+            sum(tcr.timesUsed*t.numStudents) as studentUsage,
         ');
 
         $this->db->from('trackingResources AS tcr');
@@ -206,8 +247,11 @@ class Tracking_model extends MY_Model {
             $this->db->where('tc.verified >', $params->afterDate);
         }
         
-        if(isset($params->order_by) and array_key_exists($params->order_by, $order_by)){
-            $this->db->order_by($order_by[$params->order_by], $params->side);
+        if(isset($params->group_by) and array_key_exists($params->group_by, $this->group_by_school)){
+            $this->db->group_by($this->group_by_school[$params->group_by]);
+        }
+        else{
+            $this->db->group_by('month(tc.entered)');
         }
 
         return $this->db->get()->result();
@@ -218,22 +262,21 @@ class Tracking_model extends MY_Model {
     }
 
     public function report_by_resource($year, $params){
-        $order_by = array();
-        $order_by['resource'] = 'r.id';
-        $order_by['category'] = 'c.id';
-        $order_by['grade'] = 't.gradeLevel';
-
         $this->db->select('
-            r.name AS resource
-            c.name AS category,
-            t.gradeLevel
+            c.name as category, 
+            r.title as resource, 
+            t.gradeLevel, 
+            count(t.id) as teachers, sum(t.numStudents) as students, 
+            sum(tcr.timesUsed) as teacherUsage, 
+            sum(tcr.timesUsed*t.numStudents) as studentUsage,
+            sum(tcr.timesUsed*t.numStudents*r.minutesPerUse) as minutesOfInstruction
         ');
 
-        $this->db->from('trackingResources AS tcr');
+        $this->db->from('trackingEntry AS tc');
+        $this->db->join('trackingResources AS tcr', 'tc.id = tcr.trackingEntryId', 'inner');
         $this->db->join('refResources AS r', 'tcr.resourceId = r.id', 'inner');
-        $this->db->join('trackingEntry AS tc', 'tcr.trackingEntryId = tc.id', 'inner');
-        $this->db->join('schools AS s', 'tc.schoolId = s.id', 'inner');
-        $this->db->join('refDistricts AS d', 's.districtId = d.id', 'inner');
+        $this->db->join('refResourceCategories AS c', 'r.categoryId = c.id', 'inner');
+        $this->db->join('teachers AS t', 'tc.teacherId = t.id');
         
         /*
         $fall = $year . ' - 07';
@@ -255,7 +298,7 @@ class Tracking_model extends MY_Model {
             $date = $year + 1 . '-07-31';
         }
 
-        $this->db->where('tc.trackData <=', $date);
+        $this->db->where('tc.trackDate <=', $date);
 
         if(isset($params->schoolId)){
             $this->db->where('tc.schoolId', $params->schoolId);
@@ -267,8 +310,12 @@ class Tracking_model extends MY_Model {
             $this->db->where('IF(month(now())<8, year(now()) - s.startingSchoolYear, year(now()) - s.startingSchoolYear + 1) <=', $params->cohort);
         }
 
-        if(isset($params->order_by) and array_key_exists($params->order_by, $order_by)){
-            $this->db->order_by($order_by[$params->order_by], $params->side);
+
+        if(isset($params->group_by) and array_key_exists($params->group_by, $this->group_by_resource)){
+            $this->db->group_by($this->group_by_resource[$params->group_by]);
+        }
+        else{
+            $this->db->group_by('c.id');
         }
 
         return $this->db->get()->result();

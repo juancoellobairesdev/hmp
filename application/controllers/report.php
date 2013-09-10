@@ -54,12 +54,20 @@ class Report extends MY_Controller {
             }
         }
 
+        $group_by_teacher = array();
+        $group_by_teacher['month'] = 'Month';
+        $group_by_teacher['district'] = 'District';
+        $group_by_teacher['school'] = 'School';
+        $group_by_teacher['teacher'] = 'Teacher';
+        $group_by_teacher['grade'] = 'Grade Level';
+
         $params = array();
         $params['schools'] = $schools;
         $params['years'] = $years;
         $params['months'] = $months;
         $params['grades'] = $grades;
         $params['teachers'] = $teachers;
+        $params['group_by'] = $group_by_teacher;
 
         $this->template('report/by_teacher', $params);
     }
@@ -98,16 +106,14 @@ class Report extends MY_Controller {
         $grade = $this->input->post('grade');
         $schoolId = $this->input->post('schoolId');
         $teacherId = $this->input->post('teacherId');
-        $order_by = $this->input->post('order_by');
-        $side = $this->input->post('side');
+        $group_by = $this->input->post('group_by');
 
         $params = new stdClass();
         $params->month = $month? $month: NULL;
         $params->grade = $grade!=''? $grade: NULL;
         $params->schoolId = $schoolId? $schoolId: NULL;
         $params->teacherId = $teacherId? $teacherId: NULL;
-        $params->order_by = $order_by? $order_by: NULL;
-        $params->side = $side=='desc'? $side: 'asc';
+        $params->group_by = $group_by;
 
         return $this->tracking_model->report_by_teacher($year, $params);
     }
@@ -175,6 +181,13 @@ class Report extends MY_Controller {
         $lates[-1] = 'Only late';
         $lates[1] = 'Only on time';
 
+        $group_by_school = array();
+        $group_by_school['month'] = 'Month';
+        $group_by_teacher['teacher'] = 'Teacher';
+        $group_by_school['school'] = 'School';
+        $group_by_school['nutrition'] = 'Resource Type';
+        $group_by_school['verified'] = 'Tracking Verified';
+
         $params = array();
         $params['districts'] = $districts;
         $params['years'] = $years;
@@ -182,6 +195,7 @@ class Report extends MY_Controller {
         $params['cohorts'] = $cohorts;
         $params['schools'] = $schools;
         $params['lates'] = $lates;
+        $params['group_by'] = $group_by_school;
 
         $this->template('report/by_school', $params);
     }
@@ -228,10 +242,9 @@ class Report extends MY_Controller {
         $cohort = $this->input->post('cohort');
         $districtId = $this->input->post('districtId');
         $schoolId = $this->input->post('schoolId');
-        $order_by = $this->input->post('order_by');
         $verified = $this->input->post('verified');
         $afterDate = $this->input->post('afterDate');
-        $side = $this->input->post('side');
+        $group_by = $this->input->post('group_by');
 
         $params = new stdClass();
         $params->date = $date;
@@ -242,10 +255,9 @@ class Report extends MY_Controller {
         $params->cohort = $cohort? $cohort: NULL;
         $params->districtId = $districtId? $districtId: NULL;
         $params->schoolId = $schoolId? $schoolId: NULL;
-        $params->order_by = $order_by? $order_by: NULL;
         $params->verified = $verified == 'true';
         $params->afterDate = $afterDate? Misc_helper::date_to_db($afterDate): FALSE;
-        $params->side = $side=='desc'? $side: 'asc';
+        $params->group_by = $group_by;
 
         if(!($errors = $this->_has_errors_by_school($params))){
             $result = $this->tracking_model->report_by_school($year, $params);
@@ -349,20 +361,27 @@ class Report extends MY_Controller {
             }
         }
 
+        $group_by_resource = array();
+        $group_by_resource['category'] = 'Category';
+        $group_by_resource['resource'] = 'Resource';
+        $group_by_resource['grade'] = 'Grade Level';
+
         $params = array();
         $params['schools'] = $schools;
         $params['years'] = $years;
         $params['cohorts'] = $cohorts;
         $params['grades'] = $grades;
+        $params['group_by'] = $group_by_resource;
 
         $this->template('report/by_resource', $params);
     }
 
     public function search_by_resource(){
-        $params = $this->_search_by_school();
-        $params->view = $params->errors? FALSE: $this->load->view('report/get_by_resource', $params, TRUE);
+        $params = new stdClass();
+        $params->result = $this->_search_by_resource();
+        //$params->view = $params->errors? FALSE: $this->load->view('report/get_by_resource', $params, TRUE);
 
-        echo json_encode($params);
+        $this->load->view('report/get_by_resource', $params);
     }
 
     public function _search_by_resource(){
@@ -370,15 +389,13 @@ class Report extends MY_Controller {
         $schoolId = $this->input->post('schoolId');
         $cohort = $this->input->post('cohort');
         $grade = $this->input->post('grade');
-        $order_by = $this->input->post('order_by');
-        $side = $this->input->post('side');
+        $group_by = $this->input->post('group_by');
 
         $params = new stdClass();
         $params->schoolId = $schoolId? $schoolId: NULL;
         $params->cohort = $cohort? $cohort: NULL;
         $params->grade = $grade!=''? $grade: NULL;
-        $params->order_by = $order_by? $order_by: NULL;
-        $params->side = $side=='desc'? $side: 'asc';
+        $params->group_by = $group_by;
 
         return $this->tracking_model->report_by_resource($year, $params);
     }
@@ -389,7 +406,7 @@ class Report extends MY_Controller {
 
         $result = $this->_search_by_resource();
 
-        if($result->result){
+        if($result){
             $line = '"Category","Resource","Grade Level","Teachers","Contacts","Student Usage","Minutes of Instruction"' . PHP_EOL;
             $response = $this->_download($result, $line);
             $errors = $response->errors;

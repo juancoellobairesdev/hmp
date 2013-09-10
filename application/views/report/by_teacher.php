@@ -48,11 +48,16 @@
             <?php foreach($grades as $index => $grade): ?>
                 <option value="<?= $index ?>"><?= $grade ?></option>
             <?php endforeach ?>
-        </select>
+        </select><br/>
+
+        <label for="group_by">Group By:</label>
+        <select id="group_by" name="group_by">
+            <?php foreach($group_by as $index => $value): ?>
+                <option value="<?= $index ?>"><?= $value ?></option>
+            <?php endforeach ?>
+        </select><br/>
     </fieldset>
-
-    <input type="hidden" id="order_by" value="month" side="asc"/>
-
+    
     <input type="button" value="Search" onClick="hmp.report.by_teacher.search()"/>
     <input type="button" value="Download CSV" onClick="hmp.report.by_teacher.download()"/>
 </section>
