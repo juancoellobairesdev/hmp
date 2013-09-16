@@ -46,59 +46,70 @@
 
             <label for="principal">Principal:</label>
             <input type="text" id="principal" name="principal" maxlength="100" size="50" value="<?= $school->principal ?>"/><br/>
-        </fieldset>
 
-        <fieldset>
-            <legend>Dates and Times</legend>
             <label for="startTimeOfClasses">Start Time of Classes:</label>
             <input type="time" id="startTimeOfClasses" name="startTimeOfClasses" maxlength="100" size="50" value="<?= date('H:i', strtotime($school->startTimeOfClasses)) ?>"/><br/>
 
             <label for="endTimeOfClasses">End Time of Classes:</label>
             <input type="time" id="endTimeOfClasses" name="endTimeOfClasses" maxlength="100" size="50" value="<?= date('H:i', strtotime($school->endTimeOfClasses)) ?>"/><br/>
-
-            <label for="fallBreakDates">Fall Break Dates:</label>
-            <input type="text" id="fallBreakDates" name="fallBreakDates" maxlength="100" size="50" value="<?= $school->fallBreakDates ?>"/><br/>
-
-            <label for="winterBreakDates">Winter Break Dates:</label>
-            <input type="text" id="winterBreakDates" name="winterBreakDates" maxlength="100" size="50" value="<?= $school->winterBreakDates ?>"/><br/>
-
-            <label for="springBreakDates">Spring Break Dates:</label>
-            <input type="text" id="springBreakDates" name="springBreakDates" maxlength="100" size="50" value="<?= $school->springBreakDates ?>"/><br/>
-
-            <label for="itbsTestingDates">Itbs Testing Dates:</label>
-            <input type="text" id="itbsTestingDates" name="itbsTestingDates" maxlength="100" size="50" value="<?= $school->itbsTestingDates ?>"/><br/>
-
-            <label for="writingAssessmentDates">Writing Assessment Dates:</label>
-            <input type="text" id="writingAssessmentDates" name="writingAssessmentDates" maxlength="100" size="50" value="<?= $school->writingAssessmentDates ?>"/><br/>
-
-            <label for="crctTestingDates">Crct Testing Dates:</label>
-            <input type="text" id="crctTestingDates" name="crctTestingDates" maxlength="100" size="50" value="<?= $school->crctTestingDates ?>"/><br/>
         </fieldset>
 
         <fieldset>
-            <legend>Management</legend>
+            <legend>Staff</legend>
+            <label for="adm">Administrator:</label>
+            <input type="text" id="adm" name="adm" maxlength="100" class="input_email" value="<?= $administrator->name ?>" onKeyUp="hmp.school.form.same_as_administrator()"/>
+            <span class="right_email">Email:</span>
+            <input type="email" id="admsEmail" name="admsEmail" maxlength="100" class="input_email" value="<?= $administrator->email ?>" onKeyUp="hmp.school.form.same_as_administrator()"/>
+            <span class="right_email">Same for all:</span>
+            <input type="checkbox" id="same_for_all" name="same_for_all" value="1" onclick="hmp.school.form.same_for_all()">
+            </br>
+            <label for="ver">Verifier:</label>
+            <input type="text" id="ver" name="ver" maxlength="100" class="input_name" value="<?= $verifier->name ?>"/>
+            <span class="right_email">Email:</span>
+            <input type="email" id="versEmail" name="versEmail" maxlength="100" class="input_email" value="<?= $verifier->email ?>"/>
+            <span class="right_email">Same as Administrator:</span>
+            <input type="checkbox" id="chk_ver" name="chk_staff" value="ver" onClick="hmp.school.form.copy_administrator('ver')">
+            <br/>
+            <label for="lsc">Local School Coordinator:</label>
+            <input type="text" id="lsc" name="lsc" maxlength="100" class="input_name" value="<?php //= $lsc->name ?>"/>
+            <span class="right_email">Email:</span>
+            <input type="email" id="lscsEmail" name="lscsEmail" maxlength="100" class="input_email" value="<?php //= $lsc->email ?>"/>
+            <span class="right_email">Same as Administrator:</span>
+            <input type="checkbox" id="chk_lsc" name="chk_staff" value="lsc" onClick="hmp.school.form.copy_administrator('lsc')">
+            <br/>
+            <label for="fco">Family Coordinator:</label>
+            <input type="text" id="fco" name="fco" maxlength="100" class="input_name" value="<?php //= $fco->name ?>"/>
+            <span class="right_email">Email:</span>
+            <input type="email" id="fcosEmail" name="fcosEmail" maxlength="100" class="input_email" value="<?php //= $fco->email ?>"/>
+            <span class="right_email">Same as Administrator:</span>
+            <input type="checkbox" id="chk_fco" name="chk_staff" value="fco" onClick="hmp.school.form.copy_administrator('fco')">
+            <br/>
+            <label for="pet">Physical Education Teacher:</label>
+            <input type="text" id="pet" name="pet" maxlength="100" class="input_name" value="<?php //= $pet->name ?>"/>
+            <span class="right_email">Email:</span>
+            <input type="email" id="petsEmail" name="petsEmail" maxlength="100" class="input_email" value="<?php //= $pet->email ?>"/>
+            <span class="right_email">Same as Administrator:</span>
+            <input type="checkbox" id="chk_pet" name="chk_staff" value="pet" onClick="hmp.school.form.copy_administrator('pet')">
+            <br/>
+            <label for="sha">Student Health Advocate Facilitator:</label>
+            <input type="text" id="sha" name="sha" maxlength="100" class="input_name" value="<?php //= $sha->name ?>"/>
+            <span class="right_email">Email:</span>
+            <input type="email" id="shasEmail" name="shasEmail" maxlength="100" class="input_email" value="<?php //= $sha->email ?>"/>
+            <span class="right_email">Same as Administrator:</span>
+            <input type="checkbox" id="chk_sha" name="chk_staff" value="sha" onClick="hmp.school.form.copy_administrator('sha')">
+            <br/>
 
-            <label for="administrator">Administrator:</label>
-            <input type="text" id="administrator" name="administrator" maxlength="100" size="50" value="<?= $administrator->name ?>" onKeyUp="hmp.school.form.same_as_administrator()"/><br/>
+        </fieldset>
 
-            <label for="administratorsEmail">Administrator's email:</label>
-            <input type="email" id="administratorsEmail" name="administratorsEmail" maxlength="100" size="50" value="<?= $administrator->email ?>" onKeyUp="hmp.school.form.same_as_administrator()"/><br/>
-
-            <label for="sameAsAdministrator">Administrator is verifier:</label>
-            <input type="checkbox" id="sameAsAdministrator" name="sameAsAdministrator" value="1" onclick="hmp.school.form.copy_administrator()"></br>
-
-            <label for="verifier">Verifier:</label>
-            <input type="text" id="verifier" name="verifier" maxlength="100" size="50" value="<?= $verifier->name ?>"/><br/>
-
-            <label for="verifiersEmail">Verifier's email:</label>
-            <input type="email" id="verifiersEmail" name="verifiersEmail" maxlength="100" size="50" value="<?= $verifier->email ?>"/><br/>
+        <fieldset>
+            <legend>Communications</legend>
 
             As principal, do you want to be cc’d on all communication to the local school contact(s)?  This would include e-mails for scheduling, electronic newsletters and reminders:<br/>
             <label for="principalCarbonCopied">Cc'd:</label>
             <input type="radio" id="principalCarbonCopied" name="principalCarbonCopied" <?= $school->principalCarbonCopied? 'checked': '' ?> value="1">Yes
             <input type="radio" id="principalCarbonCopied" name="principalCarbonCopied" <?= $school->principalCarbonCopied? '': 'checked' ?> value="0">No</br>
 
-            <label for="approveNewsletterCommunication">News Letter Communication:</label>
+            <label for="approveNewsletterCommunication">Newsletter Communication:</label>
             <input type="radio" id="approveNewsletterCommunication" name="approveNewsletterCommunication" <?= $school->approveNewsletterCommunication? 'checked': '' ?> value="1">Yes
             <input type="radio" id="approveNewsletterCommunication" name="approveNewsletterCommunication" <?= $school->approveNewsletterCommunication? '': 'checked' ?> value="0">No</br>
 

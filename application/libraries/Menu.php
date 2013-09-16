@@ -19,6 +19,7 @@ class Menu{
         $school = $this->_get_element('Schools');
         $school->childs[] = $this->_get_element('Become a Participating School', 'school', 'add_form');
         $school->childs[] = $this->_get_element('List', 'school', 'show_list');
+        $school->childs[] = $this->_get_element('Edit', 'school', 'edit');
 
         $resource = $this->_get_element('Resources');
         $resource->childs[] = $this->_get_element('List', 'resource', 'show_list');

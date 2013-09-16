@@ -194,21 +194,12 @@ class Misc_helper{
             }
         }
         if($any){
-            $months[0] = 'Any';
+            $months[0] = 'All';
         }
 
         for($i=0;$i<12;$i++){
             $month = $i > 4? $i - 4: $i + 8;
             $months[$month] = Misc_helper::str_month($month);
-            /*
-            if($year == $current_year && $month > $current_month){
-                break;
-            }
-            else{
-                $year_by_month = $month<8? $year - 1: $year;
-                $months[$month] = Misc_helper::str_month($month) . ' ' . $year_by_month;
-            }
-            */
         }
 
         return $months;

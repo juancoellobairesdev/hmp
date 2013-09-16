@@ -44,14 +44,12 @@ class Test extends MY_Controller {
     }
 
     public function maver($int = 1){
-        $date = new DateTime('First monday of November 2013');
-        $date->add(new DateInterval('P1W'));
-        $now = new DateTime();
+        $this->_print($this->session->all_userdata());
+        //$this->session->sess_destroy();
+    }
 
-        $this->_print($date);
-        $this->_print($now);
-
-        $this->_print($date < $now);
+    public function destroy_session(){
+        $this->session->sess_destroy();
     }
 
     public function a(){

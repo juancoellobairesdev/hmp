@@ -5,23 +5,37 @@ if(!hmp){
 hmp.school = {
     form:{
         same_as_administrator: function(){
-            if($('#sameAsAdministrator').is(':checked')){
-                $('#verifier').val($('#administrator').val());
-                $('#verifiersEmail').val($('#administratorsEmail').val());
-            }
+            var adm = $('#adm').val();
+            var admsEmail = $('#admsEmail').val();
+            $('input[type="checkbox"][name="chk_staff"]:checked').each(function(index, value){
+                var name = $(value).val();
+                var email = name + 'sEmail';
+                $('#' + name).val(adm);
+                $('#' + email).val(admsEmail);
+            });
         },
 
-        copy_administrator: function(){
-            if($('#sameAsAdministrator').is(':checked')){
-                hmp.school.form.same_as_administrator();
-                $('#verifier').prop('disabled', true);
-                $('#verifiersEmail').prop('disabled', true);
-            }
-            else{
-                $('#verifier').val('');
-                $('#verifiersEmail').val('');
-                $('#verifier').prop('disabled', false);
-                $('#verifiersEmail').prop('disabled', false);
+        same_for_all: function(){
+            $('input[type="checkbox"][name="chk_staff"]').each(function(index, value){
+                $(value).prop('checked', $('#same_for_all').is(':checked'));
+                hmp.school.form.copy_administrator($(value).val());
+            });
+        },
+
+        copy_administrator: function(to){
+            if(!!to){
+                if($('#chk_' + to).is(':checked')){
+                    $('#' + to).prop('disabled', true);
+                    $('#' + to + 'sEmail').prop('disabled', true);
+                    $('#' + to).val($('#adm').val());
+                    $('#' + to + 'sEmail').val($('#admsEmail').val());
+                }
+                else{
+                    $('#' + to).val('');
+                    $('#' + to + 'sEmail').val('');
+                    $('#' + to).prop('disabled', false);
+                    $('#' + to + 'sEmail').prop('disabled', false);
+                }
             }
         },
 
@@ -60,20 +74,24 @@ hmp.school = {
                 phone: $('#phone').val(),
                 fax: $('#fax').val(),
                 email: $('#email').val(),
+
+                adm: $('#adm').val(),
+                admsEmail: $('#admsEmail').val(),
+                ver: $('#ver').val(),
+                versEmail: $('#versEmail').val(),
+                lsc: $('#lsc').val(),
+                lscsEmail: $('#lscsEmail').val(),
+                fco: $('#fco').val(),
+                fcosEmail: $('#fcosEmail').val(),
+                pet: $('#pet').val(),
+                petsEmail: $('#petsEmail').val(),
+                sha: $('#sha').val(),
+                shasEmail: $('#shasEmail').val(),
+
                 shippingContactInfo: $('#shippingContactInfo').val(),
                 principal: $('#Principal').val(),
                 startTimeOfClasses: $('#startTimeOfClasses').val(),
                 endTimeOfClasses: $('#endTimeOfClasses').val(),
-                fallBreakDates: $('#fallBreakDates').val(),
-                winterBreakDates: $('#winterBreakDates').val(),
-                springBreakDates: $('#springBreakDates').val(),
-                itbsTestingDates: $('#itbsTestingDates').val(),
-                writingAssessmentDates: $('#writingAssessmentDates').val(),
-                crctTestingDates: $('#crctTestingDates').val(),
-                aministrator: $('#administrator').val(),
-                aministratorsEmail: $('#administratorsEmail').val(),
-                verifier: $('#verifier').val(),
-                verifierEmail: $('#verifiersEmail').val(),
                 principalCarbonCopied: $('#principalCarbonCopied:checked').val(),
                 approveNewsletterCommunication: $('#approveNewsletterCommunication:checked').val(),
                 approveReminderPrompts: $('#approveReminderPrompts:checked').val()
@@ -102,18 +120,19 @@ hmp.school = {
                 $('#notifications ul').html('');
                 if(data.id){
                     $('#notifications ul').append('<li class="form_success">School successfully saved with id ' + data.id + '</li>');
-                    if(data.administrator_password){
-                        $('#notifications ul').append('<li class="form_success">Administrator password: ' + data.administrator_password + '</li>');
-                    }
-                    if(data.verifier_password){
-                        $('#notifications ul').append('<li class="form_success">Verifier password: ' + data.verifier_password + '</li>');
+                    for(i=0; i < data.employees.length; i++){
+                        if(data.employees[i].raw_password){
+                            $('#notifications ul').append('<li class="form_success">' + data.employees[i].type + ' password: ' + data.employees[i].raw_password + '</li>')
+                        }
                     }
 
                     for(i=0; i < data.warnings.length; i++){
                         $('#notifications ul').append('<li class="form_warning">' + data.warnings[i] + '</li>')
                     }
 
-                    //$('#form_buttons').hide();
+                    $('#form_buttons').html('<input type="button" value="Back to Home" onClick="window.location.href=\'' + hmp.config.url.base + '\'">')
+                    $('#notifications').append('<input type="button" value="Back to Home" onClick="window.location.href=\'' + hmp.config.url.base + '\'">')
+                    hmp.scroll('#notifications');
                 }
                 else if(data.errors){
                     var i;

@@ -67,10 +67,10 @@ hmp.tracking = {
             $.ajax({
                 url: hmp.config.url.base + 'tracking/get_resources',
                 data:{
-                    selected_grade: $('#grades').val(),
                     month: $('#month').val(),
                     teacherId: $('#teacher').val(),
-                    schoolId: $('#school').val()
+                    schoolId: $('#school').val(),
+                    grade: $('#grade').val()
                 },
                 type: 'POST',
                 dataType: 'html',
