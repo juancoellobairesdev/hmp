@@ -58,14 +58,14 @@ class Tracking extends MY_Controller {
     }
 
     public function get_resources(){
-        $selected_grade = $this->input->post('selected_grade');
         $month = $this->input->post('month');
         $teacherId = $this->input->post('teacherId');
         $schoolId = $this->input->post('schoolId');
+        $grade = $this->input->post('grade');
 
         $teacher = $this->teacher_model->get($teacherId);
         $school = $this->school_model->get($schoolId);
-        $resources = $this->resource_model->get_for_poster($selected_grade, $school->startingSchoolYear);
+        $resources = $this->resource_model->get_for_poster($grade, $school->startingSchoolYear);
         $resources_used = $this->tracking_resource_model->get_resources_used($school->id, $month);
         $count_resources = count($resources);
 

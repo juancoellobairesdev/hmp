@@ -38,15 +38,6 @@ class Report_model extends MY_Model {
         for($i=0;$i<12;$i++){
             $month = $i > 4? $i - 4: $i + 8;
             $months[$month] = Misc_helper::str_month($month);
-            /*
-            if($year == $current_year && $month > $current_month){
-                break;
-            }
-            else{
-                $year_by_month = $month<8? $year - 1: $year;
-                $months[$month] = Misc_helper::str_month($month) . ' ' . $year_by_month;
-            }
-            */
         }
 
         if($any && count($months) > 1){
@@ -77,6 +68,85 @@ class Report_model extends MY_Model {
         }
 
         return array_merge($cohorts, $this->cohorts());
+    }
+
+    public function init_report_object_by_teacher(){
+            $object = new stdClass();
+            $object->minutesPerUse = 0;
+            $object->timesUsed = 0;
+            $object->maximumUsesPerMonth = 0;
+            $object->minutesUsed = 0;
+            $object->totalPossibleTime = 0;
+
+            return $object;
+    }
+
+    public function sum_report_objects_by_teacher($sum1, $sum2 = FALSE){
+        $sum = new stdClass();
+        if(!$sum2){
+            $sum2 = $this->_init_object_by_teacher();
+        }
+
+        $sum->minutesPerUse = $sum1->minutesPerUse + $sum2->minutesPerUse;
+        $sum->timesUsed = $sum1->timesUsed + $sum2->timesUsed;
+        $sum->maximumUsesPerMonth = $sum1->maximumUsesPerMonth + $sum2->maximumUsesPerMonth;
+        $sum->minutesUsed = $sum1->minutesUsed + $sum2->minutesUsed;
+        $sum->totalPossibleTime = $sum1->totalPossibleTime + $sum2->totalPossibleTime;
+        
+
+        return $sum;
+    }
+
+    public function init_report_object_by_school(){
+            $object = new stdClass();
+            $object->students = 0;
+            $object->teacherUsage = 0;
+            $object->totalTimeMinutes = 0;
+            $object->actualTime = 0;
+            $object->studentUsage = 0;
+
+            return $object;
+    }
+
+    public function sum_report_objects_by_school($sum1, $sum2 = FALSE){
+        $sum = new stdClass();
+        if(!$sum2){
+            $sum2 = $this->_init_object_by_teacher();
+        }
+
+        $sum->students = $sum1->students + $sum2->students;
+        $sum->teacherUsage = $sum1->teacherUsage + $sum2->teacherUsage;
+        $sum->totalTimeMinutes = $sum1->totalTimeMinutes + $sum2->totalTimeMinutes;
+        $sum->actualTime = $sum1->actualTime + $sum2->actualTime;
+        $sum->studentUsage = $sum1->studentUsage + $sum2->studentUsage;
+        
+
+        return $sum;
+    }
+
+    public function init_report_object_by_resource(){
+            $object = new stdClass();
+            $object->students = 0;
+            $object->teacherUsage = 0;
+            $object->studentUsage = 0;
+            $object->minutesOfInstruction = 0;
+
+            return $object;
+    }
+
+    public function sum_report_objects_by_resource($sum1, $sum2 = FALSE){
+        $sum = new stdClass();
+        if(!$sum2){
+            $sum2 = $this->_init_object_by_teacher();
+        }
+
+        $sum->students = $sum1->students + $sum2->students;
+        $sum->teacherUsage = $sum1->teacherUsage + $sum2->teacherUsage;
+        $sum->studentUsage = $sum1->studentUsage + $sum2->studentUsage;
+        $sum->minutesOfInstruction = $sum1->minutesOfInstruction + $sum2->minutesOfInstruction;
+        
+
+        return $sum;
     }
 }
 

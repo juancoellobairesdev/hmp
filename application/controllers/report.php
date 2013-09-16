@@ -54,20 +54,12 @@ class Report extends MY_Controller {
             }
         }
 
-        $group_by_teacher = array();
-        $group_by_teacher['month'] = 'Month';
-        $group_by_teacher['district'] = 'District';
-        $group_by_teacher['school'] = 'School';
-        $group_by_teacher['teacher'] = 'Teacher';
-        $group_by_teacher['grade'] = 'Grade Level';
-
         $params = array();
         $params['schools'] = $schools;
         $params['years'] = $years;
         $params['months'] = $months;
         $params['grades'] = $grades;
         $params['teachers'] = $teachers;
-        $params['group_by'] = $group_by_teacher;
 
         $this->template('report/by_teacher', $params);
     }
@@ -94,9 +86,63 @@ class Report extends MY_Controller {
     }
 
     public function search_by_teacher(){
-        $params = new stdClass();
-        $params->result = $this->_search_by_teacher();
+        $result = $this->_search_by_teacher();
+        $temp = array();
+        $totals = array();
+        foreach($result as $row){
+            $temp[$row->year][$row->month][$row->district][$row->school][$row->gradeLevel][$row->teacher][] = $row;
+        }
+        $result = $temp;
 
+        foreach($result as $year => $year_data){
+
+            $year_total = $this->report_model->init_report_object_by_teacher();
+            foreach($year_data as $month => $month_data){
+
+                $month_total = $this->report_model->init_report_object_by_teacher();
+                foreach($month_data as $district => $district_data){
+
+                    $district_total = $this->report_model->init_report_object_by_teacher();
+                    foreach($district_data as $school => $school_data){
+
+                        $school_total = $this->report_model->init_report_object_by_teacher();
+                        foreach($school_data as $grade => $grade_data){
+
+                            $grade_total = $this->report_model->init_report_object_by_teacher();
+                            foreach($grade_data as $teacher => $teacher_data){
+
+                                $teacher_total = $this->report_model->init_report_object_by_teacher();
+                                foreach($teacher_data as $row){
+                                    $teacher_total = $this->report_model->sum_report_objects_by_teacher($row, $teacher_total);
+                                }
+
+                                $totals[$year][$month][$district][$school][$grade][$teacher]['total'] = $teacher_total;
+                                $grade_total = $this->report_model->sum_report_objects_by_teacher($teacher_total, $grade_total);
+                            }
+
+                            $totals[$year][$month][$district][$school][$grade]['total'] = $grade_total;
+                            $school_total = $this->report_model->sum_report_objects_by_teacher($grade_total, $school_total);
+                        }
+
+                        $totals[$year][$month][$district][$school]['total'] = $school_total;
+                        $district_total = $this->report_model->sum_report_objects_by_teacher($school_total, $district_total);
+                    }
+
+                    $totals[$year][$month][$district]['total'] = $district_total;
+                    $month_total = $this->report_model->sum_report_objects_by_teacher($district_total, $month_total);
+                }
+
+                $totals[$year][$month]['total'] = $month_total;
+                $year_total = $this->report_model->sum_report_objects_by_teacher($month_total, $year_total);
+            }
+
+            $totals[$year]['total'] = $year_total;
+        }
+
+        $params = new stdClass();
+        $params->result = $result;
+        $params->totals = $totals;
+        $params->grades = $this->teacher_model->grades();
         $this->load->view('report/get_by_teacher', $params);
     }
 
@@ -225,6 +271,65 @@ class Report extends MY_Controller {
 
     public function search_by_school(){
         $params = $this->_search_by_school();
+
+        if(!$params->errors){
+            $temp = array();
+            $totals = array();
+            foreach($params->result as $row){
+                $verified = $row->verified? 'Verified': 'Not Verified';
+                $temp[$row->year][$row->month][$verified][$row->district][$row->school][$row->nutrition][] = $row;
+            }
+            $result = $temp;
+
+            foreach($result as $year => $year_data){
+
+                $year_total = $this->report_model->init_report_object_by_school();
+                foreach($year_data as $month => $month_data){
+
+                    $month_total = $this->report_model->init_report_object_by_school();
+                    foreach($month_data as $verified => $verified_data){
+
+                        $verified_total = $this->report_model->init_report_object_by_school();
+                        foreach($verified_data as $district => $district_data){
+
+                            $district_total = $this->report_model->init_report_object_by_school();
+                            foreach($district_data as $school => $school_data){
+
+                                $school_total = $this->report_model->init_report_object_by_school();
+                                foreach($school_data as $nutrition => $nutrition_data){
+
+                                    $nutrition_total = $this->report_model->init_report_object_by_school();
+                                    foreach($nutrition_data as $row){
+                                        $nutrition_total = $this->report_model->sum_report_objects_by_school($row, $nutrition_total);
+                                    }
+
+                                    $totals[$year][$month][$verified][$district][$school][$nutrition]['total'] = $nutrition_total;
+                                    $school_total = $this->report_model->sum_report_objects_by_school($nutrition_total, $school_total);
+                                }
+
+                                $totals[$year][$month][$verified][$district][$school]['total'] = $school_total;
+                                $district_total = $this->report_model->sum_report_objects_by_school($school_total, $district_total);
+                            }
+
+                            $totals[$year][$month][$verified][$district]['total'] = $district_total;
+                            $verified_total = $this->report_model->sum_report_objects_by_school($district_total, $verified_total);
+                        }
+
+                        $totals[$year][$month][$verified]['total'] = $verified_total;
+                        $month_total = $this->report_model->sum_report_objects_by_school($verified_total, $month_total);
+                    }
+
+                    $totals[$year][$month]['total'] = $month_total;
+                    $year_total = $this->report_model->sum_report_objects_by_school($month_total, $year_total);
+                }
+
+                $totals[$year]['total'] = $year_total;
+            }
+        }
+
+
+        $params->result = $result;
+        $params->totals = $totals;
         $params->view = $params->errors? FALSE: $this->load->view('report/get_by_school', $params, TRUE);
 
         echo json_encode($params);
@@ -361,26 +466,53 @@ class Report extends MY_Controller {
             }
         }
 
-        $group_by_resource = array();
-        $group_by_resource['category'] = 'Category';
-        $group_by_resource['resource'] = 'Resource';
-        $group_by_resource['grade'] = 'Grade Level';
-
         $params = array();
         $params['schools'] = $schools;
         $params['years'] = $years;
         $params['cohorts'] = $cohorts;
         $params['grades'] = $grades;
-        $params['group_by'] = $group_by_resource;
 
         $this->template('report/by_resource', $params);
     }
 
     public function search_by_resource(){
-        $params = new stdClass();
-        $params->result = $this->_search_by_resource();
-        //$params->view = $params->errors? FALSE: $this->load->view('report/get_by_resource', $params, TRUE);
+        $result = $this->_search_by_resource();
 
+        $temp = array();
+        $totals = array();
+        foreach($result as $row){
+            $temp[$row->category][$row->resource][$row->gradeLevel][] = $row;
+        }
+        $result = $temp;
+
+        foreach($result as $category => $category_data){
+
+            $category_total = $this->report_model->init_report_object_by_resource();
+            foreach($category_data as $resource => $resource_data){
+
+                $resource_total = $this->report_model->init_report_object_by_resource();
+                foreach($resource_data as $grade => $grade_data){
+
+                    $grade_total = $this->report_model->init_report_object_by_resource();
+                    foreach($grade_data as $row){
+                        $grade_total = $this->report_model->sum_report_objects_by_resource($row, $grade_total);
+                    }
+
+                    $totals[$category][$resource][$grade]['total'] = $grade_total;
+                    $resource_total = $this->report_model->sum_report_objects_by_resource($grade_total, $resource_total);
+                }
+
+                $totals[$category][$resource]['total'] = $resource_total;
+                $category_total = $this->report_model->sum_report_objects_by_resource($resource_total, $category_total);
+            }
+
+            $totals[$category]['total'] = $category_total;
+        }
+
+        $params = new stdClass();
+        $params->result = $result;
+        $params->totals = $totals;
+        $params->grades = $this->teacher_model->grades();
         $this->load->view('report/get_by_resource', $params);
     }
 

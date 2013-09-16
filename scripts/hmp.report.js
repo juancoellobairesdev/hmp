@@ -12,8 +12,7 @@ hmp.report = {
                     teacherId: $('#teacher').val(),
                     year: $('#year').val(),
                     month: $('#month').val(),
-                    grade: $('#grade').val(),
-                    group_by: $('#group_by').val()
+                    grade: $('#grade').val()
                 },
                 type: 'POST',
                 dataType: 'html',
@@ -46,24 +45,6 @@ hmp.report = {
             });
         },
 
-        order_by: function(field){
-            var order_by = $('#order_by');
-            if(order_by.val() != field){
-                order_by.val(field);
-                order_by.attr('side', 'asc');
-            }
-            else{
-                if(order_by.attr('side') == 'asc'){
-                    order_by.attr('side', 'desc').val(field);
-                }
-                else{
-                    order_by.attr('side', 'asc').val(field);
-                }
-            }
-
-            hmp.report.by_teacher.search();
-        },
-
         download: function(){
             $.ajax({
                 url: hmp.config.url.base + 'report/download_by_teacher',
@@ -72,8 +53,7 @@ hmp.report = {
                     teacherId: $('#teacher').val(),
                     year: $('#year').val(),
                     month: $('#month').val(),
-                    grade: $('#grade').val(),
-                    group_by: $('#group_by').val()
+                    grade: $('#grade').val()
                 },
                 type: 'POST',
                 dataType: 'json',
@@ -112,7 +92,6 @@ hmp.report = {
                     cohort: $('#cohort').val(),
                     verified: $('input[name="verified"]:checked').val() == '1',
                     afterDate: $('#afterDate').val(),
-                    group_by: $('#group_by').val()
                 },
                 type: 'POST',
                 dataType: 'json',
@@ -159,24 +138,6 @@ hmp.report = {
             });
         },
 
-        order_by: function(field){
-            var order_by = $('#order_by');
-            if(order_by.val() != field){
-                order_by.val(field);
-                order_by.attr('side', 'asc');
-            }
-            else{
-                if(order_by.attr('side') == 'asc'){
-                    order_by.attr('side', 'desc').val(field);
-                }
-                else{
-                    order_by.attr('side', 'asc').val(field);
-                }
-            }
-
-            hmp.report.by_school.search();
-        },
-
         verified: function(){
             $('#afterDate').prop('disabled', $('input[name="verified"]:checked').val() == '0');
         },
@@ -185,7 +146,7 @@ hmp.report = {
             if($('input[name="date"]:checked').val() == '0'){
                 $('#monthBetween').hide();
                 if($('#month option[value="0"]')){
-                    $('#month').prepend($("<option />").val(0).text('Any'));
+                    $('#month').prepend($("<option />").val(0).text('All'));
                 }
             }
             else{
@@ -208,7 +169,6 @@ hmp.report = {
                     cohort: $('#cohort').val(),
                     verified: $('input[name="verified"]:checked').val() == '1',
                     afterDate: $('#afterDate').val(),
-                    group_by: $('#group_by').val()
                 },
                 type: 'POST',
                 dataType: 'json',
@@ -241,7 +201,6 @@ hmp.report = {
                     schoolId: $('#school').val(),
                     grade: $('#grade').val(),
                     cohort: $('#cohort').val(),
-                    group_by: $('#group_by').val()
                 },
                 type: 'POST',
                 dataType: 'html',
@@ -253,24 +212,6 @@ hmp.report = {
             });
         },
 
-        order_by: function(field){
-            var order_by = $('#order_by');
-            if(order_by.val() != field){
-                order_by.val(field);
-                order_by.attr('side', 'asc');
-            }
-            else{
-                if(order_by.attr('side') == 'asc'){
-                    order_by.attr('side', 'desc').val(field);
-                }
-                else{
-                    order_by.attr('side', 'asc').val(field);
-                }
-            }
-
-            hmp.report.by_resource.search();
-        },
-
         download: function(){
             $.ajax({
                 url: hmp.config.url.base + 'report/download_by_resource',
@@ -279,7 +220,6 @@ hmp.report = {
                     schoolId: $('#school').val(),
                     grade: $('#grade').val(),
                     cohort: $('#cohort').val(),
-                    group_by: $('#group_by').val()
                 },
                 type: 'POST',
                 dataType: 'json',

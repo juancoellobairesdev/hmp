@@ -52,7 +52,7 @@ class Auth{
     private function _set_roles(){
         $roles = new stdClass();
         $roles->n = FALSE;
-        $roles->st = User_model::$ROLE_S;
+        $roles->ss = User_model::$ROLE_S;
         $roles->sa = User_model::$ROLE_C;
         $roles->sv = User_model::$ROLE_V;
         $roles->ha = User_model::$ROLE_A;
@@ -95,6 +95,7 @@ class Auth{
         $school[] = 'get_page';
         $school[] = 'edit_form';
         $school[] = 'add_form';
+        $school[] = 'edit';
         $school[] = 'save';
         $school[] = 'check_upload';
 
@@ -161,8 +162,10 @@ class Auth{
         $access->school->show_list[] = $roles->ha;
         $access->school->get_page = $access->school->show_list;
 
+        $access->school->add_form[] = $roles->n;
         $access->school->edit_form[] = $roles->ha;
-        $access->school->edit_form[] = $roles->sa;
+        //$access->school->edit_form[] = $roles->sa;
+        $access->school->edit[] = $roles->sa;
 
         $access->tracking->enter[] = $roles->ha;
         $access->tracking->enter[] = $roles->hs;
@@ -175,9 +178,22 @@ class Auth{
         $access->tracking->get_trackings = $access->tracking->unverified;
         $access->tracking->submit_unverified = $access->tracking->unverified;
 
+        $access->report->by_teacher[] = $roles->ha;
+        $access->report->by_teacher[] = $roles->hs;
+        $access->report->by_teacher[] = $roles->sv;
+        $access->report->by_teacher[] = $roles->ss;
+        $access->report->by_school[] = $roles->ha;
+        $access->report->by_school[] = $roles->hs;
+        $access->report->by_resource[] = $roles->ha;
+        $access->report->by_resource[] = $roles->hs;
+        $access->report->by_resource[] = $roles->sv;
+        $access->report->by_resource[] = $roles->ss;
+
+        /*
         $access->report->by_teacher = $this->_get_all_roles();
         $access->report->by_school = $this->_get_all_roles();
         $access->report->by_resource = $this->_get_all_roles();
+        */
 
         foreach($access->resource as $method => $array){
             $temp = array();

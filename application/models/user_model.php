@@ -54,9 +54,10 @@ class User_model extends MY_Model {
             $sql = "
                 SELECT u.*
                 FROM schools AS s
+                INNER JOIN employees AS e
+                    ON s.id = e.schoolId
                 INNER JOIN users AS u
-                    ON s.administratorUserId = u.id
-                    OR s.verifierUserId = u.id
+                    ON e.userId = u.id
                 WHERE s.id = ?
                 AND u.email like ?
             ";
@@ -65,12 +66,6 @@ class User_model extends MY_Model {
         }
 
         return $query->result();
-    }
-
-    public function _print($obj){
-        echo '<pre>';
-        print_r($obj);
-        echo '</pre>';
     }
 }
 

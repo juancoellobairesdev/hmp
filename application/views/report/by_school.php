@@ -80,15 +80,6 @@
             <input type="radio" name="verified" value="1">Yes
             <input type="date" id="afterDate" name="afterDate" disabled value="">After Date (Leave blank to show all)
         </div>
-
-        <label for="group_by">Group By:</label>
-        <select id="group_by" name="group_by">
-            <?php foreach($group_by as $index => $value): ?>
-                <option value="<?= $index ?>"><?= $value ?></option>
-            <?php endforeach ?>
-        </select><br/>
-
-        <input type="hidden" id="order_by" value="month" side="asc"/>
     </fieldset>
 
     <input type="button" value="Search" onClick="hmp.report.by_school.search()"/>

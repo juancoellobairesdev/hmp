@@ -203,10 +203,19 @@ label{
     display: block;
     float: left;
     width: 150px;
+    padding-right: 3px;
 }
 
 form br{
     clear:left;
+}
+
+.right_email{
+    margin-left: 25px;
+}
+
+.input_email, .input_name{
+    width: 170px;
 }
 
 fieldset{
@@ -298,4 +307,91 @@ li.active{
 
 li.inactive{
     color:gray;
+}
+
+.accordion_row_even, .accordion_row_noon{
+    clear:both;
+    float:right;
+    line-height: 1.5em;
+    border-radius: 5px;
+    margin-top: 0.2em;
+}
+
+.accordion_row_header{
+    background-color: rgba(244, 123, 34, 0.45);
+    font-weight: bold;
+    height: 1.5em;
+    border-radius: 5px;
+    float: right;
+}
+
+.accordion_row_even{
+    background-color: rgba(0, 140, 153, 0.25); /*#008c99*/
+}
+
+.accordion_row_noon{
+    background-color: rgba(244, 123, 34, 0.25); /*003147 11 147 213*/
+}
+
+.accordion_cell{
+    float:right;
+    width: 50px;
+    padding: 2px 0px 2px 6px;
+}
+
+.accordion_cell_header{
+    float:right;
+    width: 50px;
+    padding: 2px 0px 2px 6px;
+    margin-top: 5px;
+}
+
+.accordion_header_cell{
+    display:table;
+    float:right;
+    margin-top:-8px;
+    width:50px;
+    padding: 2px 0px 2px 6px;
+}
+
+.report_header{
+    height: 25px;
+    border-radius: 5px;
+    border: 1px solid #009cA9; /*#26b3f7;*/
+    background: #008c99 url(images/ui-bg_highlight-hard_20_0972a5_1x100.png) 50% 50% repeat-x;/*#0972a5*/
+    font-weight: bold;
+    color: #ffffff;
+    clear:both;
+}
+
+.report_header_cell{
+    display:block;
+    margin-top: 3px;
+    float:right;
+    width:50px;
+    padding: 2px 0px 2px 6px;
+}
+
+.report_legend{
+    border: 1px solid #555555;
+    background: #000000 url(images/ui-bg_loop_25_000000_21x21.png) 50% 50% repeat;
+    color: #ffffff;
+    border-radius: 7px;
+    margin: 2px 0px 10px 0px;
+    display:none;
+}
+
+.report_legend_row{
+    clear: both;
+    height: 15px;
+    list-style: none;
+}
+
+.report_legend_title{
+    float:left;
+    width: 50px;
+}
+
+.report_legend_value{
+    float: left;
 }

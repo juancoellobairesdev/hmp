@@ -10,18 +10,22 @@ class School_model extends MY_Model {
 
     public function get_verifier($id){
         $this->db->select('u.*');
-        $this->db->from($this->table);
-        $this->db->join('users AS u', "{$this->table}.verifierUserId = u.id", 'inner');
-        $this->db->where("{$this->table}.id", $id);
+        $this->db->from("{$this->table} AS s");
+        $this->db->join('employees AS e', 's.id = e.schoolId', 'inner');
+        $this->db->join('users AS u', "e.userId = u.id", 'inner');
+        $this->db->where("s.id", $id);
+        $this->db->where('e.employeeTypesId', Employee_type_model::VER);
 
         return $this->db->get()->row();
     }
 
     public function get_administrator($id){
         $this->db->select('u.*');
-        $this->db->from($this->table);
-        $this->db->join('users AS u', "{$this->table}.administratorUserId = u.id", 'inner');
-        $this->db->where("{$this->table}.id", $id);
+        $this->db->from("{$this->table} AS s");
+        $this->db->join('employees AS e', 's.id = e.schoolId', 'inner');
+        $this->db->join('users AS u', "e.userId = u.id", 'inner');
+        $this->db->where("s.id", $id);
+        $this->db->where('e.employeeTypesId', Employee_type_model::ADM);
 
         return $this->db->get()->row();
     }
@@ -64,27 +68,21 @@ class School_model extends MY_Model {
         return $errors;
     }
 
-    public function get_by_verifier($verifierUserId){
-        $this->db->select();
-        $this->db->from($this->table);
-        $this->db->where('verifierUserId', $verifierUserId);
-
-        return $this->db->get()->result();
-    }
-
-    public function get_by_administrator($administratorUserId){
-        $this->db->select();
-        $this->db->from($this->table);
-        $this->db->where('administratorUserId', $administratorUserId);
+    public function get_by_verifier($userId){
+        $this->db->select('s.*');
+        $this->db->from("{$this->table} AS s");
+        $this->db->join('employees AS e', 's.id = e.schoolId', 'inner');
+        $this->db->where('e.id', $userId);
+        $this->db->where('e.employeeTypesId', Employee_type_model::VER);
 
         return $this->db->get()->result();
     }
 
     public function get_by_user($userId){
-        $this->db->select();
-        $this->db->from($this->table);
-        $this->db->where('administratorUserId', $userId);
-        $this->db->or_where('verifierUserId', $userId);
+        $this->db->select('s.*');
+        $this->db->from("{$this->table} AS s");
+        $this->db->join('employees AS e', 's.id = e.id', 'inner');
+        $this->db->where('e.userId', $userId);
 
         // Not good but client want this asap. The way database is right now, it is very possible that an user verifies or manage more than 1 school.
         return $this->db->get()->row();
