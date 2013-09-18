@@ -57,44 +57,44 @@
         <fieldset>
             <legend>Staff</legend>
             <label for="adm">Administrator:</label>
-            <input type="text" id="adm" name="adm" maxlength="100" class="input_email" value="<?= $administrator->name ?>" onKeyUp="hmp.school.form.same_as_administrator()"/>
+            <input type="text" id="adm" name="adm" maxlength="100" class="input_email" value="<?= $adm->name ?>" onKeyUp="hmp.school.form.same_as_administrator()"/>
             <span class="right_email">Email:</span>
-            <input type="email" id="admsEmail" name="admsEmail" maxlength="100" class="input_email" value="<?= $administrator->email ?>" onKeyUp="hmp.school.form.same_as_administrator()"/>
+            <input type="email" id="admsEmail" name="admsEmail" maxlength="100" class="input_email" value="<?= $adm->email ?>" onKeyUp="hmp.school.form.same_as_administrator()"/>
             <span class="right_email">Same for all:</span>
             <input type="checkbox" id="same_for_all" name="same_for_all" value="1" onclick="hmp.school.form.same_for_all()">
             </br>
             <label for="ver">Verifier:</label>
-            <input type="text" id="ver" name="ver" maxlength="100" class="input_name" value="<?= $verifier->name ?>"/>
+            <input type="text" id="ver" name="ver" maxlength="100" class="input_name" value="<?= $ver->name ?>"/>
             <span class="right_email">Email:</span>
-            <input type="email" id="versEmail" name="versEmail" maxlength="100" class="input_email" value="<?= $verifier->email ?>"/>
+            <input type="email" id="versEmail" name="versEmail" maxlength="100" class="input_email" value="<?= $ver->email ?>"/>
             <span class="right_email">Same as Administrator:</span>
             <input type="checkbox" id="chk_ver" name="chk_staff" value="ver" onClick="hmp.school.form.copy_administrator('ver')">
             <br/>
             <label for="lsc">Local School Coordinator:</label>
-            <input type="text" id="lsc" name="lsc" maxlength="100" class="input_name" value="<?php //= $lsc->name ?>"/>
+            <input type="text" id="lsc" name="lsc" maxlength="100" class="input_name" value="<?= $lsc->name ?>"/>
             <span class="right_email">Email:</span>
-            <input type="email" id="lscsEmail" name="lscsEmail" maxlength="100" class="input_email" value="<?php //= $lsc->email ?>"/>
+            <input type="email" id="lscsEmail" name="lscsEmail" maxlength="100" class="input_email" value="<?= $lsc->email ?>"/>
             <span class="right_email">Same as Administrator:</span>
             <input type="checkbox" id="chk_lsc" name="chk_staff" value="lsc" onClick="hmp.school.form.copy_administrator('lsc')">
             <br/>
             <label for="fco">Family Coordinator:</label>
-            <input type="text" id="fco" name="fco" maxlength="100" class="input_name" value="<?php //= $fco->name ?>"/>
+            <input type="text" id="fco" name="fco" maxlength="100" class="input_name" value="<?= $fco->name ?>"/>
             <span class="right_email">Email:</span>
-            <input type="email" id="fcosEmail" name="fcosEmail" maxlength="100" class="input_email" value="<?php //= $fco->email ?>"/>
+            <input type="email" id="fcosEmail" name="fcosEmail" maxlength="100" class="input_email" value="<?= $fco->email ?>"/>
             <span class="right_email">Same as Administrator:</span>
             <input type="checkbox" id="chk_fco" name="chk_staff" value="fco" onClick="hmp.school.form.copy_administrator('fco')">
             <br/>
             <label for="pet">Physical Education Teacher:</label>
-            <input type="text" id="pet" name="pet" maxlength="100" class="input_name" value="<?php //= $pet->name ?>"/>
+            <input type="text" id="pet" name="pet" maxlength="100" class="input_name" value="<?= $pet->name ?>"/>
             <span class="right_email">Email:</span>
-            <input type="email" id="petsEmail" name="petsEmail" maxlength="100" class="input_email" value="<?php //= $pet->email ?>"/>
+            <input type="email" id="petsEmail" name="petsEmail" maxlength="100" class="input_email" value="<?= $pet->email ?>"/>
             <span class="right_email">Same as Administrator:</span>
             <input type="checkbox" id="chk_pet" name="chk_staff" value="pet" onClick="hmp.school.form.copy_administrator('pet')">
             <br/>
             <label for="sha">Student Health Advocate Facilitator:</label>
-            <input type="text" id="sha" name="sha" maxlength="100" class="input_name" value="<?php //= $sha->name ?>"/>
+            <input type="text" id="sha" name="sha" maxlength="100" class="input_name" value="<?= $sha->name ?>"/>
             <span class="right_email">Email:</span>
-            <input type="email" id="shasEmail" name="shasEmail" maxlength="100" class="input_email" value="<?php //= $sha->email ?>"/>
+            <input type="email" id="shasEmail" name="shasEmail" maxlength="100" class="input_email" value="<?= $sha->email ?>"/>
             <span class="right_email">Same as Administrator:</span>
             <input type="checkbox" id="chk_sha" name="chk_staff" value="sha" onClick="hmp.school.form.copy_administrator('sha')">
             <br/>
@@ -105,7 +105,7 @@
             <legend>Communications</legend>
 
             As principal, do you want to be cc’d on all communication to the local school contact(s)?  This would include e-mails for scheduling, electronic newsletters and reminders:<br/>
-            <label for="principalCarbonCopied">Cc'd:</label>
+            <label for="principalCarbonCopied">Allow communications:</label>
             <input type="radio" id="principalCarbonCopied" name="principalCarbonCopied" <?= $school->principalCarbonCopied? 'checked': '' ?> value="1">Yes
             <input type="radio" id="principalCarbonCopied" name="principalCarbonCopied" <?= $school->principalCarbonCopied? '': 'checked' ?> value="0">No</br>
 
@@ -128,7 +128,7 @@
         </fieldset>
 
         <div id="form_buttons">
-            <input type="submit" value="Save">
+            <input type="submit" value="Save" onClick="hmp.school.form.fill_data()">
             <?php if(!$school->id): ?>
                 <input type="reset" value="Reset"/>
             <?php endif ?>
@@ -137,7 +137,9 @@
 </div>
 
 <script>
-    var options = hmp.school.form.options;
-    hmp.school.form.options.data.schoolId = $('#schoolId').val();
-    $("#form").ajaxForm(options);
+    $(document).ready(function(){
+        var options = hmp.school.form.options;
+        hmp.school.form.options.data.schoolId = $('#schoolId').val();
+        $("#form").ajaxForm(options);
+    });
 </script>

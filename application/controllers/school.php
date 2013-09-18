@@ -23,7 +23,7 @@ class School extends MY_Controller {
         foreach($schools as &$school){
             $employees = array();
             $temp = $this->employee_model->get_full_by_school($school->id);
-            //$this->_print($temp);
+
             foreach($temp as $employee){
                 $employees[$employee->employeeTypesId] = $employee;
             }
@@ -59,20 +59,40 @@ class School extends MY_Controller {
     private function _form($id = NULL){
         if(!($school = $this->school_model->get($id))){
             $school = $this->school_model->fields();
-            $administrator = $this->user_model->fields();
-            $verifier = $administrator;
+            $adm = $this->user_model->fields();
+            $ver = $adm;
+            $lsc = $adm;
+            $fco = $adm;
+            $pet = $adm;
+            $sha = $adm;
         }
         else{
-            if(!($administrator = $this->school_model->get_administrator($school->id))){
-                $administrator = $this->user_model->fields();
+            if(!($adm = $this->school_model->get_adm($school->id))){
+                $adm = $this->user_model->fields();
             }
-            if(!($verifier = $this->school_model->get_verifier($school->id))){
-                $verifier = $this->user_model->fields();
+            if(!($ver = $this->school_model->get_ver($school->id))){
+                $ver = $this->user_model->fields();
+            }
+            if(!($lsc = $this->school_model->get_lsc($school->id))){
+                $lsc = $this->user_model->fields();
+            }
+            if(!($fco = $this->school_model->get_fco($school->id))){
+                $fco = $this->user_model->fields();
+            }
+            if(!($pet = $this->school_model->get_pet($school->id))){
+                $pet = $this->user_model->fields();
+            }
+            if(!($sha = $this->school_model->get_sha($school->id))){
+                $sha = $this->user_model->fields();
             }
         }
 
-        $params['administrator'] = $administrator;
-        $params['verifier'] = $verifier;
+        $params['adm'] = $adm;
+        $params['ver'] = $ver;
+        $params['lsc'] = $lsc;
+        $params['fco'] = $fco;
+        $params['pet'] = $pet;
+        $params['sha'] = $sha;
         $params['districts'] = $this->district_model->getAllIndexed();
         $params['grades'] = $this->school_model->grades();
         $params['school'] = $school;
@@ -83,7 +103,7 @@ class School extends MY_Controller {
         $response = new stdClass();
         $warnings = array();
 
-        $this->db->trans_begin();
+        //$this->db->trans_begin();
         try{
             $response = $this->_save_school();
             if(!$response->errors && $response->id){
@@ -97,12 +117,12 @@ class School extends MY_Controller {
                 }
             }
             else{
-                $this->db->trans_rollback();
+                //$this->db->trans_rollback();
                 $response->id = FALSE;
             }
         }
         catch(exception $e){
-            $this->db->trans_rollback();
+            //$this->db->trans_rollback();
         }
 
         $response->warnings = $warnings;
@@ -179,83 +199,84 @@ class School extends MY_Controller {
     private function _save_employees($schoolId){
         $errors = array();
         $employees = array();
+        $db_employees = array();
 
         $temp = $this->employee_model->get_full_by_school($schoolId);
         foreach($temp as $employee){
-            $employees[$employee->employeeTypeSid] = $employee;
+            $db_employees[$employee->employeeTypesId] = $employee;
         }
         unset($temp);
 
         $employee_types = $this->employee_type_model->getAllIndexed();
 
-        if($email = $this->input->post('versEmail')){
-            $name = $this->input->post('ver');
-
-            $employeeTypeSid = Employee_type_model::VER;
-            $response = $this->_save_employee($schoolId, $name, $email, $employeeTypeSid, $employees);
-            if($response->id){
-                $response->typeId = $employeeTypeSid;
-                $response->type = $employee_types[$employeeTypeSid]->title;
-                $employees[] = $response;
-            }
-        }
-
-        if($email = $this->input->post('lscsEmail')){
-            $name = $this->input->post('lsc');
-
-            $employeeTypeSid = Employee_type_model::LSC;
-            $response = $this->_save_employee($schoolId, $name, $email, $employeeTypeSid, $employees);
-            if($response->id){
-                $response->typeId = $employeeTypeSid;
-                $response->type = $employee_types[$employeeTypeSid]->title;
-                $employees[] = $response;
-            }
-        }
-
-        if($email = $this->input->post('fcosEmail')){
-            $name = $this->input->post('fco');
-
-            $employeeTypeSid = Employee_type_model::FCO;
-            $response = $this->_save_employee($schoolId, $name, $email, $employeeTypeSid, $employees);
-            if($response->id){
-                $response->typeId = $employeeTypeSid;
-                $response->type = $employee_types[$employeeTypeSid]->title;
-                $employees[] = $response;
-            }
-        }
-
-        if($email = $this->input->post('petsEmail')){
-            $name = $this->input->post('pet');
-
-            $employeeTypeSid = Employee_type_model::PET;
-            $response = $this->_save_employee($schoolId, $name, $email, $employeeTypeSid, $employees);
-            if($response->id){
-                $response->typeId = $employeeTypeSid;
-                $response->type = $employee_types[$employeeTypeSid]->title;
-                $employees[] = $response;
-            }
-        }
-
-        if($email = $this->input->post('shasEmail')){
-            $name = $this->input->post('sha');
-
-            $employeeTypeSid = Employee_type_model::SHA;
-            $response = $this->_save_employee($schoolId, $name, $email, $employeeTypeSid, $employees);
-            if($response->id){
-                $response->typeId = $employeeTypeSid;
-                $response->type = $employee_types[$employeeTypeSid]->title;
-                $employees[] = $response;
-            }
-        }
-
-        if($email = $this->input->post('admsEmail')){
+        if(($email = $this->input->post('admsEmail')) && Misc_helper::is_valid_email($email)){
             if($name = $this->input->post('adm')){
-                $employeeTypeSid = Employee_type_model::ADM;
-                $response = $this->_save_employee($schoolId, $name, $email, $employeeTypeSid, $employees);
+                $employeeTypesId = Employee_type_model::ADM;
+                $response = $this->_save_employee($schoolId, $name, $email, $employeeTypesId, $db_employees, User_model::$ROLE_C);
                 if($response->id){
-                    $response->typeId = $employeeTypeSid;
-                    $response->type = $employee_types[$employeeTypeSid]->title;
+                    $response->typeId = $employeeTypesId;
+                    $response->type = $employee_types[$employeeTypesId]->title;
                     $employees[] = $response;
+
+                    if(($email = $this->input->post('versEmail')) && Misc_helper::is_valid_email($email)){
+                        $name = $this->input->post('ver');
+
+                        $employeeTypesId = Employee_type_model::VER;
+                        $response = $this->_save_employee($schoolId, $name, $email, $employeeTypesId, $db_employees);
+                        if($response->id){
+                            $response->typeId = $employeeTypesId;
+                            $response->type = $employee_types[$employeeTypesId]->title;
+                            $employees[] = $response;
+                        }
+                    }
+
+                    if(($email = $this->input->post('lscsEmail')) && Misc_helper::is_valid_email($email)){
+                        $name = $this->input->post('lsc');
+
+                        $employeeTypesId = Employee_type_model::LSC;
+                        $response = $this->_save_employee($schoolId, $name, $email, $employeeTypesId, $db_employees);
+                        if($response->id){
+                            $response->typeId = $employeeTypesId;
+                            $response->type = $employee_types[$employeeTypesId]->title;
+                            $employees[] = $response;
+                        }
+                    }
+
+                    if(($email = $this->input->post('fcosEmail')) && Misc_helper::is_valid_email($email)){
+                        $name = $this->input->post('fco');
+
+                        $employeeTypesId = Employee_type_model::FCO;
+                        $response = $this->_save_employee($schoolId, $name, $email, $employeeTypesId, $db_employees);
+                        if($response->id){
+                            $response->typeId = $employeeTypesId;
+                            $response->type = $employee_types[$employeeTypesId]->title;
+                            $employees[] = $response;
+                        }
+                    }
+
+                    if(($email = $this->input->post('petsEmail')) && Misc_helper::is_valid_email($email)){
+                        $name = $this->input->post('pet');
+
+                        $employeeTypesId = Employee_type_model::PET;
+                        $response = $this->_save_employee($schoolId, $name, $email, $employeeTypesId, $db_employees);
+                        if($response->id){
+                            $response->typeId = $employeeTypesId;
+                            $response->type = $employee_types[$employeeTypesId]->title;
+                            $employees[] = $response;
+                        }
+                    }
+
+                    if(($email = $this->input->post('shasEmail')) && Misc_helper::is_valid_email($email)){
+                        $name = $this->input->post('sha');
+
+                        $employeeTypesId = Employee_type_model::SHA;
+                        $response = $this->_save_employee($schoolId, $name, $email, $employeeTypesId, $db_employees);
+                        if($response->id){
+                            $response->typeId = $employeeTypesId;
+                            $response->type = $employee_types[$employeeTypesId]->title;
+                            $employees[] = $response;
+                        }
+                    }
                 }
             }
             else{
@@ -273,19 +294,19 @@ class School extends MY_Controller {
         return $response;
     }
 
-    private function _save_employee($schoolId, $name, $email, $employeeTypeSid, $employees){
+    private function _save_employee($schoolId, $name, $email, $employeeTypesId, $employees, $role = 'Support Staff'){
         // Get current employees
         $response = new stdClass();
         $response->id = FALSE;
         $response->raw_password = FALSE;
 
         if($email){
-            if(!isset($employees[$employeeTypeSid])){ // Insert user and employee
-                $response_user = $this->_save_user($name, $email, User_model::$ROLE_S, Misc_helper::random_password());
+            if(!isset($employees[$employeeTypesId])){ // Insert user and employee
+                $response_user = $this->_save_user($name, $email, $role, Misc_helper::random_password());
 
                 if($response_user->id){
                     $employee = new stdClass();
-                    $employee->employeeTypeSid = $employeeTypeSid;
+                    $employee->employeeTypesId = $employeeTypesId;
                     $employee->userId = $response_user->id;
                     $employee->schoolId = $schoolId;
                     if($this->employee_model->insert($employee)){
@@ -294,8 +315,8 @@ class School extends MY_Controller {
                 }
             }
             else{
-                $employee_type = $employees[$employeeTypeSid];
-                if($employes_type->email != $email){ // Save new user and update employee
+                $employee_type = $employees[$employeeTypesId];
+                if($employee_type->email != $email){ // Save new user and update employee
                     $response_user = $this->_save_user($name, $email, User_model::$ROLE_S, Misc_helper::random_password());
 
                     if($response_user->id){
@@ -391,34 +412,41 @@ class School extends MY_Controller {
 
         $teachers = array();
         $year = date('Y');
+        $grades = $this->teacher_model->grades();
 
         // Delete all teachers from a school
         if(count($csv_users)){
             $this->teacher_model->delete_by_school($schoolId);
         }
 
-        for($i=0;$i<count($csv_users);$i++){
+        $count = count($csv_users);
+        for($i=0;$i<$count;$i++){
             $csv_user = $csv_users[$i];
+            $csv_user->name = trim($csv_user->name);
+            $csv_user->email = trim($csv_user->email);
             if(isset($csv_user->gradeLevel) && isset($csv_user->name) && isset($csv_user->email) && isset($csv_user->numStudents) && $csv_user->email){
-                $raw_password = implode('', explode(' ', $csv_user->gradeLevel . $user->name . $user->gradeLevel ));
-                $user = new stdClass();
-                $user->name = $csv_user->name;
-                $user->email = $csv_user->email;
-                $user->role = User_model::$ROLE_T;
-                $user->salt = hash('sha512', microtime());
-                $user->password = Misc_helper::encrypt_password($raw_password, $user->salt);
 
-                $teacher = new stdClass();
-                $teacher->schoolId = $schoolId;
-                $teacher->gradeLevel = $csv_user->gradeLevel;
-                $teacher->numStudents = $csv_user->numStudents;
-                $teacher->schoolYear = $year;
-                $teacher->enabled = FALSE;
-                $teacher->user = $user;
+                if(Misc_helper::is_valid_email($csv_user->email) && $csv_user->numStudents >= 0 && array_key_exists(intval($csv_user->gradeLevel), $grades)){
+                    $raw_password = implode('', explode(' ', $csv_user->gradeLevel . $csv_user->name . $csv_user->gradeLevel));
+                    $user = new stdClass();
+                    $user->name = $csv_user->name;
+                    $user->email = $csv_user->email;
+                    $user->role = User_model::$ROLE_T;
+                    $user->salt = hash('sha512', microtime());
+                    $user->password = Misc_helper::encrypt_password($raw_password, $user->salt);
 
-                $teachers[$user->email] = $teacher;
-                unset($csv_users[$i]);
-                // $csv_users will hold at the end, all the invalid users on the csv file
+                    $teacher = new stdClass();
+                    $teacher->schoolId = $schoolId;
+                    $teacher->gradeLevel = $csv_user->gradeLevel;
+                    $teacher->numStudents = $csv_user->numStudents;
+                    $teacher->schoolYear = $year;
+                    $teacher->enabled = FALSE;
+                    $teacher->user = $user;
+
+                    $teachers[$user->email] = $teacher;
+                    unset($csv_users[$i]);
+                    // $csv_users will hold at the end, all the invalid users on the csv file
+                }
             }
         }
 

@@ -43,7 +43,7 @@ class Test extends MY_Controller {
         //$this->_print($date33);
     }
 
-    public function maver($int = 1){
+    public function session($int = 1){
         $this->_print($this->session->all_userdata());
         //$this->session->sess_destroy();
     }

@@ -8,24 +8,37 @@ class School_model extends MY_Model {
         $this->load->model('teacher_model');
     }
 
-    public function get_verifier($id){
-        $this->db->select('u.*');
-        $this->db->from("{$this->table} AS s");
-        $this->db->join('employees AS e', 's.id = e.schoolId', 'inner');
-        $this->db->join('users AS u', "e.userId = u.id", 'inner');
-        $this->db->where("s.id", $id);
-        $this->db->where('e.employeeTypesId', Employee_type_model::VER);
-
-        return $this->db->get()->row();
+    public function get_adm($id){
+        return $this->get_staff($id, Employee_type_model::ADM);
     }
 
-    public function get_administrator($id){
+    public function get_ver($id){
+        return $this->get_staff($id, Employee_type_model::VER);
+    }
+
+    public function get_lsc($id){
+        return $this->get_staff($id, Employee_type_model::LSC);
+    }
+
+    public function get_fco($id){
+        return $this->get_staff($id, Employee_type_model::FCO);
+    }
+
+    public function get_pet($id){
+        return $this->get_staff($id, Employee_type_model::PET);
+    }
+
+    public function get_sha($id){
+        return $this->get_staff($id, Employee_type_model::SHA);
+    }
+
+    public function get_staff($id, $type){
         $this->db->select('u.*');
         $this->db->from("{$this->table} AS s");
         $this->db->join('employees AS e', 's.id = e.schoolId', 'inner');
-        $this->db->join('users AS u', "e.userId = u.id", 'inner');
-        $this->db->where("s.id", $id);
-        $this->db->where('e.employeeTypesId', Employee_type_model::ADM);
+        $this->db->join('users AS u', 'e.userId = u.id', 'inner');
+        $this->db->where('s.id', $id);
+        $this->db->where('e.employeeTypesId', $type);
 
         return $this->db->get()->row();
     }
@@ -69,13 +82,31 @@ class School_model extends MY_Model {
     }
 
     public function get_by_verifier($userId){
+        /*
         $this->db->select('s.*');
         $this->db->from("{$this->table} AS s");
         $this->db->join('employees AS e', 's.id = e.schoolId', 'inner');
         $this->db->where('e.id', $userId);
-        $this->db->where('e.employeeTypesId', Employee_type_model::VER);
+        $this->db->where('(e.employeeTypesId = ' . Employee_type_model::VER);
+        $this->db->or_where('e.employeeTypesId', Employee_type_model::ADM);
 
         return $this->db->get()->result();
+        */
+
+        $sql = "
+            SELECT s.*
+            FROM schools AS s
+            INNER JOIN employees AS e
+                ON s.id = e.schoolId
+            AND e.userId = ?
+            AND (
+                e.employeeTypesId = ?
+                OR
+                e.employeeTypesId = ?
+            )
+        ";
+
+        return $this->db->query($sql, array($userId, Employee_type_model::ADM, Employee_type_model::VER))->result();
     }
 
     public function get_by_user($userId){

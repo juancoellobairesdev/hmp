@@ -25,7 +25,7 @@ class Employee_model extends MY_Model {
         $this->db->select('e.*, u.*, e.id');
         $this->db->from("{$this->table} AS e");
         $this->db->join('users AS u', 'e.userId = u.id', 'inner');
-        $this->db->where('e.id', $schoolId);
+        $this->db->where('e.schoolId', $schoolId);
 
         return $this->db->get()->result();
     }

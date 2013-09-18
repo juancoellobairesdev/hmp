@@ -45,9 +45,10 @@
     <div class="report_header_cell">ST</div>
 </div>
 <div style="clear:both"></div>
-<?php foreach($result as $category => $category_data): ?>
-    <?php $total = $totals[$category]['total'] ?>
-    <div class="accordion">
+
+<div class="accordion">
+    <?php foreach($result as $category => $category_data): ?>
+        <?php $total = $totals[$category]['total'] ?>
         <h3>
             <div><?= $category ?></div>
             <div class="accordion_header_cell" style="margin-right: -7px"><?= $total->minutesOfInstruction ?></div>
@@ -55,9 +56,9 @@
             <div class="accordion_header_cell"><?= $total->teacherUsage ?></div>
             <div class="accordion_header_cell"><?= $total->students ?></div>
         </h3>
-        <?php foreach($category_data as $resource => $resource_data): ?>
-            <?php $total = $totals[$category][$resource]['total'] ?>
-            <div class="accordion">
+        <div class="accordion">
+            <?php foreach($category_data as $resource => $resource_data): ?>
+                <?php $total = $totals[$category][$resource]['total'] ?>
                 <h3>
                     <div><?= $resource ?></div>
                     <div class="accordion_header_cell" style="margin-right: -8px"><?= $total->minutesOfInstruction ?></div>
@@ -65,9 +66,9 @@
                     <div class="accordion_header_cell"><?= $total->teacherUsage ?></div>
                     <div class="accordion_header_cell"><?= $total->students ?></div>
                 </h3>
-                <?php foreach($resource_data as $grade => $grade_data): ?>
-                    <?php $total = $totals[$category][$resource][$grade]['total'] ?>
-                    <div class="accordion">
+                <div class="accordion">
+                    <?php foreach($resource_data as $grade => $grade_data): ?>
+                        <?php $total = $totals[$category][$resource][$grade]['total'] ?>
                         <h3>
                             <div><?= $grades[$grade] ?></div>
                             <div class="accordion_header_cell" style="margin-right: -9px"><?= $total->minutesOfInstruction ?></div>
@@ -95,13 +96,12 @@
                                 </div>
                             <?php endforeach ?>
                         </div>
-                    </div>
-                <?php endforeach ?>
-            </div>
-            <div style="clear:both; display:none"></div>
-        <?php endforeach ?>
-    </div>
-<?php endforeach ?>
+                    <?php endforeach ?>
+                </div>
+            <?php endforeach ?>
+        </div>
+    <?php endforeach ?>
+</div>
 
 <script>
     $(document).ready(function() {

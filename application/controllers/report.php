@@ -86,7 +86,25 @@ class Report extends MY_Controller {
     }
 
     public function search_by_teacher(){
-        $result = $this->_search_by_teacher();
+        $params = $this->_search_by_teacher();
+        $this->load->view('report/get_by_teacher', $params);
+    }
+
+    private function _search_by_teacher(){
+        $year = $this->input->post('year');
+        $month = $this->input->post('month');
+        $grade = $this->input->post('grade');
+        $schoolId = $this->input->post('schoolId');
+        $teacherId = $this->input->post('teacherId');
+
+        $params = new stdClass();
+        $params->month = $month? $month: NULL;
+        $params->grade = $grade!=''? $grade: NULL;
+        $params->schoolId = $schoolId? $schoolId: NULL;
+        $params->teacherId = $teacherId? $teacherId: NULL;
+
+        $result = $this->tracking_model->report_by_teacher($year, $params);
+
         $temp = array();
         $totals = array();
         foreach($result as $row){
@@ -139,32 +157,14 @@ class Report extends MY_Controller {
             $totals[$year]['total'] = $year_total;
         }
 
-        $params = new stdClass();
         $params->result = $result;
         $params->totals = $totals;
         $params->grades = $this->teacher_model->grades();
-        $this->load->view('report/get_by_teacher', $params);
+
+        return $params;
     }
 
-    private function _search_by_teacher(){
-        $year = $this->input->post('year');
-        $month = $this->input->post('month');
-        $grade = $this->input->post('grade');
-        $schoolId = $this->input->post('schoolId');
-        $teacherId = $this->input->post('teacherId');
-        $group_by = $this->input->post('group_by');
-
-        $params = new stdClass();
-        $params->month = $month? $month: NULL;
-        $params->grade = $grade!=''? $grade: NULL;
-        $params->schoolId = $schoolId? $schoolId: NULL;
-        $params->teacherId = $teacherId? $teacherId: NULL;
-        $params->group_by = $group_by;
-
-        return $this->tracking_model->report_by_teacher($year, $params);
-    }
-
-    public function download_by_teacher(){
+    /*public function download_by_teacher(){
         $errors = array();
         $url = FALSE;
 
@@ -173,6 +173,87 @@ class Report extends MY_Controller {
             $response = $this->_download($result, $line);
             $errors = $response->errors;
             $url = $response->url;
+        }
+        else{
+            $errors[] = 'Nothing to download.';
+        }
+
+        $data = new stdClass();
+        $data->errors = $errors;
+        $data->url = $url;
+
+        echo json_encode($data);
+    }*/
+
+    public function download_by_teacher(){
+        $errors = array();
+        $url = FALSE;
+        $report = '';
+
+        $params = $this->_search_by_teacher();
+        if($params->result){
+            $result = $params->result;
+            $totals = $params->totals;
+            $grades = $params->grades;
+            foreach($result as $year => $year_data){
+                $year_total = $totals[$year]['total'];
+                $report .= '"' . $year . '","';
+                $report .= implode('","',(array) $year_total);
+                $report .= "\"\r\n";
+                foreach($year_data as $month => $month_data){
+                    $month_total = $totals[$year][$month]['total'];
+                    $report .= "\t\"" . $month . '","';
+                    $report .= implode('","',(array) $month_total);
+                    $report .= "\"\r\n";
+                    foreach($month_data as $district => $district_data){
+                        $district_total = $totals[$year][$month][$district]['total'];
+                        $report .= "\t\t\"" . $district . '","';
+                        $report .= implode('","',(array) $district_total);
+                        $report .= "\"\r\n";
+                        foreach($district_data as $school => $school_data){
+                            $school_total = $totals[$year][$month][$district][$school]['total'];
+                            $report .= "\t\t\t\"" . $school . '","';
+                            $report .= implode('","',(array) $school_total);
+                            $report .= "\"\r\n";
+                            foreach($school_data as $grade => $grade_data){
+                                $grade_total = $totals[$year][$month][$district][$school][$grade]['total'];
+                                $report .= "\t\t\t\t\"" . $grades[$grade] . '","';
+                                $report .= implode('","',(array) $grade_total);
+                                $report .= "\"\r\n";
+                                foreach($grade_data as $teacher => $teacher_data){
+                                    $teacher_total = $totals[$year][$month][$district][$school][$grade][$teacher]['total'];
+                                    $report .= "\t\t\t\t\t\"" . $teacher . '","';
+                                    $report .= implode('","',(array) $teacher_total);
+                                    $report .= "\"\r\n";
+                                    foreach($teacher_data as $row){
+                                        $temp = new stdClass();
+                                        $temp->category = $row->category;
+                                        $temp->resource = $row->resource;
+                                        $temp->minutesPerUse = $row->minutesPerUse;
+                                        $temp->timesUsed = $row->timesUsed;
+                                        $temp->maximumUsesPerMonth = $row->maximumUsesPerMonth;
+                                        $temp->minutesUsed = $row->minutesUsed;
+                                        $temp->totalPossibleTime = $row->totalPossibleTime;
+
+                                        $report .= "\t\t\t\t\t\t\"";
+                                        $report .= implode('","', (array)$temp);
+                                        $report .= "\"\r\n";
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if($report){
+                $download = $this->_download($report);
+                $errors = $download->errors;
+                $url = $download->url;
+            }
+            else{
+                $errors[] = 'Error filling report.';
+            }
         }
         else{
             $errors[] = 'Nothing to download.';
@@ -271,11 +352,44 @@ class Report extends MY_Controller {
 
     public function search_by_school(){
         $params = $this->_search_by_school();
+        $params->view = $params->errors? FALSE: $this->load->view('report/get_by_school', $params, TRUE);
 
-        if(!$params->errors){
+        echo json_encode($params);
+    }
+
+    public function _search_by_school(){
+        $errors = array();
+        $result = FALSE;
+        $totals = array();
+
+        $year = $this->input->post('year');
+        $month = $this->input->post('month');
+        $date = $this->input->post('date');
+        $andMonth = $this->input->post('andMonth');
+        $late = $this->input->post('late');
+        $cohort = $this->input->post('cohort');
+        $districtId = $this->input->post('districtId');
+        $schoolId = $this->input->post('schoolId');
+        $verified = $this->input->post('verified');
+        $afterDate = $this->input->post('afterDate');
+
+        $params = new stdClass();
+        $params->date = $date;
+        $params->year = $year;
+        $params->month = $month? $month: NULL;
+        $params->andMonth = $andMonth;
+        $params->late = $late? $late: NULL;
+        $params->cohort = $cohort? $cohort: NULL;
+        $params->districtId = $districtId? $districtId: NULL;
+        $params->schoolId = $schoolId? $schoolId: NULL;
+        $params->verified = $verified == 'true';
+        $params->afterDate = $afterDate? Misc_helper::date_to_db($afterDate): FALSE;
+
+        if(!($errors = $this->_has_errors_by_school($params))){
+            $result = $this->tracking_model->report_by_school($year, $params);
+
             $temp = array();
-            $totals = array();
-            foreach($params->result as $row){
+            foreach($result as $row){
                 $verified = $row->verified? 'Verified': 'Not Verified';
                 $temp[$row->year][$row->month][$verified][$row->district][$row->school][$row->nutrition][] = $row;
             }
@@ -325,53 +439,14 @@ class Report extends MY_Controller {
 
                 $totals[$year]['total'] = $year_total;
             }
-        }
 
-
-        $params->result = $result;
-        $params->totals = $totals;
-        $params->view = $params->errors? FALSE: $this->load->view('report/get_by_school', $params, TRUE);
-
-        echo json_encode($params);
-    }
-
-    public function _search_by_school(){
-        $errors = array();
-        $result = FALSE;
-
-        $year = $this->input->post('year');
-        $month = $this->input->post('month');
-        $date = $this->input->post('date');
-        $andMonth = $this->input->post('andMonth');
-        $late = $this->input->post('late');
-        $cohort = $this->input->post('cohort');
-        $districtId = $this->input->post('districtId');
-        $schoolId = $this->input->post('schoolId');
-        $verified = $this->input->post('verified');
-        $afterDate = $this->input->post('afterDate');
-        $group_by = $this->input->post('group_by');
-
-        $params = new stdClass();
-        $params->date = $date;
-        $params->year = $year;
-        $params->month = $month? $month: NULL;
-        $params->andMonth = $andMonth;
-        $params->late = $late? $late: NULL;
-        $params->cohort = $cohort? $cohort: NULL;
-        $params->districtId = $districtId? $districtId: NULL;
-        $params->schoolId = $schoolId? $schoolId: NULL;
-        $params->verified = $verified == 'true';
-        $params->afterDate = $afterDate? Misc_helper::date_to_db($afterDate): FALSE;
-        $params->group_by = $group_by;
-
-        if(!($errors = $this->_has_errors_by_school($params))){
-            $result = $this->tracking_model->report_by_school($year, $params);
         }
 
         $data = new stdClass();
         $data->errors = $errors;
         $data->result = $result;
-        
+        $data->totals = $totals;
+
         return $data;
     }
 
@@ -398,7 +473,7 @@ class Report extends MY_Controller {
         return $errors;
     }
 
-    public function download_by_school(){
+    /*public function download_by_school(){
         $errors = array();
         $url = FALSE;
 
@@ -417,6 +492,85 @@ class Report extends MY_Controller {
         }
         else{
             $errors = $result->errors;
+        }
+
+        $data = new stdClass();
+        $data->errors = $errors;
+        $data->url = $url;
+
+        echo json_encode($data);
+    }*/
+
+    public function download_by_school(){
+        $errors = array();
+        $url = FALSE;
+        $report = '';
+
+        $params = $this->_search_by_school();
+        if($params->result){
+            $result = $params->result;
+            $totals = $params->totals;
+            foreach($result as $year => $year_data){
+                $year_total = $totals[$year]['total'];
+                $report .= '"' . $year . '","';
+                $report .= implode('","',(array) $year_total);
+                $report .= "\"\r\n";
+                foreach($year_data as $month => $month_data){
+                    $month_total = $totals[$year][$month]['total'];
+                    $report .= "\t\"" . $month . '","';
+                    $report .= implode('","',(array) $month_total);
+                    $report .= "\"\r\n";
+                    foreach($month_data as $verified => $verified_data){
+                        $verified_total = $totals[$year][$month][$verified]['total'];
+                        $report .= "\t\t\"" . $verified . '","';
+                        $report .= implode('","',(array) $verified_total);
+                        $report .= "\"\r\n";
+                        foreach($verified_data as $district => $district_data){
+                            $district_total = $totals[$year][$month][$verified][$district]['total'];
+                            $report .= "\t\t\t\"" . $district . '","';
+                            $report .= implode('","',(array) $district_total);
+                            $report .= "\"\r\n";
+                            foreach($district_data as $school => $school_data){
+                                $school_total = $totals[$year][$month][$verified][$district][$school]['total'];
+                                $report .= "\t\t\t\t\"" . $school . '","';
+                                $report .= implode('","',(array) $school_total);
+                                $report .= "\"\r\n";
+                                foreach($school_data as $nutrition => $nutrition_data){
+                                    $nutrition_total = $totals[$year][$month][$verified][$district][$school][$nutrition]['total'];
+                                    $nutrition = $nutrition? 'Nutrition': 'Physical Activity';
+                                    $report .= "\t\t\t\t\t\"" . $nutrition . '","';
+                                    $report .= implode('","',(array) $nutrition_total);
+                                    $report .= "\"\r\n";
+                                    foreach($nutrition_data as $row){
+                                        $temp = new stdClass();
+                                        $temp->cohort = $row->cohort;
+                                        $temp->teacherUsage = $row->teacherUsage;
+                                        $temp->totalTimeMinutes = $row->totalTimeMinutes;
+                                        $temp->actualTime = $row->actualTime;
+                                        $temp->studentUsage = $row->studentUsage;
+                                        
+                                        $report .= "\t\t\t\t\t\t\"";
+                                        $report .= implode('","', (array)$temp);
+                                        $report .= "\"\r\n";
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if($report){
+                $download = $this->_download($report);
+                $errors = $download->errors;
+                $url = $download->url;
+            }
+            else{
+                $errors[] = 'Error filling report.';
+            }
+        }
+        else{
+            $errors[] = 'Nothing to download.';
         }
 
         $data = new stdClass();
@@ -476,7 +630,23 @@ class Report extends MY_Controller {
     }
 
     public function search_by_resource(){
-        $result = $this->_search_by_resource();
+        $params = $this->_search_by_resource();
+
+        $this->load->view('report/get_by_resource', $params);
+    }
+
+    public function _search_by_resource(){
+        $year = $this->input->post('year');
+        $schoolId = $this->input->post('schoolId');
+        $cohort = $this->input->post('cohort');
+        $grade = $this->input->post('grade');
+
+        $params = new stdClass();
+        $params->schoolId = $schoolId? $schoolId: NULL;
+        $params->cohort = $cohort? $cohort: NULL;
+        $params->grade = $grade!=''? $grade: NULL;
+
+        $result = $this->tracking_model->report_by_resource($year, $params);
 
         $temp = array();
         $totals = array();
@@ -513,26 +683,12 @@ class Report extends MY_Controller {
         $params->result = $result;
         $params->totals = $totals;
         $params->grades = $this->teacher_model->grades();
-        $this->load->view('report/get_by_resource', $params);
+
+        return $params;
     }
 
-    public function _search_by_resource(){
-        $year = $this->input->post('year');
-        $schoolId = $this->input->post('schoolId');
-        $cohort = $this->input->post('cohort');
-        $grade = $this->input->post('grade');
-        $group_by = $this->input->post('group_by');
-
-        $params = new stdClass();
-        $params->schoolId = $schoolId? $schoolId: NULL;
-        $params->cohort = $cohort? $cohort: NULL;
-        $params->grade = $grade!=''? $grade: NULL;
-        $params->group_by = $group_by;
-
-        return $this->tracking_model->report_by_resource($year, $params);
-    }
-
-    public function download_by_resource(){
+    
+    /*public function download_by_resource(){
         $errors = array();
         $url = FALSE;
 
@@ -543,6 +699,68 @@ class Report extends MY_Controller {
             $response = $this->_download($result, $line);
             $errors = $response->errors;
             $url = $response->url;
+        }
+        else{
+            $errors[] = 'Nothing to download.';
+        }
+
+        $data = new stdClass();
+        $data->errors = $errors;
+        $data->url = $url;
+
+        echo json_encode($data);
+    }*/
+    
+
+    public function download_by_resource(){
+        $errors = array();
+        $url = FALSE;
+        $report = '';
+
+        $params = $this->_search_by_resource();
+        if($params->result){
+            $result = $params->result;
+            $totals = $params->totals;
+            $grades = $params->grades;
+            foreach($result as $category => $category_data){
+                $category_total = $totals[$category]['total'];
+                $report .= '"' . $category . '","';
+                $report .= implode('","',(array) $category_total);
+                $report .= "\"\r\n";
+                foreach($category_data as $resource => $resource_data){
+                    $resource_total = $totals[$category][$resource]['total'];
+                    $report .= "\t\"" . $resource . '","';
+                    $report .= implode('","',(array) $resource_total);
+                    $report .= "\"\r\n";
+                    foreach($resource_data as $grade => $grade_data){
+                        $grade_total = $totals[$category][$resource][$grade]['total'];
+                        $report .= "\t\t\"" . $grades[$grade] . '","';
+                        $report .= implode('","',(array) $grade_total);
+                        $report .= "\"\r\n";
+                        foreach($grade_data as $row){
+                            $temp = new stdClass();
+                            $temp->teacher = $row->teacher;
+                            $temp->students = $row->students;
+                            $temp->teacherUsage = $row->teacherUsage;
+                            $temp->studentUsage = $row->studentUsage;
+                            $temp->minutesOfInstruction = $row->minutesOfInstruction;
+
+                            $report .= "\t\t\t\"";
+                            $report .= implode('","', (array)$temp);
+                            $report .= "\"\r\n";
+                        }
+                    }
+                }
+            }
+
+            if($report){
+                $download = $this->_download($report);
+                $errors = $download->errors;
+                $url = $download->url;
+            }
+            else{
+                $errors[] = 'Error filling report.';
+            }
         }
         else{
             $errors[] = 'Nothing to download.';
@@ -619,7 +837,7 @@ class Report extends MY_Controller {
         return FALSE;
     }
 
-    private function _download($result, $line){
+    private function _download($report){
         $userId = $this->session->userdata('userId');
         $full_path = '';
         $url = '';
@@ -635,7 +853,49 @@ class Report extends MY_Controller {
         }
 
         if(is_dir($reports_path)){
-            $file_name = date('Y-m-dH:i:s').'.csv';//$schoolId . '_' . microtime(TRUE) . '.csv';
+            $file_name = date('Y-m-dH:i:s').'.csv';
+            $full_path = $reports_path . $file_name;
+
+            $uploads_url = config_item('uploads_url');
+            $url = $uploads_url . 'reports/' . $userId . '/' . $file_name;
+
+            if($file = fopen($full_path, 'wt')){
+                fwrite($file, $report);
+                fclose($file);
+            }
+            else{
+                $errors[] = 'Unable to create csv file.';
+            }
+        }
+        else{
+            $errors[] = 'Unable to create csv file.';
+        }
+
+        $response = new stdClass();
+        $response->url = $url;
+        $response->errors = $errors;
+
+        return $response;
+    }
+
+
+    /*private function _download($result, $line){
+        $userId = $this->session->userdata('userId');
+        $full_path = '';
+        $url = '';
+        $errors = array();
+
+        $reports_path = config_item('uploads_path') . 'reports/' . $userId . '/';
+
+        if(is_dir($reports_path)){
+            @chmod($reports_path, 0755);
+        }
+        else{
+            @mkdir($reports_path, 0755);
+        }
+
+        if(is_dir($reports_path)){
+            $file_name = date('Y-m-dH:i:s').'.csv';
             $full_path = $reports_path . $file_name;
 
             $uploads_url = config_item('uploads_url');
@@ -665,7 +925,7 @@ class Report extends MY_Controller {
         $response->errors = $errors;
 
         return $response;
-    }
+    }*/
 }
 
 /* End of file report.php */

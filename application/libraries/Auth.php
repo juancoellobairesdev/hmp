@@ -170,11 +170,13 @@ class Auth{
         $access->tracking->enter[] = $roles->ha;
         $access->tracking->enter[] = $roles->hs;
         $access->tracking->enter[] = $roles->st;
+        $access->tracking->enter[] = $roles->sa;
         $access->tracking->get_resources = $access->tracking->enter;
         $access->tracking->submit_enter = $access->tracking->enter;
 
         $access->tracking->unverified[] = $roles->ha;
         $access->tracking->unverified[] = $roles->sv;
+        $access->tracking->unverified[] = $roles->sa;
         $access->tracking->get_trackings = $access->tracking->unverified;
         $access->tracking->submit_unverified = $access->tracking->unverified;
 

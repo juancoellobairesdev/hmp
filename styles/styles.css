@@ -326,11 +326,11 @@ li.inactive{
 }
 
 .accordion_row_even{
-    background-color: rgba(0, 140, 153, 0.25); /*#008c99*/
+    background-color: rgba(0, 140, 153, 0.25);
 }
 
 .accordion_row_noon{
-    background-color: rgba(244, 123, 34, 0.25); /*003147 11 147 213*/
+    background-color: rgba(244, 123, 34, 0.25);
 }
 
 .accordion_cell{
@@ -357,8 +357,8 @@ li.inactive{
 .report_header{
     height: 25px;
     border-radius: 5px;
-    border: 1px solid #009cA9; /*#26b3f7;*/
-    background: #008c99 url(images/ui-bg_highlight-hard_20_0972a5_1x100.png) 50% 50% repeat-x;/*#0972a5*/
+    border: 1px solid #009cA9;
+    background: #008c99 url(images/ui-bg_highlight-hard_20_0972a5_1x100.png) 50% 50% repeat-x;
     font-weight: bold;
     color: #ffffff;
     clear:both;

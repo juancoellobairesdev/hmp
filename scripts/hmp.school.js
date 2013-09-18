@@ -4,6 +4,21 @@ if(!hmp){
 
 hmp.school = {
     form:{
+        fill_data: function(){
+            hmp.school.form.options.data.adm = $('#adm').val();
+            hmp.school.form.options.data.admsEmail = $('#admsEmail').val();
+            hmp.school.form.options.data.ver = $('#chk_ver').is(':checked')? $('#adm').val(): $('#ver').val();
+            hmp.school.form.options.data.versEmail = $('#chk_ver').is(':checked')? $('#admsEmail').val(): $('#versEmail').val();
+            hmp.school.form.options.data.lsc = $('#chk_lsc').is(':checked')? $('#adm').val(): $('#lsc').val();
+            hmp.school.form.options.data.lscsEmail = $('#chk_lsc').is(':checked')? $('#admsEmail').val(): $('#lscsEmail').val();
+            hmp.school.form.options.data.fco = $('#chk_fco').is(':checked')? $('#adm').val(): $('#fco').val();
+            hmp.school.form.options.data.fcosEmail = $('#chk_fco').is(':checked')? $('#admsEmail').val(): $('#fcosEmail').val();
+            hmp.school.form.options.data.pet = $('#chk_pet').is(':checked')? $('#adm').val(): $('#pet').val();
+            hmp.school.form.options.data.petsEmail = $('#chk_oet').is(':checked')? $('#admsEmail').val(): $('#petsEmail').val();
+            hmp.school.form.options.data.sha = $('#chk_sha').is(':checked')? $('#adm').val(): $('#sha').val();
+            hmp.school.form.options.data.shasEmail = $('#chk_sha').is(':checked')? $('#admsEmail').val(): $('#shasEmail').val();
+        },
+        
         same_as_administrator: function(){
             var adm = $('#adm').val();
             var admsEmail = $('#admsEmail').val();
@@ -74,19 +89,6 @@ hmp.school = {
                 phone: $('#phone').val(),
                 fax: $('#fax').val(),
                 email: $('#email').val(),
-
-                adm: $('#adm').val(),
-                admsEmail: $('#admsEmail').val(),
-                ver: $('#ver').val(),
-                versEmail: $('#versEmail').val(),
-                lsc: $('#lsc').val(),
-                lscsEmail: $('#lscsEmail').val(),
-                fco: $('#fco').val(),
-                fcosEmail: $('#fcosEmail').val(),
-                pet: $('#pet').val(),
-                petsEmail: $('#petsEmail').val(),
-                sha: $('#sha').val(),
-                shasEmail: $('#shasEmail').val(),
 
                 shippingContactInfo: $('#shippingContactInfo').val(),
                 principal: $('#Principal').val(),

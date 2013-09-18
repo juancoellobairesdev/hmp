@@ -54,9 +54,10 @@
     <div class="report_header_cell">ST</div>
 </div>
 <div style="clear:both"></div>
-<?php foreach($result as $year => $year_data): ?>
-    <?php $total = $totals[$year]['total'] ?>
-    <div class="accordion">
+
+<div class="accordion">
+    <?php foreach($result as $year => $year_data): ?>
+        <?php $total = $totals[$year]['total'] ?>
         <h3>
             <div><?= $year ?></div>
             <div class="accordion_header_cell" style="margin-right: -4px"><?= $total->studentUsage ?></div>
@@ -65,9 +66,9 @@
             <div class="accordion_header_cell"><?= $total->teacherUsage ?></div>
             <div class="accordion_header_cell"><?= $total->students ?></div>
         </h3>
-        <?php foreach($year_data as $month => $month_data): ?>
-            <?php $total = $totals[$year][$month]['total'] ?>
-            <div class="accordion">
+        <div class="accordion">
+            <?php foreach($year_data as $month => $month_data): ?>
+                <?php $total = $totals[$year][$month]['total'] ?>
                 <h3>
                     <div><?= Misc_helper::str_month($month) ?></div>
                     <div class="accordion_header_cell" style="margin-right: -5px"><?= $total->studentUsage ?></div>
@@ -76,9 +77,9 @@
                     <div class="accordion_header_cell"><?= $total->teacherUsage ?></div>
                     <div class="accordion_header_cell"><?= $total->students ?></div>
                 </h3>
-                <?php foreach($month_data as $verified => $verified_data): ?>
-                    <?php $total = $totals[$year][$month][$verified]['total'] ?>
-                    <div class="accordion">
+                <div class="accordion">
+                    <?php foreach($month_data as $verified => $verified_data): ?>
+                        <?php $total = $totals[$year][$month][$verified]['total'] ?>
                         <h3>
                             <div><?= $verified ?></div>
                             <div class="accordion_header_cell" style="margin-right: -6px"><?= $total->studentUsage ?></div>
@@ -87,9 +88,9 @@
                             <div class="accordion_header_cell"><?= $total->teacherUsage ?></div>
                             <div class="accordion_header_cell"><?= $total->students ?></div>
                         </h3>
-                        <?php foreach($verified_data as $district => $district_data): ?>
-                            <?php $total = $totals[$year][$month][$verified][$district]['total'] ?>
-                            <div class="accordion">
+                        <div class="accordion">
+                            <?php foreach($verified_data as $district => $district_data): ?>
+                                <?php $total = $totals[$year][$month][$verified][$district]['total'] ?>
                                 <h3>
                                     <div><?= $district ?></div>
                                     <div class="accordion_header_cell" style="margin-right: -7px"><?= $total->studentUsage ?></div>
@@ -98,9 +99,9 @@
                                     <div class="accordion_header_cell"><?= $total->teacherUsage ?></div>
                                     <div class="accordion_header_cell"><?= $total->students ?></div>
                                 </h3>
-                                <?php foreach($district_data as $school => $school_data): ?>
+                                <div class="accordion">
+                                    <?php foreach($district_data as $school => $school_data): ?>
                                     <?php $total = $totals[$year][$month][$verified][$district][$school]['total'] ?>
-                                    <div class="accordion">
                                         <h3>
                                             <div><?= $school ?></div>
                                             <div class="accordion_header_cell" style="margin-right: -8px"><?= $total->studentUsage ?></div>
@@ -109,9 +110,9 @@
                                             <div class="accordion_header_cell"><?= $total->teacherUsage ?></div>
                                             <div class="accordion_header_cell"><?= $total->students ?></div>
                                         </h3>
-                                        <?php foreach($school_data as $nutrition => $nutrition_data): ?>
+                                        <div class="accordion">
+                                            <?php foreach($school_data as $nutrition => $nutrition_data): ?>
                                             <?php $total = $totals[$year][$month][$verified][$district][$school][$nutrition]['total'] ?>
-                                            <div class="accordion">
                                                 <h3>
                                                     <div><?= $nutrition? 'Nutrition': 'Physical Activity' ?></div>
                                                     <div class="accordion_header_cell" style="margin-right: -9px"><?= $total->studentUsage ?></div>
@@ -144,18 +145,21 @@
                                                         </div>
                                                     <?php endforeach ?>
                                                 </div>
-                                            </div>
-                                        <?php endforeach ?>
-                                    </div>
-                                <?php endforeach ?>
-                            </div>
-                        <?php endforeach ?>
-                    </div>
-                <?php endforeach ?>
-            </div>
-        <?php endforeach ?>
-    </div>
-<?php endforeach ?>
+                                            <?php endforeach ?>
+                                        </div>
+                                    <?php endforeach ?>
+                                </div>
+                            <?php endforeach ?>
+                        </div>
+                    <?php endforeach ?>
+                </div>
+            <?php endforeach ?>
+        </div>
+    <?php endforeach ?>
+</div>
+
+
+
 
 <script>
     $(document).ready(function() {

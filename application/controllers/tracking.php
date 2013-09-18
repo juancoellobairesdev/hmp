@@ -34,6 +34,12 @@ class Tracking extends MY_Controller {
             $schools[] = $school;
             if($this->_can_access($role, 'enter_choose_teacher')){
                 $teachers = $this->teacher_model->get_full_by_school($school->id);
+                if($this->_can_access($teachers[0]->role, 'enter_choose_grade')){
+                    $grades = $all_grades;
+                }
+                else{
+                    $grades[$teachers[0]->gradeLevel] = $all_grades[$teachers[0]->gradeLevel];
+                }
             }
             else{
                 $user = $this->session->userdata('user');
@@ -152,7 +158,8 @@ class Tracking extends MY_Controller {
                     }
 
                     $date = new DateTime('First monday of ' . $str_month . ' ' . $year);
-                    $date->add(new DateInterval('P' . $reportingWeek-1 . 'W'));
+                    $string = 'P' . intval($reportingWeek-1) . 'W';
+                    $date->add(new DateInterval($string));
                 }
                 catch(Exception $e){
                     $date = new DateTime();
@@ -166,6 +173,7 @@ class Tracking extends MY_Controller {
                     $tracking = new stdClass();
                     $tracking->teacherId = $teacherId;
                     $tracking->schoolId = $schoolId;
+                    $tracking->trackDate = $date->format('Y-m-d');
                     $tracking->reportingMonth = $reportingMonth;
                     $tracking->reportingWeek = $reportingWeek;
                     $errors = $this->tracking_model->has_errors($tracking);

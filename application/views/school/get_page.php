@@ -40,12 +40,12 @@
             <td><?= $school->principalCarbonCopied; ?></td>
             <td><?= $school->approveNewsletterCommunication; ?></td>
             <td><?= $school->approveReminderPrompts; ?></td>
-            <td><?= isset($employess[Employee_type_model::ADM])? $employees[Employee_type_model::ADM]: '' ?></td>
-            <td><?= isset($employess[Employee_type_model::VER])? $employees[Employee_type_model::VER]: '' ?></td>
-            <td><?= isset($employess[Employee_type_model::LSC])? $employees[Employee_type_model::LSC]: '' ?></td>
-            <td><?= isset($employess[Employee_type_model::FCO])? $employees[Employee_type_model::FCO]: '' ?></td>
-            <td><?= isset($employess[Employee_type_model::PET])? $employees[Employee_type_model::PET]: '' ?></td>
-            <td><?= isset($employess[Employee_type_model::SHA])? $employees[Employee_type_model::SHA]: '' ?></td>
+            <td><?= isset($employees[Employee_type_model::ADM])? $employees[Employee_type_model::ADM]->name: '' ?></td>
+            <td><?= isset($employees[Employee_type_model::VER])? $employees[Employee_type_model::VER]->name: '' ?></td>
+            <td><?= isset($employees[Employee_type_model::LSC])? $employees[Employee_type_model::LSC]->name: '' ?></td>
+            <td><?= isset($employees[Employee_type_model::FCO])? $employees[Employee_type_model::FCO]->name: '' ?></td>
+            <td><?= isset($employees[Employee_type_model::PET])? $employees[Employee_type_model::PET]->name: '' ?></td>
+            <td><?= isset($employees[Employee_type_model::SHA])? $employees[Employee_type_model::SHA]->name: '' ?></td>
         </tr>
     <?php endforeach; ?>
 </table>
