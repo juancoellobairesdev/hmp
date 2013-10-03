@@ -20,13 +20,15 @@ class Tracking extends MY_Controller {
         $all_grades = $this->teacher_model->grades();
 
         if($this->_can_access($role, 'enter_choose_school')){
-            $schools = $this->school_model->getAll();
-            $teachers = $this->teacher_model->get_full_by_school($schools[0]->id);
-            if($this->_can_access($teachers[0]->role, 'enter_choose_grade')){
-                $grades = $all_grades;
-            }
-            else{
-                $grades[$teachers[0]->gradeLevel] = $all_grades[$teachers[0]->gradeLevel];
+            if($schools = $this->school_model->getAll()){
+                if($teachers = $this->teacher_model->get_full_by_school($schools[0]->id)){
+                    if($this->_can_access($teachers[0]->role, 'enter_choose_grade')){
+                        $grades = $all_grades;
+                    }
+                    else{
+                        $grades[$teachers[0]->gradeLevel] = $all_grades[$teachers[0]->gradeLevel];
+                    }
+                }
             }
         }
         else{
@@ -68,43 +70,53 @@ class Tracking extends MY_Controller {
         $teacherId = $this->input->post('teacherId');
         $schoolId = $this->input->post('schoolId');
         $grade = $this->input->post('grade');
+        $resources = array();
+        $school = FALSE;
+        $categories = $this->category_model->getAllIndexed();
 
-        $teacher = $this->teacher_model->get($teacherId);
-        $school = $this->school_model->get($schoolId);
-        $resources = $this->resource_model->get_for_poster($grade, $school->startingSchoolYear);
-        $resources_used = $this->tracking_resource_model->get_resources_used($school->id, $month);
-        $count_resources = count($resources);
+        if(($teacher = $this->teacher_model->get($teacherId)) && ($school = $this->school_model->get($schoolId))){
+            $resources = $this->resource_model->get_for_poster($grade, $school->startingSchoolYear);
+            $resources_used = $this->tracking_resource_model->get_resources_used($school->id, $month);
+            $count_resources = count($resources);
 
-        for($i=0; $i<$count_resources; $i++){
-            $uses = 0;
-            $unset_resource = FALSE;
-            $resources_used = array_values($resources_used);
-            $count_resources_used = count($resources_used);
+            for($i=0; $i<$count_resources; $i++){
+                $uses = 0;
+                $unset_resource = FALSE;
+                $resources_used = array_values($resources_used);
+                $count_resources_used = count($resources_used);
 
-            for($j=0; $j<$count_resources_used; $j++){
-                if($resources[$i]->id == $resources_used[$j]->id){
-                    if($resources[$i]->maximumUsesPerMonth - $resources_used[$j]->used < 1){
-                        $unset_resource = TRUE;
+                for($j=0; $j<$count_resources_used; $j++){
+                    if($resources[$i]->id == $resources_used[$j]->id){
+                        if($resources[$i]->maximumUsesPerMonth - $resources_used[$j]->used < 1){
+                            $unset_resource = TRUE;
+                        }
+                        else{
+                            $uses = $resources_used[$j]->used;
+                        }
+                        unset($resources_used[$j]);
                     }
-                    else{
-                        $uses = $resources_used[$j]->used;
-                    }
-                    unset($resources_used[$j]);
+                }
+
+                if($unset_resource){
+                    unset($resources[$i]);
+                }
+                else{
+                    $resources[$i]->timesUsed = $uses;
+                    $resources[$i]->availableUses = $resources[$i]->maximumUsesPerMonth - $uses;
                 }
             }
 
-            if($unset_resource){
-                unset($resources[$i]);
+            $temp = array();
+            foreach($resources as $resource){
+                $temp[$resource->categoryId][] = $resource;
             }
-            else{
-                $resources[$i]->timesUsed = $uses;
-                $resources[$i]->availableUses = $resources[$i]->maximumUsesPerMonth - $uses;
-            }
-        }
 
+            $resources = $temp;
+        }
 
         $params['resources'] = $resources;
         $params['school'] = $school;
+        $params['categories'] = $categories;
 
         $this->load->view('tracking/get_resources', $params);
     }
@@ -134,7 +146,6 @@ class Tracking extends MY_Controller {
     public function submit_enter(){
         $errors = array();
         $id = FALSE;
-
         $resources = json_decode(json_encode($this->input->post('resources')));
         $reportingMonth = $this->input->post('reportingMonth');
         $reportingWeek = $this->input->post('reportingWeek');
@@ -158,6 +169,12 @@ class Tracking extends MY_Controller {
                     }
 
                     $date = new DateTime('First monday of ' . $str_month . ' ' . $year);
+                    if(date('Y') == $date->format('Y') && date('m') == $date->format('m')){
+                        if((int) $date->format('d') > (int) date('d')){
+                            $date->setDate((int) $date->format('Y'), (int) $date->format('m'), date('d'));
+                        }
+                    }
+
                     $string = 'P' . intval($reportingWeek-1) . 'W';
                     $date->add(new DateInterval($string));
                 }
@@ -183,6 +200,7 @@ class Tracking extends MY_Controller {
 
                         // Save trackingResources
                         foreach($resources as $resource){
+                            unset($resource->checked);
                             $resource->trackingEntryId = $id;
                             $this->tracking_resource_model->insert($resource);
                         }

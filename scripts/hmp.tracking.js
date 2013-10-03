@@ -6,26 +6,20 @@ hmp.tracking = {
     enter: {
         submit: function(){
             var resources = new Array();
-            var checkboxes = $("[name='tracking_resources']:checked").map(function () { return $(this).val(); }).get();
             var selects = $("select[name='tracking_resources']").map(function(){
                 var resource = {
                     resourceId: $(this).attr('resourceId'),
-                    timesUsed: $(this).val()
+                    timesUsed: $(this).val(),
+                    checked: $('#' + $(this).attr('resourceId')).is(':checked')
                 };
                 
                 return resource;
             }).get();
 
             var i;
-            for(i=0;i<checkboxes.length;i++){
-                var resource = {};
-                resource.resourceId = checkboxes[i];
-                resource.timesUsed = 1;
-                resources.push(resource);
-            }
 
             for(i=0;i<selects.length;i++){
-                if(selects[i].timesUsed > 0){
+                if(selects[i].checked){
                     resources.push(selects[i]);
                 }
             }

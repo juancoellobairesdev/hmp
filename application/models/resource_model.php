@@ -22,6 +22,7 @@ class Resource_model extends MY_Model {
             $this->db->where('r.categoryId', $categoryId);
         }
         $this->db->order_by('r.categoryId', 'asc');
+        $this->db->order_by('r.weight', 'asc');
 
         return $this->db->get()->result();
     }
