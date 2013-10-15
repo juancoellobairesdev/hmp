@@ -35,7 +35,7 @@ CREATE TABLE `employeeTypes` (
 
 LOCK TABLES `employeeTypes` WRITE;
 /*!40000 ALTER TABLE `employeeTypes` DISABLE KEYS */;
-INSERT INTO `employeeTypes` VALUES (1,'Administrator'),(2,'Verificator'),(3,'Local School Contact'),(4,'Family Coordinator'),(5,'Physical Education Teacher'),(6,'Student Health Advocate Facilitator'),(7,'Teacher');
+INSERT INTO `employeeTypes` VALUES (1,'Administrator'),(2,'Verifier'),(3,'Local School Contact'),(4,'Family Coordinator'),(5,'Physical Education Teacher'),(6,'Student Health Advocate Facilitator'),(7,'Teacher');
 /*!40000 ALTER TABLE `employeeTypes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -329,4 +329,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-09-17 16:32:29
+-- Dump completed on 2013-10-08 17:41:27

@@ -85,6 +85,22 @@ class Test extends MY_Controller {
     public function get_teachers(){
         $this->_print($this->teacher_model->getAll());
     }
+
+    public function get_employee_types(){
+        $this->_print($this->employee_type_model->getAll());
+    }
+
+    public function csv(){
+        $this->load->library('Csv_Reader');
+        $path = 'uploads/csv.csv';
+        $csv = $this->csv_reader->parse_file($path);
+
+        $this->_print($csv);
+    }
+
+    public function hotfix(){
+        $this->employee_type_model->hotfix();
+    }
 }
 
 /* End of file test.php */

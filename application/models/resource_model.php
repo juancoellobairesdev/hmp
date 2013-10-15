@@ -10,7 +10,7 @@ class Resource_model extends MY_Model {
 
     public function get_for_poster($gradeLevel, $startingSchoolYear, $categoryId = FALSE){
         $cohort = date('Y') - $startingSchoolYear + 1;
-        $this->db->select('r.id, r.title, r.maximumUsesPerMonth, c.id AS categoryId, c.name');
+        $this->db->select('r.id, r.title, r.maximumUsesPerYear, c.id AS categoryId, c.name');
         $this->db->from("{$this->table} AS r");
         $this->db->join('refResourceCategories AS c', 'r.categoryId = c.id', 'inner');
         $this->db->where('c.minCohort <=', $cohort);
@@ -39,8 +39,8 @@ class Resource_model extends MY_Model {
             $errors[] = 'Invalid value for "Minutes Per Use". It must be an integer greater than 0.';
         }
 
-        if(!isset($resource->maximumUsesPerMonth) || (intval($resource->maximumUsesPerMonth) < 1)){
-            $errors[] = 'Invalid value for "Maximum Uses Per Month". It must be an integer greater than 0.';
+        if(!isset($resource->maximumUsesPerYear) || (intval($resource->maximumUsesPerYear) < 1)){
+            $errors[] = 'Invalid value for "Maximum Uses Per Year". It must be an integer greater than 0.';
         }
 
         if(!isset($resource->nutrition) || ($resource->nutrition != 0 && $resource->nutrition != 1)){

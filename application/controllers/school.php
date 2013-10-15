@@ -61,10 +61,14 @@ class School extends MY_Controller {
             $school = $this->school_model->fields();
             $adm = $this->user_model->fields();
             $ver = $adm;
+            /*
             $lsc = $adm;
             $fco = $adm;
             $pet = $adm;
             $sha = $adm;
+            */
+            $employee = $this->employee_model->fields();
+            $employees = array($employee, $employee, $employee);
         }
         else{
             if(!($adm = $this->school_model->get_adm($school->id))){
@@ -73,6 +77,13 @@ class School extends MY_Controller {
             if(!($ver = $this->school_model->get_ver($school->id))){
                 $ver = $this->user_model->fields();
             }
+
+            $employees = $this->employee_model->get_not_vital_by_school($school->id);
+            $employee = $this->employee_model->fields();
+            for($i=count($employees); $i<3; $i++){
+                $employees[] = $employee;
+            }
+            /*
             if(!($lsc = $this->school_model->get_lsc($school->id))){
                 $lsc = $this->user_model->fields();
             }
@@ -85,14 +96,18 @@ class School extends MY_Controller {
             if(!($sha = $this->school_model->get_sha($school->id))){
                 $sha = $this->user_model->fields();
             }
+            */
         }
 
         $params['adm'] = $adm;
         $params['ver'] = $ver;
+        $params['employees'] = $employees;
+        /*
         $params['lsc'] = $lsc;
         $params['fco'] = $fco;
         $params['pet'] = $pet;
         $params['sha'] = $sha;
+        */
         $params['districts'] = $this->district_model->getAllIndexed();
         $params['grades'] = $this->school_model->grades();
         $params['school'] = $school;
@@ -152,6 +167,7 @@ class School extends MY_Controller {
         $school->phone = $this->input->post('phone');
         $school->fax = $this->input->post('fax');
         $school->email = $this->input->post('email');
+        $school->principalEmailAddress = $this->input->post('principalEmailAddress');
         $school->startTimeOfClasses = $this->input->post('startTimeOfClasses');
         $school->endTimeOfClasses = $this->input->post('endTimeOfClasses');
         $school->shippingContactInfo = $this->input->post('shippingContactInfo');
@@ -201,6 +217,12 @@ class School extends MY_Controller {
         $employees = array();
         $db_employees = array();
 
+        $this->employee_model->delete_not_vital_by_school($schoolId);
+        $not_vital_employees = json_decode(json_encode($this->input->post('employees')));
+        foreach($not_vital_employees as $not_vital_employee){
+            $this->employee_model->save_not_vital($schoolId, $not_vital_employee);
+        }
+
         $temp = $this->employee_model->get_full_by_school($schoolId);
         foreach($temp as $employee){
             $db_employees[$employee->employeeTypesId] = $employee;
@@ -229,7 +251,7 @@ class School extends MY_Controller {
                             $employees[] = $response;
                         }
                     }
-
+/*
                     if(($email = $this->input->post('lscsEmail')) && Misc_helper::is_valid_email($email)){
                         $name = $this->input->post('lsc');
 
@@ -277,6 +299,7 @@ class School extends MY_Controller {
                             $employees[] = $response;
                         }
                     }
+                    */
                 }
             }
             else{
@@ -294,7 +317,7 @@ class School extends MY_Controller {
         return $response;
     }
 
-    private function _save_employee($schoolId, $name, $email, $employeeTypesId, $employees, $role = 'Support Staff'){
+    private function _save_employee($schoolId, $name, $email, $employeeTypesId, $employees, $role = 'Support Staff', $erole = 'Support Staff'){
         // Get current employees
         $response = new stdClass();
         $response->id = FALSE;
@@ -309,6 +332,7 @@ class School extends MY_Controller {
                     $employee->employeeTypesId = $employeeTypesId;
                     $employee->userId = $response_user->id;
                     $employee->schoolId = $schoolId;
+                    $employee->role = $erole;
                     if($this->employee_model->insert($employee)){
                         $response = $response_user;
                     }
@@ -322,6 +346,7 @@ class School extends MY_Controller {
                     if($response_user->id){
                         $employee = new stdClass();
                         $employee->userId = $response_user->id;
+                        $employee->role = $erole;
                         if($this->employee_model->update($employee_type->id, $employee)){
                             $response = $response_user;
                         }
@@ -331,7 +356,7 @@ class School extends MY_Controller {
                     if($name != $employee_type->name){
                         $user = new stdClass();
                         $user->name = $name;
-                        if($this->user_name->update($employee_type->userId, $user)){
+                        if($this->user_model->update($employee_type->userId, $user)){
                             $response->id = $employee_type->userId;
                         }
                     }

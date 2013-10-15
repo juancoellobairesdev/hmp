@@ -76,7 +76,7 @@ class Tracking extends MY_Controller {
 
         if(($teacher = $this->teacher_model->get($teacherId)) && ($school = $this->school_model->get($schoolId))){
             $resources = $this->resource_model->get_for_poster($grade, $school->startingSchoolYear);
-            $resources_used = $this->tracking_resource_model->get_resources_used($school->id, $month);
+            $resources_used = $this->tracking_resource_model->get_resources_used($school->id);
             $count_resources = count($resources);
 
             for($i=0; $i<$count_resources; $i++){
@@ -87,7 +87,7 @@ class Tracking extends MY_Controller {
 
                 for($j=0; $j<$count_resources_used; $j++){
                     if($resources[$i]->id == $resources_used[$j]->id){
-                        if($resources[$i]->maximumUsesPerMonth - $resources_used[$j]->used < 1){
+                        if($resources[$i]->maximumUsesPerYear - $resources_used[$j]->used < 1){
                             $unset_resource = TRUE;
                         }
                         else{
@@ -102,7 +102,7 @@ class Tracking extends MY_Controller {
                 }
                 else{
                     $resources[$i]->timesUsed = $uses;
-                    $resources[$i]->availableUses = $resources[$i]->maximumUsesPerMonth - $uses;
+                    $resources[$i]->availableUses = $resources[$i]->maximumUsesPerYear - $uses;
                 }
             }
 

@@ -7,17 +7,11 @@ class Tracking_resource_model extends MY_Model {
         parent::__construct();
     }
 
-    public function get_resources_used($schoolId, $month = FALSE, $year = FALSE){
+    public function get_resources_used($schoolId, $year = FALSE){
         $this->db->select('tr.resourceId AS id, SUM(tr.timesUsed) AS used');
         $this->db->from('trackingEntry AS te');
         $this->db->join("{$this->table} AS tr", 'te.id = tr.trackingEntryId', 'inner');
         $this->db->where('te.schoolId', $schoolId);
-        if($month){
-            $this->db->where('MONTH(te.entered)', $month);
-        }
-        else{
-            $this->db->where('MONTH(te.entered) = YEAR(NOW())');
-        }
         if($year){
             $this->db->where('YEAR(te.entered)', $year);
         }

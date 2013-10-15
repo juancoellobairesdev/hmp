@@ -4,7 +4,7 @@
 <meta name="description" content="<?php $this->description(); ?>">
 <meta charset="utf-8">
 
-<link type="text/css" href="<?=$stylesUrl?>styles.css" rel="stylesheet" />
+<link type="text/css" href="<?=$stylesUrl?>styles.css?v=<?= time() ?>" rel="stylesheet" />
 <link type="text/css" href="<?=$stylesUrl?>jquery-ui-1.10.3.custom.css" rel="stylesheet" />
 
 <script type="text/javascript" src="<?=$scriptsUrl?>jquery-2.0.3.min.js" id="<?= microtime(TRUE) ?>"></script>

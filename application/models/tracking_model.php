@@ -56,9 +56,9 @@ class Tracking_model extends MY_Model {
             r.title AS resource,
             r.minutesPerUse,
             tcr.timesUsed,
-            r.maximumUsesPerMonth,
+            r.maximumUsesPerYear,
             r.minutesPerUse * tcr.timesUsed AS minutesUsed,
-            r.maximumUsesPerMonth * r.minutesPerUse AS totalPossibleTime
+            r.maximumUsesPerYear * r.minutesPerUse AS totalPossibleTime
         ');
 
         $this->db->from('trackingResources AS tcr');

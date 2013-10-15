@@ -12,12 +12,27 @@ class Csv_Reader{
 
         $file = fopen($p_Filepath, 'r');
         $this->fields = fgetcsv($file, $this->max_row_size, $this->separator, $this->enclosure);
-        $keys_values = explode(',',$this->fields[0]);
+        
+        $keys_values = array('gradeLevel', 'name', 'email', 'numStudents');
+        //$keys_values = explode(',',$this->fields[0]);
+        $first_line = explode(',',$this->fields[0]);
+        
+        // Take out enclosing quotes
+        foreach($first_line as &$field){
+            if($field[0] == "'" || $field[0] == '"'){
+                $field = substr($field, 1);
+            }
+
+            
+            if($field[strlen($field) -1] == "'" || $field[strlen($field) -1] == '"'){
+                $field = substr($field, 0, -1);
+            }
+        }
 
         $content    =   array();
         $keys   =   $this->escape_string($keys_values);
 
-        $i  =   1;
+        $i = ($keys_values == $first_line)? 1: 0;
         while( ($row = fgetcsv($file, $this->max_row_size, $this->separator, $this->enclosure)) != false ){            
             if( $row != null ) { // skip empty lines
                 $values =   explode(',',$row[0]);

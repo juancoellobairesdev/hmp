@@ -1,6 +1,6 @@
 <header id="headercont" class="header">
     <div id="banner" class="banner">
-        Health M. Powers
+        <img class="banner_logo" src="<?= $imagesUrl ?>logo.png"/>
     </div>
 </header>
 <menu>

@@ -4,7 +4,7 @@
         <th>Category</th>
         <th>Title</th>
         <th>Minutes Per Use</th>
-        <th>Maximum Uses Per Month</th>
+        <th>Maximum Uses Per Year</th>
         <th>Nutrition</th>
         <th>Minimum Grade</th>
         <th>Maximum Grade</th>
@@ -17,7 +17,7 @@
             <td><?= $categories[$resource->categoryId]->name; ?></td>
             <td><?= $resource->title; ?></td>
             <td><?= $resource->minutesPerUse; ?></td>
-            <td><?= $resource->maximumUsesPerMonth; ?></td>
+            <td><?= $resource->maximumUsesPerYear; ?></td>
             <td><?= $resource->nutrition; ?></td>
             <td><?= $resource->minGrade; ?></td>
             <td><?= $resource->maxGrade; ?></td>

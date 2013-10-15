@@ -14,12 +14,14 @@ class Menu{
     }
 
     private function _set_menu(){
-        $home = $this->_get_element('Home', 'home');
-
+        //$registration = $this->_get_element('Registration', 'school', 'add_form');
+        
+        //$home = $this->_get_element('Home', 'home');
         $school = $this->_get_element('Schools');
-        $school->childs[] = $this->_get_element('Become a Participating School', 'school', 'add_form');
+        //$school->childs[] = $this->_get_element('Register', 'school', 'add_form');
         $school->childs[] = $this->_get_element('List', 'school', 'show_list');
         $school->childs[] = $this->_get_element('Edit', 'school', 'edit');
+
 
         $resource = $this->_get_element('Resources');
         $resource->childs[] = $this->_get_element('List', 'resource', 'show_list');
@@ -45,7 +47,8 @@ class Menu{
         $login = $this->_get_element('Login', 'user', 'login_form');
 
         $menu = array(
-            $home,
+            //$home,
+            //$registration,
             $school,
             $tracking,
             $resource,

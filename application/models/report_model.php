@@ -74,7 +74,7 @@ class Report_model extends MY_Model {
             $object = new stdClass();
             $object->minutesPerUse = 0;
             $object->timesUsed = 0;
-            $object->maximumUsesPerMonth = 0;
+            $object->maximumUsesPerYear = 0;
             $object->minutesUsed = 0;
             $object->totalPossibleTime = 0;
 
@@ -89,7 +89,7 @@ class Report_model extends MY_Model {
 
         $sum->minutesPerUse = $sum1->minutesPerUse + $sum2->minutesPerUse;
         $sum->timesUsed = $sum1->timesUsed + $sum2->timesUsed;
-        $sum->maximumUsesPerMonth = $sum1->maximumUsesPerMonth + $sum2->maximumUsesPerMonth;
+        $sum->maximumUsesPerYear = $sum1->maximumUsesPerYear + $sum2->maximumUsesPerYear;
         $sum->minutesUsed = $sum1->minutesUsed + $sum2->minutesUsed;
         $sum->totalPossibleTime = $sum1->totalPossibleTime + $sum2->totalPossibleTime;
         

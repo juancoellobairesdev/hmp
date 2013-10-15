@@ -66,8 +66,12 @@ class School_model extends MY_Model {
             $errors[] = 'Invalid date for "Start Classes Date".';
         }
 
-        if(!isset($school->email) || !$school->email || !Misc_helper::is_valid_email($school->email)){
+        /*if(!isset($school->email) || !$school->email || !Misc_helper::is_valid_email($school->email)){
             $errors[] = 'Invalid email.';
+        }*/
+
+        if(!isset($school->principalEmailAddress) || !$school->principalEmailAddress || !Misc_helper::is_valid_email($school->principalEmailAddress)){
+            $errors[] = 'Invalid email for Principal.';
         }
 
         if(isset($school->startTimeOfClasses) && $school->startTimeOfClasses && !Misc_helper::time_to_db($school->startTimeOfClasses)){
@@ -112,7 +116,7 @@ class School_model extends MY_Model {
     public function get_by_user($userId){
         $this->db->select('s.*');
         $this->db->from("{$this->table} AS s");
-        $this->db->join('employees AS e', 's.id = e.id', 'inner');
+        $this->db->join('employees AS e', 's.id = e.schoolId', 'inner');
         $this->db->where('e.userId', $userId);
 
         // Not good but client want this asap. The way database is right now, it is very possible that an user verifies or manage more than 1 school.

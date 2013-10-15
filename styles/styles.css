@@ -14,6 +14,8 @@ body{
     -webkit-box-shadow: 10px 10px 10px rgba(50, 50, 50, 0.75);
     -moz-box-shadow: 10px 10px 10px rgba(50, 50, 50, 0.75);
     box-shadow: 10px 10px 10px rgba(50, 50, 50, 0.75);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .bodycont{
@@ -26,13 +28,14 @@ body{
 }
 
 header{
-    background: rgba(00, 140, 153, 1);
+    /*background: rgba(00, 140, 153, 1);*/
+    background-color: white;
     -moz-border-radius: inherit;
     -webkit-border-radius: inherit;
      border-radius: inherit;
 }
 
-.banner{
+/*.banner{
     font-size: 3.2em;
     text-shadow:    #ABD 0px 2px 1px,
                     #ABD 2px 4px 2px,
@@ -42,6 +45,12 @@ header{
     font-weight: bold;
     color: white;
     padding-bottom: 10px;
+}*/
+
+.banner{
+    width: 412px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 footer{
@@ -394,4 +403,55 @@ li.inactive{
 
 .report_legend_value{
     float: left;
+}
+
+table.enter_tracking{
+    border: 1px solid black;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th.enter_tracking{
+    padding-left: 10px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.enter_tracking_head{
+    background: black;
+    color: white;
+}
+
+.enter_tracking_category{
+    border: 1px solid black;
+    background-color: lightgray;
+    font-weight: bold;
+    height: 40px;
+}
+
+tr.enter_tracking_resource_1{
+    background-color: #FABF8F;
+    border: 0px;
+}
+
+tr.enter_tracking_resource_2{
+    background-color: #00CC99;
+    border: 0px;
+}
+
+tr.enter_tracking_resource_3{
+    background-color: #95B3D7;
+    border: 0px;
+}
+
+td.enter_tracking_resource_1{
+    padding-left: 5px;
+}
+
+td.enter_tracking_resource_2{
+    padding-left: 5px;
+}
+
+td.enter_tracking_resource_3{
+    padding-left: 5px;
 }

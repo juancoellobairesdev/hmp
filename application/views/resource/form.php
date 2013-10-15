@@ -22,8 +22,8 @@
         <label for="minutesPerUse">Minutes Per Use:</label>
         <input type="text" id="minutesPerUse" name="minutesPerUse" maxlength="3" size="3" value="<?= $resource->minutesPerUse? intval($resource->minutesPerUse): 1 ?>"/><br/>
 
-        <label for="maximumUsesPerMonth">Maximum Uses Per Month:</label>
-        <input type="text" id="maximumUsesPerMonth" name="maximumUsesPerMonth" maxlength="2" size="2" value="<?= $resource->maximumUsesPerMonth? intval($resource->maximumUsesPerMonth): 1 ?>"/><br/>
+        <label for="maximumUsesPerYear">Maximum Uses Per Year:</label>
+        <input type="text" id="maximumUsesPerYear" name="maximumUsesPerYear" maxlength="2" size="2" value="<?= $resource->maximumUsesPerYear? intval($resource->maximumUsesPerYear): 1 ?>"/><br/>
 
         <label for="nutrition">Nutrition:</label>
         <select id="nutrition" name="nutrition">

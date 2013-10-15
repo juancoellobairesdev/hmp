@@ -17,6 +17,25 @@ hmp.school = {
             hmp.school.form.options.data.petsEmail = $('#chk_oet').is(':checked')? $('#admsEmail').val(): $('#petsEmail').val();
             hmp.school.form.options.data.sha = $('#chk_sha').is(':checked')? $('#adm').val(): $('#sha').val();
             hmp.school.form.options.data.shasEmail = $('#chk_sha').is(':checked')? $('#admsEmail').val(): $('#shasEmail').val();
+
+            var employees = new Array();
+            $('#staff tr').each(function(){
+                if($(this).find('input').length){
+                    var employee = {
+                        id: $(this).find('input.employee_id').val(),
+                        name: $(this).find('input.employee_name').val(),
+                        role: $(this).find('input.employee_role').val(),
+                        email: $(this).find('input.employee_email').val(),
+                    }
+                    employees.push(employee);
+                }
+            });
+
+            hmp.school.form.options.data.employees = employees;
+        },
+
+        add_representative: function(){
+            $('#staff').append('<tr><input type="hidden" value="" class="employee_id"><td><input type="text" value="" class="employee_name"></td><td><input type="text" value="" class="employee_role"></td><td><input type="email" value="" class="employee_email"></td></tr>');
         },
         
         same_as_administrator: function(){
@@ -95,6 +114,7 @@ hmp.school = {
                 startTimeOfClasses: $('#startTimeOfClasses').val(),
                 endTimeOfClasses: $('#endTimeOfClasses').val(),
                 principalCarbonCopied: $('#principalCarbonCopied:checked').val(),
+                principalEmailAddress: $('#principalEmailAddress').val(),
                 approveNewsletterCommunication: $('#approveNewsletterCommunication:checked').val(),
                 approveReminderPrompts: $('#approveReminderPrompts:checked').val()
             },

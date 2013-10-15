@@ -5,8 +5,8 @@
 | Default Title and Description Metatags
 |--------------------------------------------------------------------------
 */
-$config['site_title'] = "Hmp";
-$config['site_description'] = "Resources";
+$config['site_title'] = "HealthMPowers";
+$config['site_description'] = "Teacher Resource Management";
 
 /*
 |--------------------------------------------------------------------------

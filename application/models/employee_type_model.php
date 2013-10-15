@@ -20,6 +20,14 @@ class Employee_type_model extends MY_Model {
         
         return $errors;
     }
+
+    public function hotfix(){
+        $verifier = new stdClass();
+        $verifier->title = 'Verifier';
+
+        $this->db->where('id', 2);
+        $this->db->update($this->table, $verifier);
+    }
 }
 
 /* End of file employee_type_model.php */

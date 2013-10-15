@@ -38,7 +38,9 @@
 |
 */
 
-$route['default_controller'] = "home";
+$route['default_controller'] = "user/login_form";
+$route['school/register'] = 'school/add_form';
+$route['register'] = 'school/add_form';
 $route['404_override'] = '';
 
 

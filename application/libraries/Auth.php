@@ -162,9 +162,9 @@ class Auth{
         $access->school->show_list[] = $roles->ha;
         $access->school->get_page = $access->school->show_list;
 
-        $access->school->add_form[] = $roles->n;
+        //$access->school->add_form = $this->_get_all_roles();
         $access->school->edit_form[] = $roles->ha;
-        //$access->school->edit_form[] = $roles->sa;
+        $access->school->edit_form[] = $roles->sa;
         $access->school->edit[] = $roles->sa;
 
         $access->tracking->enter[] = $roles->ha;

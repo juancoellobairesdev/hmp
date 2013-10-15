@@ -20,10 +20,10 @@
         </li>
         <li class="report_legend_row">
             <div class="report_legend_title">
-                MXU
+                MXY
             </div>
             <div class="report_legend_value">
-                = Maximum Uses Per Month
+                = Maximum Uses Per Year
             </div>
         </li>
         <li class="report_legend_row">
@@ -49,7 +49,7 @@
     <div class="report_header_cell" style="float:left">Totals</div>
     <div class="report_header_cell" style="margin-right: 4px">TT</div>
     <div class="report_header_cell">MU</div>
-    <div class="report_header_cell">MXU</div>
+    <div class="report_header_cell">MXY</div>
     <div class="report_header_cell">TU</div>
     <div class="report_header_cell">MPU</div>
 </div>
@@ -62,7 +62,7 @@
             <div><?= $year ?></div>
             <div class="accordion_header_cell" style="margin-right: -4px"><?= $total->totalPossibleTime ?></div>
             <div class="accordion_header_cell"><?= $total->minutesUsed ?></div>
-            <div class="accordion_header_cell"><?= $total->maximumUsesPerMonth ?></div>
+            <div class="accordion_header_cell"><?= $total->maximumUsesPerYear ?></div>
             <div class="accordion_header_cell"><?= $total->timesUsed ?></div>
             <div class="accordion_header_cell"><?= $total->minutesPerUse ?></div>
         </h3>
@@ -73,7 +73,7 @@
                     <div><?= Misc_helper::str_month($month) ?></div>
                     <div class="accordion_header_cell" style="margin-right: -5px"><?= $total->totalPossibleTime ?></div>
                     <div class="accordion_header_cell"><?= $total->minutesUsed ?></div>
-                    <div class="accordion_header_cell"><?= $total->maximumUsesPerMonth ?></div>
+                    <div class="accordion_header_cell"><?= $total->maximumUsesPerYear ?></div>
                     <div class="accordion_header_cell"><?= $total->timesUsed ?></div>
                     <div class="accordion_header_cell"><?= $total->minutesPerUse ?></div>
                 </h3>
@@ -84,7 +84,7 @@
                             <div><?= $district ?></div>
                             <div class="accordion_header_cell" style="margin-right: -6px"><?= $total->totalPossibleTime ?></div>
                             <div class="accordion_header_cell"><?= $total->minutesUsed ?></div>
-                            <div class="accordion_header_cell"><?= $total->maximumUsesPerMonth ?></div>
+                            <div class="accordion_header_cell"><?= $total->maximumUsesPerYear ?></div>
                             <div class="accordion_header_cell"><?= $total->timesUsed ?></div>
                             <div class="accordion_header_cell"><?= $total->minutesPerUse ?></div>
                         </h3>
@@ -95,7 +95,7 @@
                                     <div><?= $school ?></div>
                                     <div class="accordion_header_cell" style="margin-right: -7px"><?= $total->totalPossibleTime ?></div>
                                     <div class="accordion_header_cell"><?= $total->minutesUsed ?></div>
-                                    <div class="accordion_header_cell"><?= $total->maximumUsesPerMonth ?></div>
+                                    <div class="accordion_header_cell"><?= $total->maximumUsesPerYear ?></div>
                                     <div class="accordion_header_cell"><?= $total->timesUsed ?></div>
                                     <div class="accordion_header_cell"><?= $total->minutesPerUse ?></div>
                                 </h3>
@@ -106,7 +106,7 @@
                                             <div><?= $grades[$grade] ?></div>
                                             <div class="accordion_header_cell" style="margin-right: -8px"><?= $total->totalPossibleTime ?></div>
                                             <div class="accordion_header_cell"><?= $total->minutesUsed ?></div>
-                                            <div class="accordion_header_cell"><?= $total->maximumUsesPerMonth ?></div>
+                                            <div class="accordion_header_cell"><?= $total->maximumUsesPerYear ?></div>
                                             <div class="accordion_header_cell"><?= $total->timesUsed ?></div>
                                             <div class="accordion_header_cell"><?= $total->minutesPerUse ?></div>
                                         </h3>
@@ -117,7 +117,7 @@
                                                     <div><?= $teacher ?></div>
                                                     <div class="accordion_header_cell" style="margin-right: -9px"><?= $total->totalPossibleTime ?></div>
                                                     <div class="accordion_header_cell"><?= $total->minutesUsed ?></div>
-                                                    <div class="accordion_header_cell"><?= $total->maximumUsesPerMonth ?></div>
+                                                    <div class="accordion_header_cell"><?= $total->maximumUsesPerYear ?></div>
                                                     <div class="accordion_header_cell"><?= $total->timesUsed ?></div>
                                                     <div class="accordion_header_cell"><?= $total->minutesPerUse ?></div>
                                                 </h3>
@@ -125,7 +125,7 @@
                                                     <div class="accordion_row_header">
                                                         <div class="accordion_cell_header">TT</div>
                                                         <div class="accordion_cell_header">MU</div>
-                                                        <div class="accordion_cell_header">MXU</div>
+                                                        <div class="accordion_cell_header">MXY</div>
                                                         <div class="accordion_cell_header">TU</div>
                                                         <div class="accordion_cell_header">MPU</div>
                                                         <div class="accordion_cell_header" style="width:350px">Resource</div>
@@ -137,7 +137,7 @@
                                                         <div class="<?= $row_class ?>">
                                                             <div class="accordion_cell"><?= $row->totalPossibleTime ?></div>
                                                             <div class="accordion_cell"><?= $row->minutesUsed ?></div>
-                                                            <div class="accordion_cell"><?= $row->maximumUsesPerMonth ?></div>
+                                                            <div class="accordion_cell"><?= $row->maximumUsesPerYear ?></div>
                                                             <div class="accordion_cell"><?= $row->timesUsed ?></div>
                                                             <div class="accordion_cell"><?= $row->minutesPerUse ?></div>
                                                             <div class="accordion_cell" style="width:350px"><?= $row->resource ?></div>

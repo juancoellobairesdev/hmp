@@ -6,7 +6,6 @@ class User extends MY_Controller {
     }
 
     public function login_form($email = '', $errors = array()){
-        $this->session->unset_userdata('userId', 1);
         $params['email'] = $email;
         $params['errors'] = $errors;
         $this->template('user/login_form', $params);
@@ -41,8 +40,8 @@ class User extends MY_Controller {
                 unset($user->salt);
                 unset($user->securityCode);
                 $this->session->set_userdata('user', $user);
-                $this->session->set_userdata('userId', $user->id);
                 $this->session->set_userdata('role', $user->role);
+                $this->session->set_userdata('userId', $user->id);
                 if($teacher = $this->teacher_model->get_by_user($user->id)){
                     $this->session->set_userdata('teacher', $teacher);
                     $this->session->set_userdata('teacherId', $teacher->id);
@@ -76,7 +75,7 @@ class User extends MY_Controller {
             //$this->redirect(config_item('base_url'), array($this->session->userdata('session_id')));
         }
         else{
-            $params['message'] = "Welcome {$user->name}. Thank you for loging in.";
+            $params['message'] = "Welcome {$user->name}. Thank you for logging in.";
         }
 
         $params['user'] = $user;
@@ -94,7 +93,7 @@ class User extends MY_Controller {
         $this->session->unset_userdata('schoolId');
 
         $params['redirect_url'] = config_item('base_url');
-        $params['message'] = "We are sad to see you leave. Please como again soon.";
+        $params['message'] = "We are sad to see you leave. Please come again soon.";
 
         $this->template('messages', $params);
     }
@@ -109,6 +108,8 @@ class User extends MY_Controller {
 
         $password = $this->input->post('password');
         $new_password = $this->input->post('newPassword');
+        $errors[] = $password;
+        $errors[] = $new_password;
 
         // Session exists
         $userId = $this->session->userdata('userId');
@@ -143,7 +144,7 @@ class User extends MY_Controller {
             $errors[] = 'No user logged in.';
         }
 
-        $this->change_form($errors);
+        $this->change_password_form($errors);
     }
 
     public function forgot_password_form($errors = array()){
