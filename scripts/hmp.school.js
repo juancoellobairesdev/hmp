@@ -35,6 +35,9 @@ hmp.school = {
         },
 
         add_representative: function(){
+
+
+
             $('#staff').append('<tr><input type="hidden" value="" class="employee_id"><td><input type="text" value="" class="employee_name"></td><td><input type="text" value="" class="employee_role"></td><td><input type="email" value="" class="employee_email"></td></tr>');
         },
         
